@@ -14,6 +14,15 @@
 
 **不预先抽象。** 不要为了"以后可能用到"而提前建通用组件。只有真的复用过 2 次以上的代码才值得进入归档目录。
 
+## 命名规则
+
+> **目录名描述稳定能力，CSS / JS / 配置描述可变表现。**
+
+- 资产目录名只写**它是谁**（稳定身份）：`metric-card`、`energy-ring`、`world-map`。
+- 不写可变表现：颜色、Dark/Light、Glow、速度、动画方式（CountUp、Fade、Stagger……）都是可换的表现层或行为层，写进 CSS / JS / config 和资产 README，不写进目录名。
+- 反例：`metric-card-countup-dark`（countup 是可选行为、dark 是 CSS 样式）、`orange-energy-ring-fast`、`dark-world-map-glow`。
+- 变体处理：保持 `index.html` + `README.md` 的简单结构，不为变体提前建目录；确有多个值得保留的 Demo 时，才在资产下建 `demos/`（如 `countup-dark.html`、`static-light.html`）。
+
 ## 目录结构
 
 | 目录 | 用途 |

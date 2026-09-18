@@ -21,17 +21,21 @@
 
 ## 命名方式
 
-`组件类型-风格或变体`，kebab-case，例如：
+**目录名描述稳定能力（组件是谁），不写可变表现。** 颜色、Dark/Light、Glow 属于 CSS 表现层；CountUp、Fade、Hover、Stagger 属于可选行为层——都写进代码和资产 README，不写进目录名。
 
-- `legend-gradient-bar/`
-- `tooltip-follow-cursor/`
-- `kpi-counter-odometer/`
+`组件类型`，kebab-case，例如：
+
+- `legend/`
+- `tooltip/`
+- `metric-card/`
+
+反例：`metric-card-countup-dark`（countup 是可选行为、dark 是样式）。确有多个值得保留的变体时，在组件下建 `demos/`（如 `countup-dark.html`、`static-light.html`），不提前创建。
 
 ## 子目录建议包含
 
 ```
 05-components/xxxx/
-├── README.md      # 接口说明（输入什么数据、输出什么）、样式变量
+├── README.md      # 组件身份、表现层/行为层分层说明、接口、样式变量
 ├── index.html     # 最小演示
-└── src/           # 实现代码
+└── src/           # 实现代码（可选，单文件能装下就不建）
 ```

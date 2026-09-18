@@ -20,11 +20,13 @@
 
 ## 命名方式
 
-`视觉特征-色调或用途`，kebab-case，例如：
+目录名只写稳定能力（背景类型），色调等可变表现写进 CSS 和资产 README，不写进目录名。
 
-- `gradient-mesh-dark/`
-- `noise-grain-subtle/`
-- `grid-dots-blueprint/`
+`背景类型`，kebab-case，例如：
+
+- `gradient-mesh/`
+- `noise-grain/`
+- `grid-dots/`
 
 ## 子目录建议包含
 

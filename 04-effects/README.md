@@ -20,11 +20,16 @@
 
 ## 命名方式
 
-`效果类型-特征描述`，kebab-case，例如：
+目录名只写稳定能力（效果类型），颜色、强度、速度等可变参数写进代码和资产 README，不写进目录名。
 
-- `glow-bloom-soft/`
+`效果类型`，kebab-case，例如：
+
+- `glow-bloom/`
+- `energy-ring/`
 - `particles-mouse-follow/`
 - `shader-liquid-distortion/`
+
+反例：`orange-energy-ring-fast`（orange、fast 都是可变参数）。
 
 ## 子目录建议包含
 

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metric Card Demo</title>
+
+  <!-- Mature upstream libraries. The demo also contains a tiny native fallback so the file still previews offline. -->
+  <script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.10.1/dist/countUp.umd.js"></script>
+
+  <style>
+    :root {
+      --bg: #06101b;
+      --panel: rgba(9, 24, 38, .72);
+      --line: rgba(144, 184, 214, .16);
+      --line-strong: rgba(144, 184, 214, .34);
+      --text: #f5f8fb;
+      --muted: #8fa4b6;
+      --accent: #f6a21a;
+      --accent-soft: rgba(246, 162, 26, .16);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 44%, rgba(28, 74, 105, .30), transparent 28%),
+        radial-gradient(circle at 53% 49%, rgba(246, 162, 26, .07), transparent 18%),
+        linear-gradient(180deg, #081522 0%, #040a11 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .32;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, black 12%, transparent 72%);
+    }
+
+    .stage {
+      width: min(920px, 92vw);
+      display: grid;
+      place-items: center;
+      gap: 28px;
+      perspective: 1200px;
+    }
+
+    .metric-card {
+      position: relative;
+      width: min(520px, 88vw);
+      min-height: 310px;
+      padding: 32px 34px 30px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.035), transparent 32%),
+        var(--panel);
+      box-shadow:
+        0 28px 70px rgba(0, 0, 0, .38),
+        inset 0 1px 0 rgba(255,255,255,.035);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(32px) scale(.96);
+      transition: border-color .35s ease, box-shadow .35s ease, transform .35s ease;
+    }
+
+    .metric-card:hover {
+      border-color: var(--line-strong);
+      box-shadow:
+        0 32px 84px rgba(0, 0, 0, .45),
+        0 0 54px rgba(246, 162, 26, .06),
+        inset 0 1px 0 rgba(255,255,255,.05);
+      transform: translateY(-3px);
+    }
+
+    .metric-card::before {
+      content: "";
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      right: -95px;
+      top: -120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(246,162,26,.18), rgba(246,162,26,.04) 38%, transparent 70%);
+      filter: blur(1px);
+      pointer-events: none;
+    }
+
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(110deg, transparent 24%, rgba(255,255,255,.025) 44%, transparent 62%);
+      transform: translateX(-110%);
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: #b5c4cf;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(246,162,26,.75);
+    }
+
+    .icon-shell {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      border: 1px solid rgba(246,162,26,.16);
+      background: rgba(246,162,26,.055);
+      color: var(--accent);
+    }
+
+    .icon-shell svg { width: 20px; height: 20px; }
+
+    .accent-line {
+      width: 0;
+      height: 2px;
+      margin: 28px 0 29px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), rgba(246,162,26,.08));
+      box-shadow: 0 0 18px rgba(246,162,26,.20);
+    }
+
+    .label {
+      color: #c8d4dd;
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .metric {
+      display: flex;
+      align-items: flex-start;
+      margin-top: 7px;
+      line-height: .9;
+      letter-spacing: -.065em;
+    }
+
+    .value {
+      font-size: clamp(76px, 10vw, 112px);
+      font-weight: 780;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 42px rgba(255,255,255,.035);
+    }
+
+    .suffix {
+      margin: 7px 0 0 7px;
+      color: var(--accent);
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -.03em;
+    }
+
+    .description {
+      max-width: 300px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .micro {
+      position: absolute;
+      right: 34px;
+      bottom: 29px;
+      color: rgba(174,194,209,.45);
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .replay {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.035);
+      color: #afbdc8;
+      padding: 10px 15px;
+      border-radius: 999px;
+      font: inherit;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .replay:hover {
+      color: white;
+      border-color: rgba(255,255,255,.20);
+      background: rgba(255,255,255,.06);
+    }
+
+    .note {
+      color: rgba(166,185,199,.55);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .metric-card { opacity: 1; transform: none; }
+      .accent-line { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <article class="metric-card" id="metricCard" aria-label="Global reach metric">
+      <div class="top-row">
+        <div class="eyebrow" id="eyebrow"></div>
+        <div class="icon-shell" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path>
+          </svg>
+        </div>
+      </div>
+
+      <div class="accent-line" id="accentLine"></div>
+      <div class="label" id="label"></div>
+
+      <div class="metric">
+        <span class="value" id="metricValue">0</span>
+        <span class="suffix" id="suffix"></span>
+      </div>
+
+      <div class="description" id="description"></div>
+      <div class="micro">Live brand metric</div>
+    </article>
+
+    <button class="replay" id="replay" type="button">Replay animation</button>
+    <div class="note">Primary path: Anime.js + CountUp.js · Native fallback only for offline preview</div>
+  </main>
+
+  <script>
+    // ---- Thin glue layer: content lives in one config object. ----
+    const metricConfig = {
+      eyebrow: 'Market Presence',
+      label: 'Global Reach',
+      value: 90,
+      suffix: '+',
+      description: 'Countries & regions served worldwide.'
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      card: $('metricCard'),
+      eyebrow: $('eyebrow'),
+      line: $('accentLine'),
+      label: $('label'),
+      value: $('metricValue'),
+      suffix: $('suffix'),
+      description: $('description'),
+      replay: $('replay')
+    };
+
+    function render(config) {
+      els.eyebrow.textContent = config.eyebrow;
+      els.label.textContent = config.label;
+      els.suffix.textContent = config.suffix;
+      els.description.textContent = config.description;
+    }
+
+    function countFallback(endValue, duration = 1450) {
+      const start = performance.now();
+      const easeOut = t => 1 - Math.pow(1 - t, 4);
+      function frame(now) {
+        const p = Math.min((now - start) / duration, 1);
+        els.value.textContent = Math.round(endValue * easeOut(p)).toLocaleString();
+        if (p < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    function animateFallback() {
+      els.card.animate([
+        { opacity: 0, transform: 'translateY(32px) scale(.96)', filter: 'blur(6px)' },
+        { opacity: 1, transform: 'translateY(0) scale(1)', filter: 'blur(0)' }
+      ], { duration: 900, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+
+      els.line.animate([
+        { width: '0%' },
+        { width: '100%' }
+      ], { duration: 900, delay: 260, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+
+      countFallback(metricConfig.value);
+    }
+
+    function runAnimation() {
+      els.value.textContent = '0';
+      els.card.style.opacity = '0';
+      els.card.style.transform = 'translateY(32px) scale(.96)';
+      els.line.style.width = '0';
+
+      // Anime.js v4 IIFE exposes an `anime` namespace in browsers.
+      const animate = window.anime && window.anime.animate;
+      const CountUpCtor = (window.countUp && window.countUp.CountUp) || window.CountUp;
+
+      if (animate) {
+        animate(els.card, {
+          opacity: [0, 1],
+          translateY: [32, 0],
+          scale: [.96, 1],
+          duration: 900,
+          ease: 'outExpo'
+        });
+
+        animate(els.line, {
+          width: ['0%', '100%'],
+          duration: 900,
+          delay: 240,
+          ease: 'outExpo'
+        });
+      } else {
+        animateFallback();
+      }
+
+      if (CountUpCtor) {
+        const counter = new CountUpCtor(els.value, metricConfig.value, {
+          duration: 1.5,
+          useEasing: true,
+          separator: ','
+        });
+        if (!counter.error) counter.start();
+        else countFallback(metricConfig.value);
+      } else if (animate) {
+        countFallback(metricConfig.value);
+      }
+    }
+
+    render(metricConfig);
+    window.addEventListener('load', runAnimation);
+    els.replay.addEventListener('click', runAnimation);
+  </script>
+</body>
+</html>

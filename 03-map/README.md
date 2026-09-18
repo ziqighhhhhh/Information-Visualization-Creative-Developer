@@ -20,11 +20,16 @@
 
 ## 命名方式
 
-`地图类型-视觉风格或功能`，kebab-case，例如：
+目录名只写稳定能力（地图类型），配色、动效等可变表现写进代码和资产 README，不写进目录名。
 
-- `basemap-dark-minimal/`
-- `choropleth-hover-highlight/`
-- `flow-map-animated/`
+`地图类型`，kebab-case，例如：
+
+- `world-map/`
+- `basemap/`
+- `choropleth/`
+- `flow-map/`
+
+反例：`dark-world-map-glow`（dark、glow 都是可变表现）。
 
 ## 子目录建议包含
 
