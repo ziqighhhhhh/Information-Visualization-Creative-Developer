@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gradient Mesh — Reusable Background Asset</title>
+
+<style>
+  :root{
+    --bg:#06080d;
+    --text:#f5f7fa;
+    --muted:rgba(236,242,247,.60);
+    --line:rgba(255,255,255,.09);
+    --accent:#ff7a16;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    isolation:isolate;
+  }
+
+  /*
+    The mature open-source renderer owns this canvas.
+    We do not reproduce its shader stack.
+  */
+  #mesh-canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    display:block;
+  }
+
+  /*
+    Thin art-direction layers only:
+    vignette, contrast and subtle grain.
+  */
+  .grade{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:
+      radial-gradient(circle at 50% 46%,transparent 0 28%,rgba(1,4,8,.16) 63%,rgba(1,4,8,.48) 100%),
+      linear-gradient(180deg,rgba(3,6,11,.16),rgba(3,6,11,.03) 38%,rgba(3,6,11,.38));
+  }
+
+  .grain{
+    position:absolute;
+    inset:-50%;
+    z-index:2;
+    opacity:.055;
+    pointer-events:none;
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    animation:grainMove .28s steps(2) infinite;
+  }
+
+  @keyframes grainMove{
+    0%{transform:translate3d(0,0,0)}
+    25%{transform:translate3d(2%,-1%,0)}
+    50%{transform:translate3d(-1%,2%,0)}
+    75%{transform:translate3d(1%,1%,0)}
+    100%{transform:translate3d(0,0,0)}
+  }
+
+  .ui{
+    position:absolute;
+    inset:0;
+    z-index:5;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    padding:30px 32px;
+    pointer-events:none;
+  }
+
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.46);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .hero{
+    align-self:center;
+    width:min(760px,82vw);
+    margin-left:clamp(0px,6vw,88px);
+  }
+
+  .hero-kicker{
+    margin:0 0 18px;
+    color:rgba(255,255,255,.56);
+    font-size:12px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+  }
+
+  .hero-title{
+    margin:0;
+    max-width:760px;
+    font-size:clamp(52px,8.2vw,112px);
+    line-height:.88;
+    font-weight:760;
+    letter-spacing:-.064em;
+    text-wrap:balance;
+    text-shadow:0 8px 38px rgba(0,0,0,.14);
+  }
+
+  .hero-copy{
+    margin:24px 0 0;
+    width:min(590px,80vw);
+    color:var(--muted);
+    font-size:clamp(13px,1.25vw,17px);
+    line-height:1.6;
+  }
+
+  .bottom{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:24px;
+  }
+
+  .legend{
+    color:rgba(255,255,255,.38);
+    font-size:9px;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    line-height:1.55;
+  }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    gap:8px;
+    pointer-events:auto;
+  }
+
+  button{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:999px;
+    background:rgba(0,0,0,.18);
+    color:rgba(255,255,255,.78);
+    padding:9px 12px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.05em;
+    cursor:pointer;
+    backdrop-filter:blur(12px);
+  }
+
+  button:hover{
+    color:#fff;
+    background:rgba(255,255,255,.08);
+    border-color:rgba(255,255,255,.24);
+  }
+
+  button.active{
+    color:#fff;
+    border-color:rgba(255,255,255,.30);
+    background:rgba(255,255,255,.11);
+  }
+
+  .status{
+    position:absolute;
+    left:32px;
+    bottom:30px;
+    transform:translateY(-24px);
+    z-index:8;
+    color:rgba(255,255,255,.32);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  @media(max-width:720px){
+    .ui{padding:20px}
+    .meta{display:none}
+    .hero{margin-left:0;width:92vw}
+    .hero-title{font-size:clamp(48px,16vw,78px)}
+    .bottom{align-items:flex-start;flex-direction:column}
+    .controls{justify-content:flex-start}
+    .status{left:20px;bottom:110px}
+  }
+</style>
+</head>
+
+<body>
+<main class="stage">
+
+  <canvas id="mesh-canvas"></canvas>
+
+  <div class="grade"></div>
+  <div class="grain"></div>
+
+  <div class="ui">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Background System / Gradient Mesh</div>
+        <h1>Gradient Mesh</h1>
+      </div>
+
+      <div class="meta">
+        mesh-gradient.js<br>
+        WebGL shader renderer
+      </div>
+    </header>
+
+    <section class="hero">
+      <p class="hero-kicker">Reusable Background Asset</p>
+
+      <h2 class="hero-title">
+        Build Atmosphere Before Content
+      </h2>
+
+      <p class="hero-copy">
+        A reusable WebGL mesh-gradient background for hero sections, product launches, data stories and brand presentation pages.
+      </p>
+    </section>
+
+    <footer class="bottom">
+      <div class="legend">
+        Open-source renderer stays intact<br>
+        Glue layer = colors + seed + presentation
+      </div>
+
+      <div class="controls">
+        <button data-theme="ember" class="active">Ember</button>
+        <button data-theme="aurora">Aurora</button>
+        <button data-theme="ocean">Ocean</button>
+        <button data-theme="mono">Mono</button>
+        <button id="regenerateBtn">Regenerate Mesh</button>
+      </div>
+    </footer>
+  </div>
+
+  <div class="status" id="status">Initializing WebGL mesh…</div>
+
+</main>
+
+<script type="module">
+/* ============================================================
+   MATURE OPEN-SOURCE ENGINE
+
+   mesh-gradient.js provides the WebGL mesh renderer, shader stack,
+   animation loop, color updates and seed/position changes.
+
+   We only write a small orchestration layer around its public API.
+   ============================================================ */
+import MeshGradient from "https://esm.sh/mesh-gradient.js@0.0.5";
+
+
+/* ============================================================
+   REUSE CONFIG
+   Change this object when transplanting the background elsewhere.
+   ============================================================ */
+const CONFIG = {
+  initialTheme: "ember",
+  seed: 720,
+
+  themes: {
+    ember: [
+      "#ff7a16",
+      "#f0b12e",
+      "#161c29",
+      "#05070c"
+    ],
+
+    aurora: [
+      "#44e7c7",
+      "#8f73ff",
+      "#163a5f",
+      "#07111f"
+    ],
+
+    ocean: [
+      "#2563eb",
+      "#31b7d8",
+      "#17365c",
+      "#050b16"
+    ],
+
+    mono: [
+      "#dbe3ea",
+      "#737e88",
+      "#222933",
+      "#07090d"
+    ]
+  }
+};
+
+
+/* ============================================================
+   ENGINE WRAPPER
+   Stable public surface for the rest of your project.
+   ============================================================ */
+class GradientMeshBackground {
+
+  constructor({
+    canvas,
+    themes,
+    theme,
+    seed
+  }) {
+    this.canvas = canvas;
+    this.themes = themes;
+    this.theme = theme;
+    this.seed = seed;
+
+    this.engine = new MeshGradient();
+  }
+
+  async init() {
+    const colors =
+      this.themes[this.theme];
+
+    await this.engine.initGradient(
+      "#" + this.canvas.id,
+      colors
+    );
+
+    this.engine.changePosition(
+      this.seed
+    );
+
+    return this;
+  }
+
+  setTheme(name) {
+    if(!this.themes[name]){
+      return;
+    }
+
+    this.theme = name;
+
+    this.engine.changeGradientColors(
+      this.themes[name]
+    );
+  }
+
+  regenerate(seed = Math.floor(Math.random()*1000)+1) {
+    this.seed = seed;
+
+    this.engine.changePosition(
+      seed
+    );
+
+    return seed;
+  }
+
+  getColors() {
+    return this.engine.getGradientColors();
+  }
+}
+
+
+/* ============================================================
+   BOOTSTRAP
+   ============================================================ */
+const status =
+  document.querySelector("#status");
+
+const background =
+  new GradientMeshBackground({
+    canvas:
+      document.querySelector("#mesh-canvas"),
+
+    themes:
+      CONFIG.themes,
+
+    theme:
+      CONFIG.initialTheme,
+
+    seed:
+      CONFIG.seed
+  });
+
+try{
+
+  await background.init();
+
+  status.textContent =
+    `Mesh ready · seed ${CONFIG.seed}`;
+
+}catch(error){
+
+  status.textContent =
+    "Mesh renderer failed to initialize";
+
+  console.error(error);
+}
+
+
+/* ============================================================
+   DEMO CONTROLS
+   ============================================================ */
+document
+  .querySelectorAll("[data-theme]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        document
+          .querySelectorAll("[data-theme]")
+          .forEach(el => {
+            el.classList.remove("active");
+          });
+
+        button.classList.add("active");
+
+        const theme =
+          button.dataset.theme;
+
+        background.setTheme(
+          theme
+        );
+
+        status.textContent =
+          `Theme · ${theme}`;
+      }
+    );
+
+  });
+
+
+document
+  .querySelector("#regenerateBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      const seed =
+        background.regenerate();
+
+      status.textContent =
+        `Mesh regenerated · seed ${seed}`;
+    }
+  );
+
+
+/* ============================================================
+   OPTIONAL GLOBAL API
+   Handy when this asset is embedded in a larger page.
+   ============================================================ */
+window.gradientMesh = {
+  setTheme:
+    name => background.setTheme(name),
+
+  regenerate:
+    seed => background.regenerate(seed),
+
+  getColors:
+    () => background.getColors()
+};
+</script>
+</body>
+</html>

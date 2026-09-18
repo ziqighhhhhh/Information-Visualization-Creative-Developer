@@ -47,8 +47,9 @@ split-type@0.3.4 · animejs@3.2.2（均 CDN）
 
 - `../line-mask/`：同栈的行级遮罩 reveal（编辑感）
 - `../blur-focus/`：同栈的景深聚焦 reveal（电影感；注意它的 blur 是深度模型，强于本资产的 blur 预设）
+- `../kinetic-type/`：同栈的循环运动程序（持续动效，非一次性入场）
 
-split-text 管字/词/行的颗粒 stagger，line-mask 管行遮罩滑入，blur-focus 管对焦——按场景选用。
+split-text 管字/词/行的颗粒 stagger，line-mask 管行遮罩滑入，blur-focus 管对焦，kinetic-type 管循环——按场景选用。四个资产同栈同结构，已达拆分阈值，可考虑沉淀共享 SplitType 引擎封装。
 
 ## 来源
 
