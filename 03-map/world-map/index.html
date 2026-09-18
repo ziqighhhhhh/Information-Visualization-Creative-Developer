@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>World Map — Global Network Asset</title>
+<style>
+:root{
+  --bg:#06101b;--panel:#0b1725;--country:#102235;--country-stroke:#24405a;
+  --grid:rgba(122,167,205,.10);--route:#ff7a16;--route-hot:#ffd59a;
+  --node:#ff8a21;--text:#f4f7fa;--muted:#8fa1b3;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{background:radial-gradient(circle at 53% 48%,rgba(30,91,145,.13),transparent 33%),
+radial-gradient(circle at 52% 60%,rgba(255,122,22,.035),transparent 29%),var(--bg)}
+.stage{position:relative;width:100%;height:100%;overflow:hidden;isolation:isolate}
+.stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+background:linear-gradient(180deg,rgba(255,255,255,.015),transparent 18%,transparent 82%,rgba(0,0,0,.12)),
+radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.25) 100%);z-index:3}
+.header{position:absolute;left:32px;top:28px;z-index:20;pointer-events:none}
+.eyebrow{margin-bottom:8px;color:var(--route);font-size:10px;font-weight:800;letter-spacing:.19em;text-transform:uppercase}
+h1{margin:0;font-size:22px;font-weight:670;letter-spacing:-.03em}
+.subtitle{margin:8px 0 0;max-width:420px;color:var(--muted);font-size:12px;line-height:1.6}
+.stats{position:absolute;right:30px;top:28px;z-index:20;display:flex;gap:10px;pointer-events:none}
+.stat{min-width:104px;padding:10px 13px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(8,20,32,.48);backdrop-filter:blur(10px)}
+.stat strong{display:block;margin-bottom:2px;color:#fff;font-size:18px;font-weight:730}
+.stat span{color:var(--muted);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+#map{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.country{fill:var(--country);stroke:var(--country-stroke);stroke-width:.55;vector-effect:non-scaling-stroke;transition:fill .2s ease}
+.country:hover{fill:#17304a}
+.graticule{fill:none;stroke:var(--grid);stroke-width:.5;vector-effect:non-scaling-stroke}
+.sphere{fill:rgba(7,20,33,.18);stroke:rgba(126,174,214,.10);stroke-width:1}
+.route-glow,.route-main,.route-hot{fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;vector-effect:non-scaling-stroke}
+.route-glow{stroke:var(--route);stroke-width:8;opacity:.09;filter:url(#routeBlur)}
+.route-main{stroke:var(--route);stroke-width:1.35;opacity:.72}
+.route-hot{stroke:var(--route-hot);stroke-width:.58;opacity:.78}
+.node-group{cursor:pointer}
+.node-core{fill:#fff1de;stroke:var(--node);stroke-width:2;vector-effect:non-scaling-stroke;filter:url(#nodeGlow)}
+.node-pulse{fill:none;stroke:var(--node);stroke-width:1;opacity:.38;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;animation:pulse 2.6s ease-out infinite}
+.node-pulse.second{animation-delay:1.3s}
+.hub .node-core{fill:#fff;stroke:#ffd7a5;stroke-width:2.4}
+.node-label{fill:#cfdae4;font-size:10px;font-weight:620;letter-spacing:.02em;paint-order:stroke;stroke:var(--bg);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+@keyframes pulse{0%{transform:scale(.55);opacity:.55}75%,100%{transform:scale(2.35);opacity:0}}
+.tooltip{position:absolute;z-index:40;pointer-events:none;opacity:0;min-width:150px;padding:10px 12px;border:1px solid rgba(255,255,255,.10);
+border-radius:10px;background:rgba(5,14,23,.93);box-shadow:0 12px 36px rgba(0,0,0,.30);backdrop-filter:blur(12px);transform:translate(12px,12px);transition:opacity .12s ease}
+.tooltip strong{display:block;margin-bottom:4px;color:#fff;font-size:12px}
+.tooltip span{color:var(--muted);font-size:10px}
+.controls{position:absolute;right:27px;bottom:24px;z-index:30;display:flex;gap:9px}
+button{appearance:none;border:1px solid rgba(255,255,255,.11);border-radius:999px;background:rgba(7,18,30,.56);color:#dce6ef;padding:9px 13px;font:inherit;font-size:10px;letter-spacing:.04em;cursor:pointer;backdrop-filter:blur(10px)}
+button:hover{background:rgba(255,255,255,.07);color:#fff}
+.legend{position:absolute;left:30px;bottom:24px;z-index:20;display:flex;align-items:center;gap:16px;color:rgba(218,229,239,.55);font-size:9px;letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
+.legend-item{display:flex;align-items:center;gap:7px}
+.legend-dot{width:6px;height:6px;border-radius:50%;background:var(--node);box-shadow:0 0 10px var(--node)}
+.legend-line{width:23px;height:1px;background:linear-gradient(90deg,var(--route),var(--route-hot));box-shadow:0 0 7px rgba(255,122,22,.55)}
+.loading{position:absolute;inset:0;z-index:50;display:grid;place-items:center;background:var(--bg);color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;transition:opacity .35s ease}
+.loading.hidden{opacity:0;pointer-events:none}
+@media(max-width:760px){.header{left:18px;top:18px}.stats{display:none}.controls{right:14px;bottom:14px}.legend{left:18px;bottom:18px}h1{font-size:18px}.subtitle{display:none}}
+</style>
+</head>
+<body>
+<main class="stage">
+  <header class="header">
+    <div class="eyebrow">Visualization / World Map</div>
+    <h1>Global Network</h1>
+    <p class="subtitle">Reusable brand-market map built with mature open-source geospatial primitives. Data, routes and visual tokens are configuration-driven.</p>
+  </header>
+  <div class="stats">
+    <div class="stat"><strong id="marketCount">0</strong><span>Markets</span></div>
+    <div class="stat"><strong id="routeCount">0</strong><span>Connections</span></div>
+  </div>
+  <svg id="map" aria-label="Global network map">
+    <defs>
+      <filter id="routeBlur" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5"/></filter>
+      <filter id="nodeGlow" x="-200%" y="-200%" width="500%" height="500%">
+        <feGaussianBlur stdDeviation="2" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+  </svg>
+  <div class="tooltip" id="tooltip"><strong></strong><span></span></div>
+  <div class="legend">
+    <div class="legend-item"><i class="legend-dot"></i>Market node</div>
+    <div class="legend-item"><i class="legend-line"></i>Network route</div>
+  </div>
+  <div class="controls">
+    <button id="replayBtn">Replay</button>
+    <button id="resetBtn">Reset view</button>
+  </div>
+  <div class="loading" id="loading">Loading world atlas…</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script>
+const CONFIG = {
+  atlasUrl:"https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json",
+  projection:"NaturalEarth1",
+  hub:{id:"guangzhou",name:"Guangzhou",region:"Global HQ",lon:113.2644,lat:23.1291},
+  markets:[
+    {id:"singapore",name:"Singapore",region:"Southeast Asia",lon:103.8198,lat:1.3521},
+    {id:"dubai",name:"Dubai",region:"Middle East",lon:55.2708,lat:25.2048},
+    {id:"nairobi",name:"Nairobi",region:"East Africa",lon:36.8219,lat:-1.2921},
+    {id:"sao-paulo",name:"São Paulo",region:"South America",lon:-46.6333,lat:-23.5505},
+    {id:"london",name:"London",region:"Europe",lon:-0.1276,lat:51.5072},
+    {id:"los-angeles",name:"Los Angeles",region:"North America",lon:-118.2437,lat:34.0522}
+  ]
+};
+
+const svg=d3.select("#map"), tooltip=d3.select("#tooltip"), loading=document.querySelector("#loading");
+const gRoot=svg.append("g").attr("class","map-root");
+const gBase=gRoot.append("g").attr("class","base-layer");
+const gRoutes=gRoot.append("g").attr("class","route-layer");
+const gNodes=gRoot.append("g").attr("class","node-layer");
+const projection=d3.geoNaturalEarth1();
+const geoPath=d3.geoPath(projection);
+const graticule=d3.geoGraticule10();
+let width=0,height=0,worldData=null;
+
+const zoom=d3.zoom().scaleExtent([1,5]).on("zoom",event=>gRoot.attr("transform",event.transform));
+svg.call(zoom);
+
+function createGeoRoute(from,to,steps=80){
+  const interpolate=d3.geoInterpolate([from.lon,from.lat],[to.lon,to.lat]);
+  return {type:"LineString",coordinates:d3.range(steps+1).map(i=>interpolate(i/steps))};
+}
+
+function fitProjection(countries){
+  width=window.innerWidth;height=window.innerHeight;
+  svg.attr("viewBox",`0 0 ${width} ${height}`);
+  projection.fitExtent([[width*.045,height*.13],[width*.955,height*.88]],{type:"FeatureCollection",features:countries});
+}
+
+function drawBase(countries){
+  gBase.selectAll("*").remove();
+  gBase.append("path").datum({type:"Sphere"}).attr("class","sphere").attr("d",geoPath);
+  gBase.append("path").datum(graticule).attr("class","graticule").attr("d",geoPath);
+  gBase.selectAll(".country").data(countries).join("path").attr("class","country").attr("d",geoPath);
+}
+
+function drawRoutes(){
+  gRoutes.selectAll("*").remove();
+  const routes=CONFIG.markets.map(market=>({id:`${CONFIG.hub.id}-${market.id}`,market,geometry:createGeoRoute(CONFIG.hub,market)}));
+  const groups=gRoutes.selectAll(".route").data(routes).join("g").attr("class","route");
+  groups.append("path").attr("class","route-glow").attr("d",d=>geoPath(d.geometry));
+  groups.append("path").attr("class","route-main").attr("d",d=>geoPath(d.geometry));
+  groups.append("path").attr("class","route-hot").attr("d",d=>geoPath(d.geometry));
+  document.querySelector("#routeCount").textContent=routes.length;
+}
+
+function allNodes(){return [{...CONFIG.hub,isHub:true},...CONFIG.markets.map(d=>({...d,isHub:false}))]}
+
+function drawNodes(){
+  gNodes.selectAll("*").remove();
+  const nodes=allNodes();
+  const groups=gNodes.selectAll(".node-group").data(nodes,d=>d.id).join("g")
+    .attr("class",d=>`node-group${d.isHub?" hub":""}`)
+    .attr("transform",d=>{const p=projection([d.lon,d.lat]);return `translate(${p[0]},${p[1]})`;})
+    .on("mouseenter",(event,d)=>{
+      tooltip.style("opacity",1).style("left",`${event.clientX}px`).style("top",`${event.clientY}px`);
+      tooltip.select("strong").text(d.name);tooltip.select("span").text(d.region);
+    })
+    .on("mousemove",event=>tooltip.style("left",`${event.clientX}px`).style("top",`${event.clientY}px`))
+    .on("mouseleave",()=>tooltip.style("opacity",0))
+    .on("click",(event,d)=>{
+      event.stopPropagation();
+      const [x,y]=projection([d.lon,d.lat]),scale=2.6;
+      svg.transition().duration(900).ease(d3.easeCubicInOut)
+        .call(zoom.transform,d3.zoomIdentity.translate(width/2,height/2).scale(scale).translate(-x,-y));
+    });
+
+  groups.append("circle").attr("class","node-pulse").attr("r",d=>d.isHub?7:5);
+  groups.append("circle").attr("class","node-pulse second").attr("r",d=>d.isHub?7:5);
+  groups.append("circle").attr("class","node-core").attr("r",d=>d.isHub?4.2:3.2);
+  groups.append("text").attr("class","node-label").attr("x",8).attr("y",-7).text(d=>d.name);
+  document.querySelector("#marketCount").textContent=nodes.length;
+}
+
+function replayAnimation(){
+  svg.selectAll(".route-main, .route-hot").each(function(){
+    const path=this,length=path.getTotalLength();
+    d3.select(path).interrupt()
+      .attr("stroke-dasharray",`${length} ${length}`).attr("stroke-dashoffset",length).style("opacity",0)
+      .transition().delay((d,i)=>180+i*55).duration(1350).ease(d3.easeCubicOut)
+      .style("opacity",null).attr("stroke-dashoffset",0)
+      .on("end",function(){d3.select(this).attr("stroke-dasharray",null).attr("stroke-dashoffset",null)});
+  });
+
+  svg.selectAll(".node-group").interrupt().style("opacity",0)
+    .attr("transform",function(d){const p=projection([d.lon,d.lat]);return `translate(${p[0]},${p[1]}) scale(.2)`;})
+    .transition().delay((d,i)=>620+i*80).duration(700).ease(d3.easeBackOut.overshoot(1.4)).style("opacity",1)
+    .attr("transform",function(d){const p=projection([d.lon,d.lat]);return `translate(${p[0]},${p[1]}) scale(1)`;});
+}
+
+function render(){
+  if(!worldData)return;
+  const countries=topojson.feature(worldData,worldData.objects.countries).features;
+  fitProjection(countries);drawBase(countries);drawRoutes();drawNodes();replayAnimation();
+}
+
+d3.json(CONFIG.atlasUrl).then(data=>{
+  worldData=data;render();requestAnimationFrame(()=>loading.classList.add("hidden"));
+}).catch(error=>{
+  loading.textContent="World atlas failed to load";console.error(error);
+});
+
+document.querySelector("#replayBtn").addEventListener("click",replayAnimation);
+document.querySelector("#resetBtn").addEventListener("click",()=>{
+  svg.transition().duration(700).ease(d3.easeCubicInOut).call(zoom.transform,d3.zoomIdentity);
+});
+
+let resizeTimer=null;
+window.addEventListener("resize",()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>render(),120);
+});
+</script>
+</body>
+</html>
