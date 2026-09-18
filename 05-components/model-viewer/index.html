@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Product Stage — Model Viewer</title>
+
+<style>
+  :root{
+    --bg:#07090d;
+    --text:#f6f8fb;
+    --muted:rgba(235,241,247,.54);
+    --accent:#ff7a16;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 46%,rgba(255,122,22,.055),transparent 24%),
+      linear-gradient(180deg,#0a0d12,#05070a 74%);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  .page{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    isolation:isolate;
+  }
+
+  .page::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:12;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at center,transparent 0 48%,rgba(0,0,0,.12) 72%,rgba(0,0,0,.46) 100%);
+  }
+
+  .topbar{
+    position:absolute;
+    z-index:30;
+    left:30px;
+    right:30px;
+    top:28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.42);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .viewer-shell{
+    position:absolute;
+    inset:76px 0 96px;
+    display:grid;
+    place-items:center;
+  }
+
+  .viewer-wrap{
+    position:relative;
+    width:min(900px,88vw);
+    height:min(680px,72vh);
+  }
+
+  .ambient{
+    position:absolute;
+    left:50%;
+    top:48%;
+    width:min(560px,58vw);
+    aspect-ratio:1;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:
+      radial-gradient(circle,rgba(255,151,65,.12),rgba(255,122,22,.035) 42%,transparent 72%);
+    filter:blur(22px);
+    pointer-events:none;
+  }
+
+  model-viewer{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    background:transparent;
+    --poster-color:transparent;
+    --progress-bar-color:#ff7a16;
+    --progress-bar-height:2px;
+    outline:none;
+  }
+
+  model-viewer::part(default-progress-bar){
+    border-radius:999px;
+  }
+
+  .viewer-card{
+    position:absolute;
+    inset:0;
+    z-index:-1;
+    border-radius:34px;
+    border:1px solid rgba(255,255,255,.055);
+    background:
+      radial-gradient(circle at 50% 44%,rgba(255,255,255,.018),transparent 42%),
+      linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.006));
+    box-shadow:
+      inset 0 0 80px rgba(255,255,255,.01),
+      0 30px 80px rgba(0,0,0,.12);
+  }
+
+  .badge{
+    position:absolute;
+    left:24px;
+    bottom:22px;
+    z-index:8;
+    color:rgba(255,255,255,.35);
+    font-size:9px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  .controls{
+    position:absolute;
+    z-index:40;
+    left:50%;
+    bottom:26px;
+    transform:translateX(-50%);
+    width:min(1100px,95vw);
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:8px;
+  }
+
+  button,
+  select,
+  .upload-label{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:999px;
+    background:rgba(0,0,0,.25);
+    color:rgba(255,255,255,.76);
+    padding:9px 12px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.045em;
+    cursor:pointer;
+    backdrop-filter:blur(12px);
+  }
+
+  button:hover,
+  select:hover,
+  .upload-label:hover{
+    color:#fff;
+    background:rgba(255,255,255,.07);
+    border-color:rgba(255,255,255,.24);
+  }
+
+  button.active{
+    color:#fff;
+    border-color:rgba(255,122,22,.36);
+    background:rgba(255,122,22,.10);
+  }
+
+  input[type=file]{display:none}
+
+  .status{
+    position:absolute;
+    z-index:35;
+    left:30px;
+    bottom:30px;
+    color:rgba(255,255,255,.26);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  @media(max-width:780px){
+    .topbar{left:20px;right:20px;top:20px}
+    .meta{display:none}
+    .viewer-shell{inset:70px 0 150px}
+    .viewer-wrap{width:94vw;height:62vh}
+    .controls{bottom:16px}
+    .status{display:none}
+  }
+</style>
+</head>
+
+<body>
+<main class="page">
+
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">Product Stage / Model Viewer</div>
+      <h1>Model Viewer</h1>
+    </div>
+
+    <div class="meta">
+      Google &lt;model-viewer&gt; 4.3.1<br>
+      GLB / glTF product staging
+    </div>
+  </div>
+
+  <section class="viewer-shell">
+    <div class="viewer-wrap">
+
+      <div class="ambient"></div>
+      <div class="viewer-card"></div>
+
+      <model-viewer
+        id="viewer"
+        src="https://modelviewer.dev/assets/ShopifyModels/Chair.glb"
+        alt="Interactive 3D product model"
+        camera-controls
+        touch-action="pan-y"
+        auto-rotate
+        auto-rotate-delay="1200"
+        rotation-per-second="18deg"
+        environment-image="neutral"
+        shadow-intensity="0.85"
+        shadow-softness="0.82"
+        exposure="1"
+        tone-mapping="neutral"
+        camera-orbit="35deg 72deg auto"
+        min-camera-orbit="auto 45deg auto"
+        max-camera-orbit="auto 105deg auto">
+      </model-viewer>
+
+      <div class="badge">
+        Drag to rotate · wheel/pinch to zoom
+      </div>
+
+    </div>
+  </section>
+
+  <div class="controls">
+    <button data-preset="studio" class="active">Studio</button>
+    <button data-preset="hero">Hero</button>
+    <button data-preset="detail">Detail</button>
+    <button data-preset="static">Static</button>
+
+    <select id="rotationSelect">
+      <option value="10deg">Slow Rotate</option>
+      <option value="18deg" selected>Standard Rotate</option>
+      <option value="28deg">Fast Rotate</option>
+    </select>
+
+    <select id="exposureSelect">
+      <option value=".78">Exposure −</option>
+      <option value="1" selected>Exposure 1×</option>
+      <option value="1.22">Exposure +</option>
+    </select>
+
+    <label class="upload-label">
+      Upload GLB
+      <input id="modelUpload" type="file" accept=".glb,model/gltf-binary">
+    </label>
+
+    <button id="rotateBtn">Auto Rotate On</button>
+    <button id="resetBtn">Reset Camera</button>
+  </div>
+
+  <div class="status" id="status">
+    Loading model…
+  </div>
+</main>
+
+<script type="module"
+        src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
+
+<script>
+const viewer =
+  document.querySelector("#viewer");
+
+const status =
+  document.querySelector("#status");
+
+let uploadedObjectUrl =
+  null;
+
+
+/* ============================================================
+   PRODUCT STAGING PRESETS
+
+   All behavior is delegated to <model-viewer>'s public API.
+   ============================================================ */
+const PRESETS = {
+
+  studio:{
+    cameraOrbit:"35deg 72deg auto",
+    fieldOfView:"30deg",
+    shadowIntensity:.85,
+    shadowSoftness:.82,
+    exposure:1,
+    autoRotate:true
+  },
+
+  hero:{
+    cameraOrbit:"25deg 68deg auto",
+    fieldOfView:"25deg",
+    shadowIntensity:1,
+    shadowSoftness:.72,
+    exposure:1.08,
+    autoRotate:true
+  },
+
+  detail:{
+    cameraOrbit:"42deg 76deg 80%",
+    fieldOfView:"20deg",
+    shadowIntensity:.72,
+    shadowSoftness:.9,
+    exposure:1.04,
+    autoRotate:false
+  },
+
+  static:{
+    cameraOrbit:"0deg 75deg auto",
+    fieldOfView:"30deg",
+    shadowIntensity:.82,
+    shadowSoftness:.86,
+    exposure:1,
+    autoRotate:false
+  }
+};
+
+
+function applyPreset(name){
+
+  const p =
+    PRESETS[name];
+
+  if(!p){
+    return;
+  }
+
+  viewer.cameraOrbit =
+    p.cameraOrbit;
+
+  viewer.fieldOfView =
+    p.fieldOfView;
+
+  viewer.shadowIntensity =
+    p.shadowIntensity;
+
+  viewer.shadowSoftness =
+    p.shadowSoftness;
+
+  viewer.exposure =
+    p.exposure;
+
+  viewer.autoRotate =
+    p.autoRotate;
+
+  document
+    .querySelector("#rotateBtn")
+    .textContent =
+      p.autoRotate
+        ? "Auto Rotate On"
+        : "Auto Rotate Off";
+
+  status.textContent =
+    `Preset · ${name}`;
+}
+
+
+/* ============================================================
+   PRESET CONTROLS
+   ============================================================ */
+document
+  .querySelectorAll("[data-preset]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        document
+          .querySelectorAll("[data-preset]")
+          .forEach(el => {
+            el.classList.remove(
+              "active"
+            );
+          });
+
+        button.classList.add(
+          "active"
+        );
+
+        applyPreset(
+          button.dataset.preset
+        );
+      }
+    );
+
+  });
+
+
+/* ============================================================
+   ROTATION SPEED
+   ============================================================ */
+document
+  .querySelector("#rotationSelect")
+  .addEventListener(
+    "change",
+    event => {
+
+      viewer.rotationPerSecond =
+        event.target.value;
+
+      status.textContent =
+        `Rotation · ${event.target.value}`;
+    }
+  );
+
+
+/* ============================================================
+   EXPOSURE
+   ============================================================ */
+document
+  .querySelector("#exposureSelect")
+  .addEventListener(
+    "change",
+    event => {
+
+      viewer.exposure =
+        Number(
+          event.target.value
+        );
+
+      status.textContent =
+        `Exposure · ${event.target.value}`;
+    }
+  );
+
+
+/* ============================================================
+   AUTO ROTATE
+   ============================================================ */
+document
+  .querySelector("#rotateBtn")
+  .addEventListener(
+    "click",
+    event => {
+
+      viewer.autoRotate =
+        !viewer.autoRotate;
+
+      event.currentTarget.textContent =
+        viewer.autoRotate
+          ? "Auto Rotate On"
+          : "Auto Rotate Off";
+
+      status.textContent =
+        viewer.autoRotate
+          ? "Auto rotation enabled"
+          : "Auto rotation disabled";
+    }
+  );
+
+
+/* ============================================================
+   CAMERA RESET
+   ============================================================ */
+document
+  .querySelector("#resetBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      viewer.cameraOrbit =
+        "35deg 72deg auto";
+
+      viewer.fieldOfView =
+        "30deg";
+
+      /*
+        Jump to the newly assigned camera target/orbit.
+      */
+      if(
+        typeof viewer.jumpCameraToGoal ===
+        "function"
+      ){
+        viewer.jumpCameraToGoal();
+      }
+
+      status.textContent =
+        "Camera reset";
+    }
+  );
+
+
+/* ============================================================
+   GLB UPLOAD
+
+   GLB is intentionally preferred because it is a single file.
+   A .gltf often references separate textures / buffers.
+   ============================================================ */
+document
+  .querySelector("#modelUpload")
+  .addEventListener(
+    "change",
+    event => {
+
+      const file =
+        event.target.files?.[0];
+
+      if(!file){
+        return;
+      }
+
+      if(
+        uploadedObjectUrl
+      ){
+        URL.revokeObjectURL(
+          uploadedObjectUrl
+        );
+      }
+
+      uploadedObjectUrl =
+        URL.createObjectURL(
+          file
+        );
+
+      viewer.src =
+        uploadedObjectUrl;
+
+      status.textContent =
+        `Loading · ${file.name}`;
+    }
+  );
+
+
+/* ============================================================
+   VIEWER EVENTS
+   ============================================================ */
+viewer.addEventListener(
+  "load",
+  () => {
+
+    status.textContent =
+      "Model ready";
+  }
+);
+
+
+viewer.addEventListener(
+  "error",
+  event => {
+
+    status.textContent =
+      "Model failed to load";
+
+    console.error(
+      event
+    );
+  }
+);
+
+
+/* ============================================================
+   GLOBAL API
+   ============================================================ */
+window.productModelViewer = {
+
+  element:
+    viewer,
+
+  setPreset:
+    applyPreset,
+
+  setModel:
+    src => {
+      viewer.src = src;
+    },
+
+  setExposure:
+    value => {
+      viewer.exposure =
+        Number(value);
+    },
+
+  setAutoRotate:
+    enabled => {
+      viewer.autoRotate =
+        Boolean(enabled);
+    }
+};
+</script>
+
+</body>
+</html>
