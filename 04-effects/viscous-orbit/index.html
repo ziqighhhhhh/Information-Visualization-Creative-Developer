@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Viscous Orbit</title>
+<style>
+  :root{
+    --bg:#090704;
+    --ivory:#fff0c7;
+  }
+  *{box-sizing:border-box}
+  html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--bg)}
+  body{
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--ivory);
+    user-select:none;
+  }
+  #gl{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+  .stage{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+
+  /* 轨道元素（文本 / 图片） */
+  .orbital{
+    position:absolute;left:0;top:0;transform-origin:50% 50%;
+    will-change:transform,opacity,filter;
+    pointer-events:auto;
+  }
+  .orbital .fallback{
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    width:100%;height:100%;
+    font:800 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+    letter-spacing:.12em;text-align:center;
+    color:rgba(255,247,220,.95);
+    text-shadow:0 2px 10px rgba(0,0,0,.8);
+  }
+  .orbital .fallback small{
+    display:block;margin-top:6px;font-size:8px;font-weight:600;letter-spacing:.18em;
+    color:rgba(255,226,155,.55)
+  }
+  .orbital img{
+    width:100%;height:100%;object-fit:contain;display:none;
+    filter:drop-shadow(0 14px 22px rgba(0,0,0,.35));
+    pointer-events:none;
+  }
+  .orbital.has-image img{display:block}
+  .orbital.has-image .fallback{display:none}
+</style>
+</head>
+<body>
+
+<canvas id="gl"></canvas>
+<div class="stage" id="stage"></div>
+
+<script>
+/* ==========================================================================
+   VISCOUS ORBIT — 黏连轨道效果
+   --------------------------------------------------------------------------
+   复用时只需要改 CONFIG：
+
+   1) items：轨道上的内容（文字卡片，或透明 PNG/WebP 图片路径）
+   2) ring ：轨道几何 / 运动 / 黏度参数
+   3) colors：表现层配色（shader uniform）
+   ========================================================================== */
+
+const CONFIG = {
+  items: [
+    {title:"1928",      meta:"HERITAGE",       image:""},
+    {title:"TRUST",     meta:"BUILT OVER TIME",image:""},
+    {title:"BOLD",      meta:"VISUAL SPIRIT",  image:""},
+    {title:"GLOBAL",    meta:"PERSPECTIVE",    image:""},
+    {title:"ENDURING",  meta:"BRAND VALUE",    image:""},
+    {title:"ICONIC",    meta:"RECOGNITION",    image:""},
+    {title:"HUMAN",     meta:"CONNECTION",     image:""},
+    {title:"FORWARD",   meta:"MOMENTUM",       image:""},
+    {title:"ONE BRAND", meta:"ONE VOICE",      image:""}
+  ],
+
+  ring: {
+    radiusX: 0.76,
+    radiusY: 0.94,
+    centerOffsetX: -0.82,
+    centerOffsetY: 0.02,
+    step: 0.245,
+
+    itemBaseHeight: 108,
+    itemAspect: 1.18,
+    backScale: 0.58,
+    frontScale: 1.46,
+    perspectivePower: 2.35,
+
+    autoSpeed: 0.11,
+    wheelStrength: 0.00055,
+    dragStrength: 0.0042,
+    damping: 0.925,
+    snapDuration: 0.62,
+
+    viscosity: 12.0,
+    cursorMelt: 30.0,
+    cursorReach: 52000.0,
+    glow: 0.22
+  },
+
+  colors: {
+    bg: [0.034,0.025,0.014],
+    goldA: [0.36,0.18,0.035],
+    goldB: [1.00,0.69,0.18],
+    ivory: [1.00,0.94,0.72]
+  }
+}
+
+/* ===========================
+   下面一般不需要改
+   =========================== */
+
+const MAX_ITEMS = 9;
+const canvas = document.getElementById("gl");
+const stage = document.getElementById("stage");
+
+let items = [];
+let orbitalEls = [];
+
+function createOrbitals(){
+  orbitalEls.forEach(el=>el.remove());
+  orbitalEls = [];
+  items = CONFIG.items.slice(0,MAX_ITEMS);
+
+  for(let i=0;i<MAX_ITEMS;i++){
+    const item = items[i] || {title:"",meta:"",image:""};
+    const el = document.createElement("div");
+    el.className = "orbital";
+    el.innerHTML = `
+      <img alt="">
+      <div class="fallback">
+        <span>${item.title}</span>
+        <small>${item.meta}</small>
+      </div>
+    `;
+    const img = el.querySelector("img");
+    if(item.image){
+      img.onload = ()=>el.classList.add("has-image");
+      img.onerror = ()=>el.classList.remove("has-image");
+      img.src = item.image;
+    }
+    stage.appendChild(el);
+    orbitalEls.push(el);
+  }
+}
+createOrbitals();
+
+/* ---------------------------
+   WebGL
+   --------------------------- */
+const gl = canvas.getContext("webgl2",{antialias:true,alpha:false});
+if(!gl){
+  alert("This effect requires WebGL2.");
+  throw new Error("WebGL2 unavailable");
+}
+
+const vert = `#version 300 es
+precision highp float;
+const vec2 V[3]=vec2[3](vec2(-1.,-1.),vec2(3.,-1.),vec2(-1.,3.));
+out vec2 vUv;
+void main(){
+  vec2 p=V[gl_VertexID];
+  vUv=p*.5+.5;
+  gl_Position=vec4(p,0.,1.);
+}`;
+
+const frag = `#version 300 es
+precision highp float;
+in vec2 vUv;
+out vec4 outColor;
+
+uniform vec2 uRes;
+uniform float uTime;
+uniform vec2 uMouse;
+uniform vec4 uCards[${MAX_ITEMS}];
+uniform float uRot[${MAX_ITEMS}];
+uniform float uFront[${MAX_ITEMS}];
+
+uniform vec3 uBg;
+uniform vec3 uGoldA;
+uniform vec3 uGoldB;
+uniform vec3 uIvory;
+uniform float uViscosity;
+uniform float uCursorMelt;
+uniform float uCursorReach;
+uniform float uGlow;
+
+float sdRoundBox(vec2 p, vec2 b, float r){
+  vec2 q=abs(p)-b+r;
+  return min(max(q.x,q.y),0.0)+length(max(q,0.0))-r;
+}
+float smin(float a,float b,float k){
+  float h=clamp(.5+.5*(b-a)/k,0.,1.);
+  return mix(b,a,h)-k*h*(1.-h);
+}
+mat2 rot(float a){
+  float c=cos(a),s=sin(a);
+  return mat2(c,-s,s,c);
+}
+float hash21(vec2 p){
+  p=fract(p*vec2(123.34,456.21));
+  p+=dot(p,p+45.32);
+  return fract(p.x*p.y);
+}
+
+void main(){
+  vec2 px=vec2(vUv.x*uRes.x,(1.-vUv.y)*uRes.y);
+
+  vec3 col=uBg;
+  float unionD=1e5;
+  float glow=0.;
+  float nearD=1e5;
+  float frontMix=0.;
+
+  for(int i=0;i<${MAX_ITEMS};i++){
+    vec2 c=uCards[i].xy;
+    vec2 halfSize=uCards[i].zw;
+    vec2 lp=rot(-uRot[i])*(px-c);
+    float d=sdRoundBox(lp,halfSize,8.+5.*uFront[i]);
+
+    float md=length(px-uMouse);
+    float localK=uViscosity+uCursorMelt*exp(-md*md/uCursorReach);
+
+    unionD=smin(unionD,d,localK);
+
+    if(d<nearD){
+      nearD=d;
+      frontMix=uFront[i];
+    }
+
+    glow += exp(-abs(d)*.065) * (.10+.35*uFront[i]);
+  }
+
+  float body=1.-smoothstep(-1.35,1.35,unionD);
+
+  vec3 bodyColor=mix(uGoldA,uGoldB,clamp(frontMix,0.,1.));
+  bodyColor=mix(bodyColor,uIvory,pow(clamp(frontMix,0.,1.),4.)*.18);
+
+  float bands=.04*sin(px.y*.14+uTime*.7)+.035*sin(px.x*.045-uTime*.3);
+  bodyColor+=bands;
+
+  col+=vec3(1.,.50,.06)*min(glow,.55)*uGlow;
+  col=mix(col,bodyColor,body);
+
+  float rim=1.-smoothstep(0.,2.2,abs(unionD));
+  col+=rim*vec3(1.,.78,.30)*(.20+.25*frontMix);
+
+  float m=exp(-dot(px-uMouse,px-uMouse)/52000.);
+  col+=vec3(.55,.30,.06)*m*.045;
+
+  float grain=hash21(px+fract(uTime)*33.7)-.5;
+  col+=grain*.018;
+
+  vec2 q=(vUv-.5)*vec2(uRes.x/uRes.y,1.);
+  col*=1.-.34*dot(q,q);
+
+  outColor=vec4(pow(max(col,0.),vec3(.92)),1.);
+}`;
+
+function compile(type,src){
+  const s=gl.createShader(type);
+  gl.shaderSource(s,src);
+  gl.compileShader(s);
+  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+  return s;
+}
+const program=gl.createProgram();
+gl.attachShader(program,compile(gl.VERTEX_SHADER,vert));
+gl.attachShader(program,compile(gl.FRAGMENT_SHADER,frag));
+gl.linkProgram(program);
+if(!gl.getProgramParameter(program,gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program));
+gl.useProgram(program);
+
+const U = n => gl.getUniformLocation(program,n);
+const loc={
+  res:U("uRes"),time:U("uTime"),mouse:U("uMouse"),
+  cards:U("uCards[0]"),rot:U("uRot[0]"),front:U("uFront[0]"),
+  bg:U("uBg"),goldA:U("uGoldA"),goldB:U("uGoldB"),ivory:U("uIvory"),
+  viscosity:U("uViscosity"),cursorMelt:U("uCursorMelt"),
+  cursorReach:U("uCursorReach"),glow:U("uGlow")
+};
+
+let W=1,H=1,dpr=1;
+function resize(){
+  dpr=Math.min(devicePixelRatio||1,1.6);
+  W=innerWidth;H=innerHeight;
+  canvas.width=Math.floor(W*dpr);
+  canvas.height=Math.floor(H*dpr);
+  canvas.style.width=W+"px";
+  canvas.style.height=H+"px";
+  gl.viewport(0,0,canvas.width,canvas.height);
+}
+addEventListener("resize",resize);
+resize();
+
+/* ---------------------------
+   运动状态
+   --------------------------- */
+let spin=0;
+let velocity=CONFIG.ring.autoSpeed;
+let paused=false;
+let dragging=false;
+let lastX=0;
+let moved=0;
+let mouseX=W*.72,mouseY=H*.5;
+let targetMouseX=mouseX,targetMouseY=mouseY;
+let snap=null;
+
+const cards=new Float32Array(MAX_ITEMS*4);
+const rots=new Float32Array(MAX_ITEMS);
+const fronts=new Float32Array(MAX_ITEMS);
+const centres=Array.from({length:MAX_ITEMS},()=>({x:0,y:0,scale:1}));
+
+function geometry(i){
+  const R_x=Math.max(W*CONFIG.ring.radiusX,H*.65);
+  const R_y=Math.max(H*CONFIG.ring.radiusY,W*.42);
+
+  const cx=W*.5 + R_x*CONFIG.ring.centerOffsetX;
+  const cy=H*.5 + H*CONFIG.ring.centerOffsetY;
+
+  const idx=i-(MAX_ITEMS-1)/2;
+  const a=idx*CONFIG.ring.step+spin;
+
+  const x=cx+Math.cos(a)*R_x;
+  const y=cy+Math.sin(a)*R_y;
+
+  const front=Math.pow((Math.cos(a)+1)*.5,CONFIG.ring.perspectivePower);
+  const scale=CONFIG.ring.backScale + front*(CONFIG.ring.frontScale-CONFIG.ring.backScale);
+
+  const baseH=Math.min(CONFIG.ring.itemBaseHeight,Math.max(76,Math.min(W,H)*.108));
+  const hh=baseH*scale*.5;
+  const hw=hh*CONFIG.ring.itemAspect;
+  const rotation=a+Math.PI/2;
+
+  return {x,y,a,front,scale,hw,hh,rotation};
+}
+
+function nearestCard(x,y){
+  let best=-1,bd=1e9;
+  for(let i=0;i<MAX_ITEMS;i++){
+    const p=centres[i];
+    const d=Math.hypot(x-p.x,y-p.y);
+    if(d<bd && d<120*p.scale){bd=d;best=i}
+  }
+  return best;
+}
+function centreCard(i){
+  const idx=i-(MAX_ITEMS-1)/2;
+  const target=-idx*CONFIG.ring.step;
+  let diff=target-spin;
+  while(diff>Math.PI) diff-=Math.PI*2;
+  while(diff<-Math.PI) diff+=Math.PI*2;
+  snap={from:spin,to:spin+diff,t:0};
+  velocity=0;
+}
+
+/* ---------------------------
+   Pointer / Wheel
+   --------------------------- */
+canvas.addEventListener("pointerdown",e=>{
+  dragging=true;lastX=e.clientX;moved=0;
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener("pointermove",e=>{
+  targetMouseX=e.clientX;
+  targetMouseY=e.clientY;
+  if(!dragging)return;
+  const dx=e.clientX-lastX;
+  moved+=Math.abs(dx);
+  spin+=dx*CONFIG.ring.dragStrength;
+  velocity=dx*.013;
+  lastX=e.clientX;
+});
+canvas.addEventListener("pointerup",e=>{
+  dragging=false;
+  if(moved<8){
+    const hit=nearestCard(e.clientX,e.clientY);
+    if(hit>=0)centreCard(hit);
+  }
+});
+canvas.addEventListener("pointercancel",()=>dragging=false);
+addEventListener("wheel",e=>{
+  velocity+=Math.max(-180,Math.min(180,e.deltaY))*CONFIG.ring.wheelStrength;
+},{passive:true});
+addEventListener("keydown",e=>{
+  if(e.code==="Space"){
+    e.preventDefault();
+    paused=!paused;
+  }
+});
+
+/* ---------------------------
+   Animation
+   --------------------------- */
+function update(dt){
+  mouseX+=(targetMouseX-mouseX)*(1-Math.pow(.001,dt));
+  mouseY+=(targetMouseY-mouseY)*(1-Math.pow(.001,dt));
+
+  if(!paused){
+    if(snap){
+      snap.t+=dt/CONFIG.ring.snapDuration;
+      const t=Math.min(1,snap.t);
+      const ease=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+      spin=snap.from+(snap.to-snap.from)*ease;
+      if(t>=1)snap=null;
+    }else if(!dragging){
+      spin+=velocity*dt;
+      velocity*=Math.pow(CONFIG.ring.damping,dt*60);
+
+      // 完全停下来后，恢复轻微慢转
+      if(Math.abs(velocity)<.002) velocity=CONFIG.ring.autoSpeed;
+    }
+  }
+
+  for(let i=0;i<MAX_ITEMS;i++){
+    const g=geometry(i);
+
+    cards[i*4]=g.x*dpr;
+    cards[i*4+1]=(H-g.y)*dpr;
+    cards[i*4+2]=g.hw*dpr;
+    cards[i*4+3]=g.hh*dpr;
+
+    rots[i]=-g.rotation;
+    fronts[i]=g.front;
+
+    centres[i].x=g.x;
+    centres[i].y=g.y;
+    centres[i].scale=g.scale;
+
+    const el=orbitalEls[i];
+    if(!el)continue;
+
+    const width=g.hw*2;
+    const height=g.hh*2;
+
+    el.style.width=width+"px";
+    el.style.height=height+"px";
+    el.style.opacity=String(.16+.84*g.front);
+    el.style.zIndex=String(Math.round(8+g.front*28));
+
+    const blur=(1-g.front)*1.8;
+    el.style.filter=`blur(${blur}px)`;
+
+    el.style.transform =
+      `translate(${g.x-width/2}px,${g.y-height/2}px) rotate(${g.rotation}rad)`;
+  }
+}
+
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(.033,(now-last)/1000);
+  last=now;
+
+  update(dt);
+
+  gl.useProgram(program);
+  gl.uniform2f(loc.res,canvas.width,canvas.height);
+  gl.uniform1f(loc.time,now*.001);
+  gl.uniform2f(loc.mouse,mouseX*dpr,(H-mouseY)*dpr);
+  gl.uniform4fv(loc.cards,cards);
+  gl.uniform1fv(loc.rot,rots);
+  gl.uniform1fv(loc.front,fronts);
+
+  gl.uniform3fv(loc.bg,CONFIG.colors.bg);
+  gl.uniform3fv(loc.goldA,CONFIG.colors.goldA);
+  gl.uniform3fv(loc.goldB,CONFIG.colors.goldB);
+  gl.uniform3fv(loc.ivory,CONFIG.colors.ivory);
+
+  gl.uniform1f(loc.viscosity,CONFIG.ring.viscosity*dpr);
+  gl.uniform1f(loc.cursorMelt,CONFIG.ring.cursorMelt*dpr);
+  gl.uniform1f(loc.cursorReach,CONFIG.ring.cursorReach*dpr*dpr);
+  gl.uniform1f(loc.glow,CONFIG.ring.glow);
+
+  gl.drawArrays(gl.TRIANGLES,0,3);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+</script>
+
+</body>
+</html>

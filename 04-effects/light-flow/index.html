@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Infinite Lights Baseline — Orange Study</title>
+
+<style>
+  :root{
+    --bg:#000;
+    --fg:#fff;
+    --muted:rgba(255,255,255,.42);
+    --accent:#ff7a00;
+  }
+
+  *{box-sizing:border-box}
+  html,body{
+    width:100%;
+    height:100%;
+    margin:0;
+    overflow:hidden;
+    background:#000;
+    font-family:Arial,Helvetica,sans-serif;
+  }
+
+  #app{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    background:#000;
+  }
+
+  #app canvas{
+    display:block;
+    width:100%;
+    height:100%;
+  }
+
+  .hud{
+    position:absolute;
+    inset:0;
+    z-index:10;
+    pointer-events:none;
+    color:var(--fg);
+  }
+
+  .hud__left{
+    position:absolute;
+    left:24px;
+    top:22px;
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:18px;
+    line-height:1.1;
+    font-weight:600;
+    letter-spacing:-.02em;
+  }
+
+  .sub{
+    margin-top:7px;
+    color:var(--muted);
+    font-size:10px;
+  }
+
+  .hint{
+    position:absolute;
+    left:50%;
+    bottom:22px;
+    transform:translateX(-50%);
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+
+  .hint strong{
+    color:#ff8a1f;
+    font-weight:700;
+  }
+
+  .credit{
+    position:absolute;
+    right:22px;
+    bottom:20px;
+    color:rgba(255,255,255,.18);
+    font-size:8px;
+    letter-spacing:.06em;
+  }
+
+  .badge{
+    position:absolute;
+    right:22px;
+    top:22px;
+    color:rgba(255,255,255,.33);
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+
+  .badge::before{
+    content:"";
+    display:inline-block;
+    width:5px;
+    height:5px;
+    margin-right:8px;
+    border-radius:50%;
+    background:#ff7400;
+    box-shadow:0 0 10px #ff7400;
+    vertical-align:1px;
+  }
+</style>
+</head>
+
+<body>
+<div id="app"></div>
+
+<div class="hud">
+  <div class="hud__left">
+    <div class="eyebrow">Baseline Study</div>
+    <h1>Infinite Lights — Orange</h1>
+    <div class="sub">Original rendering pipeline reused directly</div>
+  </div>
+
+  <div class="badge">Realtime WebGL</div>
+
+  <div class="hint">
+    <strong>Press & hold</strong> to speed up
+  </div>
+
+  <div class="credit">
+    Rendering engine: Anemolo / Infinite-Lights · adapted config only
+  </div>
+</div>
+
+<!--
+  GLUE-PROGRAMMING BASELINE
+
+  Instead of rewriting Infinite Lights, this page directly loads the mature
+  upstream implementation and only supplies a new configuration.
+
+  Upstream:
+  https://github.com/Anemolo/Infinite-Lights
+  Demo:
+  https://tympanus.net/Tutorials/InfiniteLights/
+
+  These four files are loaded from the upstream GitHub repository through
+  jsDelivr's GitHub CDN.
+-->
+<script src="https://cdn.jsdelivr.net/gh/Anemolo/Infinite-Lights@master/js/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Anemolo/Infinite-Lights@master/js/postprocessing.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Anemolo/Infinite-Lights@master/js/InfiniteLights.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Anemolo/Infinite-Lights@master/js/Distortions.js"></script>
+
+<script>
+(function () {
+  const container = document.getElementById('app');
+
+  /*
+    IMPORTANT:
+    This deliberately stays very close to the upstream demo parameters.
+    The main change is color direction: red/white/blue -> amber/orange/gold.
+
+    That lets us judge the ORIGINAL light quality first, before attempting
+    the product-orbit adaptation.
+  */
+  const options = {
+    onSpeedUp: () => {
+      document.querySelector('.hint').style.opacity = '.30';
+    },
+
+    onSlowDown: () => {
+      document.querySelector('.hint').style.opacity = '1';
+    },
+
+    /*
+      Use an upstream distortion directly.
+      Try:
+      mountainDistortion
+      LongRaceDistortion
+      xyDistortion
+      turbulentDistortion
+      deepDistortion
+    */
+    distortion: LongRaceDistortion,
+
+    length: 400,
+
+    roadWidth: 9,
+    islandWidth: 2,
+    lanesPerRoad: 3,
+
+    /*
+      Keep the original dramatic perspective philosophy.
+    */
+    fov: 90,
+    fovSpeedUp: 150,
+    speedUp: 2,
+
+    carLightsFade: 0.4,
+
+    totalSideLightSticks: 50,
+    lightPairsPerRoadWay: 50,
+
+    shoulderLinesWidthPercentage: 0.05,
+    brokenLinesWidthPercentage: 0.10,
+    brokenLinesLengthPercentage: 0.50,
+
+    lightStickWidth: [0.12, 0.5],
+    lightStickHeight: [1.3, 1.7],
+
+    movingAwaySpeed: [60, 80],
+    movingCloserSpeed: [-120, -160],
+
+    /*
+      Original demo proportions preserved:
+      length = 5–15% of total road length
+      radius = 0.05–0.14
+    */
+    carLightsLength: [
+      400 * 0.05,
+      400 * 0.15
+    ],
+
+    carLightsRadius: [0.05, 0.14],
+
+    carWidthPercentage: [0.3, 0.5],
+    carShiftX: [-0.2, 0.2],
+    carFloorSeparation: [0.05, 1],
+
+    colors: {
+      roadColor: 0x050505,
+      islandColor: 0x070707,
+      background: 0x000000,
+
+      shoulderLines: 0x101010,
+      brokenLines: 0x101010,
+
+      /*
+        Dark orange departing lights.
+      */
+      leftCars: [
+        0x7a2100,
+        0xb83b00,
+        0xff5a00
+      ],
+
+      /*
+        Bright warm approaching lights.
+        This gives the "hot core + colored halo" quality
+        instead of making every trail pure orange.
+      */
+      rightCars: [
+        0xfff2d8,
+        0xffc16a,
+        0xff7a00
+      ],
+
+      sticks: 0x7d4c22
+    }
+  };
+
+  /*
+    This is the upstream App class, not a reimplementation.
+  */
+  const app = new App(container, options);
+
+  app.loadAssets().then(() => {
+    app.init();
+  });
+})();
+</script>
+</body>
+</html>
