@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Scroll Story — Comparison Story</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css" />
+
+<style>
+  :root{
+    --bg:#06080b;
+    --text:#f7f8fb;
+    --muted:rgba(235,241,247,.52);
+    --accent:#ff7a16;
+    --accent-soft:#ffc36a;
+  }
+
+  *{box-sizing:border-box}
+
+  html{background:var(--bg);scroll-behavior:auto}
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 72% 34%,rgba(255,122,22,.04),transparent 23%),
+      #06080b;
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  body::-webkit-scrollbar{width:10px}
+  body::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.10);
+    border-radius:999px;
+  }
+
+  .topbar{
+    position:fixed;
+    left:0;right:0;top:0;
+    z-index:80;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    padding:26px 30px;
+    pointer-events:none;
+    background:linear-gradient(180deg,rgba(6,8,11,.94),rgba(6,8,11,.48),transparent);
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.38);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .story{
+    display:grid;
+    grid-template-columns:minmax(340px,40vw) 1fr;
+    min-height:100vh;
+  }
+
+  .steps{
+    position:relative;
+    z-index:20;
+    padding-top:6vh;
+    padding-bottom:6vh;
+  }
+
+  .step{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:clamp(90px,12vh,130px) clamp(28px,5vw,74px);
+    opacity:.34;
+    transition:opacity .3s ease;
+  }
+
+  .step.is-active{opacity:1}
+
+  .step-inner{width:min(500px,88%)}
+
+  .step-index{
+    margin-bottom:18px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  .step h2{
+    margin:0;
+    font-size:clamp(42px,5.4vw,76px);
+    line-height:.92;
+    letter-spacing:-.055em;
+    font-weight:760;
+    text-wrap:balance;
+  }
+
+  .step p{
+    margin:24px 0 0;
+    max-width:430px;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.65;
+  }
+
+  .stage-column{position:relative;min-height:100vh}
+
+  .stage{
+    position:sticky;
+    top:0;
+    height:100vh;
+    padding:88px 28px 34px;
+    display:grid;
+    place-items:center;
+  }
+
+  .compare-card{
+    position:relative;
+    width:min(980px,95%);
+    height:min(680px,74vh);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:30px;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 68% 22%,rgba(255,122,22,.055),transparent 26%),
+      linear-gradient(180deg,rgba(255,255,255,.017),rgba(255,255,255,.006));
+    box-shadow:
+      0 34px 90px rgba(0,0,0,.18),
+      inset 0 0 90px rgba(255,255,255,.008);
+  }
+
+  .compare-head{
+    position:absolute;
+    z-index:20;
+    left:28px;right:28px;top:24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+    pointer-events:none;
+  }
+
+  .compare-kicker{
+    margin-bottom:7px;
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+
+  .compare-title{
+    margin:0;
+    font-size:24px;
+    line-height:1.08;
+    letter-spacing:-.03em;
+    font-weight:700;
+  }
+
+  .compare-metric{text-align:right}
+
+  .compare-metric strong{
+    display:block;
+    font-size:38px;
+    line-height:.9;
+    letter-spacing:-.05em;
+    font-weight:760;
+  }
+
+  .compare-metric span{
+    display:block;
+    margin-top:8px;
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+  }
+
+  .slider-wrap{
+    position:absolute;
+    inset:100px 24px 46px;
+    display:grid;
+    place-items:center;
+  }
+
+  img-comparison-slider{
+    width:100%;
+    height:100%;
+    border-radius:22px;
+    overflow:hidden;
+    outline:none;
+    --divider-width:1px;
+    --divider-color:rgba(255,255,255,.78);
+    --divider-shadow:0 0 14px rgba(255,122,22,.20);
+    --default-handle-width:42px;
+    --default-handle-color:#ffffff;
+    --default-handle-opacity:.88;
+    --default-handle-shadow:0 6px 20px rgba(0,0,0,.30);
+  }
+
+  img-comparison-slider img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  .side-label{
+    position:absolute;
+    z-index:15;
+    top:50%;
+    transform:translateY(-50%);
+    padding:8px 10px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:999px;
+    background:rgba(5,8,12,.64);
+    color:rgba(255,255,255,.58);
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    backdrop-filter:blur(10px);
+    pointer-events:none;
+  }
+
+  .side-label.before{left:40px}
+  .side-label.after{right:40px}
+
+  .annotation{
+    position:absolute;
+    z-index:18;
+    right:54px;
+    bottom:66px;
+    width:230px;
+    padding:14px 16px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:16px;
+    background:rgba(7,11,15,.86);
+    backdrop-filter:blur(12px);
+    opacity:0;
+    transform:translateY(10px);
+    pointer-events:none;
+  }
+
+  .annotation strong{
+    display:block;
+    margin-bottom:6px;
+    color:#fff;
+    font-size:12px;
+  }
+
+  .annotation span{
+    display:block;
+    color:rgba(255,255,255,.48);
+    font-size:10px;
+    line-height:1.5;
+  }
+
+  .upload-bar{
+    position:absolute;
+    left:28px;
+    bottom:18px;
+    z-index:25;
+    display:flex;
+    gap:8px;
+  }
+
+  .upload-label{
+    display:inline-flex;
+    align-items:center;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:999px;
+    background:rgba(0,0,0,.20);
+    color:rgba(255,255,255,.42);
+    padding:7px 10px;
+    font-size:8px;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    cursor:pointer;
+    backdrop-filter:blur(10px);
+  }
+
+  input[type=file]{display:none}
+
+  .progress{
+    position:fixed;
+    right:20px;
+    top:50%;
+    z-index:90;
+    width:2px;
+    height:150px;
+    transform:translateY(-50%);
+    background:rgba(255,255,255,.08);
+  }
+
+  .progress-fill{
+    width:100%;
+    height:0%;
+    background:linear-gradient(180deg,var(--accent),var(--accent-soft));
+    box-shadow:0 0 12px rgba(255,122,22,.28);
+  }
+
+  @media(max-width:900px){
+    .story{display:block}
+
+    .stage-column{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+    }
+
+    .stage{padding:70px 12px 16px}
+
+    .compare-card{
+      width:95vw;
+      height:53vh;
+      margin-top:-18vh;
+    }
+
+    .steps{
+      z-index:20;
+      padding-top:38vh;
+    }
+
+    .step{
+      min-height:105vh;
+      align-items:flex-end;
+      padding:80px 20px 70px;
+    }
+
+    .step-inner{
+      width:100%;
+      padding:22px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.07);
+      background:rgba(6,8,11,.76);
+      backdrop-filter:blur(16px);
+    }
+
+    .step h2{font-size:clamp(36px,11vw,58px)}
+    .step p{font-size:13px}
+    .meta{display:none}
+    .topbar{padding:20px}
+    .progress{right:10px}
+    .compare-title{font-size:18px}
+    .compare-metric strong{font-size:30px}
+    .annotation{display:none}
+    .upload-bar{display:none}
+  }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div>
+    <div class="eyebrow">Scroll Story / Comparison Story</div>
+    <h1>Comparison Story</h1>
+  </div>
+
+  <div class="meta">
+    img-comparison-slider + GSAP ScrollTrigger<br>
+    mature comparison component + scroll narrative
+  </div>
+</header>
+
+<div class="progress">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<main class="story">
+
+  <section class="steps">
+
+    <article class="step" data-step="0">
+      <div class="step-inner">
+        <div class="step-index">01 / Baseline</div>
+        <h2>Show The Existing State First.</h2>
+        <p>
+          Start almost entirely on the “before” side. The reader needs a stable baseline before any improvement is introduced.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="1">
+      <div class="step-inner">
+        <div class="step-index">02 / Compare</div>
+        <h2>Put Both States In The Same Frame.</h2>
+        <p>
+          The divider moves to the center. Because both images share one coordinate system, differences become much easier to inspect.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="2">
+      <div class="step-inner">
+        <div class="step-index">03 / Result</div>
+        <h2>Let The New State Take Over.</h2>
+        <p>
+          The “after” view becomes dominant. Scroll progression now communicates a directional change rather than merely offering a draggable widget.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="3">
+      <div class="step-inner">
+        <div class="step-index">04 / Takeaway</div>
+        <h2>Finish On The Difference That Matters.</h2>
+        <p>
+          Return to a partial comparison and add one explicit annotation. The end state answers why the change is meaningful.
+        </p>
+      </div>
+    </article>
+
+  </section>
+
+
+  <aside class="stage-column">
+    <div class="stage">
+
+      <section class="compare-card">
+
+        <div class="compare-head">
+          <div>
+            <div class="compare-kicker" id="compareKicker">Information Design</div>
+            <h2 class="compare-title" id="compareTitle">Before / After</h2>
+          </div>
+
+          <div class="compare-metric">
+            <strong id="compareValue">90%</strong>
+            <span id="compareLabel">Before Visible</span>
+          </div>
+        </div>
+
+        <div class="slider-wrap">
+          <img-comparison-slider id="comparison" value="90">
+            <img id="beforeImage"
+                 slot="first"
+                 src="data:image/svg+xml;charset=utf-8,%0A%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%201600%201000%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23151a22%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230d1118%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%221600%22%20height%3D%221000%22%20fill%3D%22url%28%23bg%29%22/%3E%0A%20%20%3Ctext%20x%3D%2290%22%20y%3D%2295%22%20fill%3D%22%23fff%22%20font-family%3D%22Arial%22%20font-size%3D%2244%22%20font-weight%3D%22700%22%3EBEFORE%3C/text%3E%0A%20%20%3Ctext%20x%3D%2290%22%20y%3D%22140%22%20fill%3D%22%2377808d%22%20font-family%3D%22Arial%22%20font-size%3D%2224%22%3EToo%20much%20information%20competing%20at%20once%3C/text%3E%0A%0A%20%20%3Crect%20x%3D%2290%22%20y%3D%22205%22%20width%3D%22430%22%20height%3D%22250%22%20rx%3D%2222%22%20fill%3D%22%23202733%22%20stroke%3D%22%23353f4d%22/%3E%0A%20%20%3Crect%20x%3D%22555%22%20y%3D%22205%22%20width%3D%22430%22%20height%3D%22250%22%20rx%3D%2222%22%20fill%3D%22%23202733%22%20stroke%3D%22%23353f4d%22/%3E%0A%20%20%3Crect%20x%3D%221020%22%20y%3D%22205%22%20width%3D%22490%22%20height%3D%22250%22%20rx%3D%2222%22%20fill%3D%22%23202733%22%20stroke%3D%22%23353f4d%22/%3E%0A%0A%20%20%3Ctext%20x%3D%22125%22%20y%3D%22255%22%20fill%3D%22%23aeb6c3%22%20font-family%3D%22Arial%22%20font-size%3D%2220%22%3ETOTAL%20SALES%3C/text%3E%0A%20%20%3Ctext%20x%3D%22125%22%20y%3D%22345%22%20fill%3D%22%23fff%22%20font-family%3D%22Arial%22%20font-size%3D%2276%22%20font-weight%3D%22700%22%3E%248.4M%3C/text%3E%0A%20%20%3Ctext%20x%3D%22125%22%20y%3D%22400%22%20fill%3D%22%23ff7a16%22%20font-family%3D%22Arial%22%20font-size%3D%2222%22%3E%2B12.8%25%3C/text%3E%0A%0A%20%20%3Ctext%20x%3D%22590%22%20y%3D%22255%22%20fill%3D%22%23aeb6c3%22%20font-family%3D%22Arial%22%20font-size%3D%2220%22%3EACTIVE%20MARKETS%3C/text%3E%0A%20%20%3Ctext%20x%3D%22590%22%20y%3D%22345%22%20fill%3D%22%23fff%22%20font-family%3D%22Arial%22%20font-size%3D%2276%22%20font-weight%3D%22700%22%3E27%3C/text%3E%0A%20%20%3Ctext%20x%3D%22590%22%20y%3D%22400%22%20fill%3D%22%23ffc36a%22%20font-family%3D%22Arial%22%20font-size%3D%2222%22%3E9%20priority%3C/text%3E%0A%0A%20%20%3Ctext%20x%3D%221055%22%20y%3D%22255%22%20fill%3D%22%23aeb6c3%22%20font-family%3D%22Arial%22%20font-size%3D%2220%22%3EGROWTH%3C/text%3E%0A%20%20%3Cpath%20d%3D%22M1060%20390%20L1120%20345%20L1180%20366%20L1240%20302%20L1300%20324%20L1370%20260%20L1450%20278%22%0A%20%20%20%20%20%20%20%20fill%3D%22none%22%20stroke%3D%22%23ff7a16%22%20stroke-width%3D%228%22/%3E%0A%20%20%3Cline%20x1%3D%221060%22%20y1%3D%22405%22%20x2%3D%221465%22%20y2%3D%22405%22%20stroke%3D%22%23394351%22%20stroke-width%3D%222%22/%3E%0A%0A%20%20%3Crect%20x%3D%2290%22%20y%3D%22495%22%20width%3D%22895%22%20height%3D%22420%22%20rx%3D%2222%22%20fill%3D%22%23202733%22%20stroke%3D%22%23353f4d%22/%3E%0A%20%20%3Ctext%20x%3D%22125%22%20y%3D%22548%22%20fill%3D%22%23aeb6c3%22%20font-family%3D%22Arial%22%20font-size%3D%2220%22%3EREGIONAL%20PERFORMANCE%3C/text%3E%0A%0A%20%20%3Cg%20fill%3D%22%23586270%22%3E%0A%20%20%20%20%3Crect%20x%3D%22145%22%20y%3D%22610%22%20width%3D%2295%22%20height%3D%22210%22%20rx%3D%2210%22/%3E%0A%20%20%20%20%3Crect%20x%3D%22275%22%20y%3D%22675%22%20width%3D%2295%22%20height%3D%22145%22%20rx%3D%2210%22/%3E%0A%20%20%20%20%3Crect%20x%3D%22405%22%20y%3D%22640%22%20width%3D%2295%22%20height%3D%22180%22%20rx%3D%2210%22/%3E%0A%20%20%20%20%3Crect%20x%3D%22535%22%20y%3D%22710%22%20width%3D%2295%22%20height%3D%22110%22%20rx%3D%2210%22/%3E%0A%20%20%20%20%3Crect%20x%3D%22665%22%20y%3D%22590%22%20width%3D%2295%22%20height%3D%22230%22%20rx%3D%2210%22/%3E%0A%20%20%20%20%3Crect%20x%3D%22795%22%20y%3D%22690%22%20width%3D%2295%22%20height%3D%22130%22%20rx%3D%2210%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Cg%20fill%3D%22%238f9aa8%22%20font-family%3D%22Arial%22%20font-size%3D%2216%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%3Ctext%20x%3D%22192%22%20y%3D%22855%22%3EAPAC%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22322%22%20y%3D%22855%22%3EEU%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22452%22%20y%3D%22855%22%3ENA%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22582%22%20y%3D%22855%22%3EMEA%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22712%22%20y%3D%22855%22%3EAFR%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22842%22%20y%3D%22855%22%3ELATAM%3C/text%3E%0A%20%20%3C/g%3E%0A%0A%20%20%3Crect%20x%3D%221020%22%20y%3D%22495%22%20width%3D%22490%22%20height%3D%22420%22%20rx%3D%2222%22%20fill%3D%22%23202733%22%20stroke%3D%22%23353f4d%22/%3E%0A%20%20%3Ctext%20x%3D%221055%22%20y%3D%22548%22%20fill%3D%22%23aeb6c3%22%20font-family%3D%22Arial%22%20font-size%3D%2220%22%3ENOTES%3C/text%3E%0A%20%20%3Cg%20fill%3D%22%236f7987%22%3E%0A%20%20%20%20%3Crect%20x%3D%221055%22%20y%3D%22595%22%20width%3D%22360%22%20height%3D%2218%22%20rx%3D%229%22/%3E%0A%20%20%20%20%3Crect%20x%3D%221055%22%20y%3D%22635%22%20width%3D%22390%22%20height%3D%2218%22%20rx%3D%229%22/%3E%0A%20%20%20%20%3Crect%20x%3D%221055%22%20y%3D%22675%22%20width%3D%22325%22%20height%3D%2218%22%20rx%3D%229%22/%3E%0A%20%20%20%20%3Crect%20x%3D%221055%22%20y%3D%22735%22%20width%3D%22405%22%20height%3D%2218%22%20rx%3D%229%22/%3E%0A%20%20%20%20%3Crect%20x%3D%221055%22%20y%3D%22775%22%20width%3D%22290%22%20height%3D%2218%22%20rx%3D%229%22/%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E%0A"
+                 alt="Before design" />
+            <img id="afterImage"
+                 slot="second"
+                 src="data:image/svg+xml;charset=utf-8,%0A%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%201600%201000%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20x2%3D%221%22%20y1%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2310151b%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23090d12%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23141015%22/%3E%0A%20%20%20%20%3C/linearGradient%3E%0A%20%20%20%20%3CradialGradient%20id%3D%22glow%22%20cx%3D%22.7%22%20cy%3D%22.35%22%20r%3D%22.55%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff7a16%22%20stop-opacity%3D%22.17%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%23ff7a16%22%20stop-opacity%3D%22.04%22/%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff7a16%22%20stop-opacity%3D%220%22/%3E%0A%20%20%20%20%3C/radialGradient%3E%0A%20%20%3C/defs%3E%0A%20%20%3Crect%20width%3D%221600%22%20height%3D%221000%22%20fill%3D%22url%28%23bg%29%22/%3E%0A%20%20%3Crect%20width%3D%221600%22%20height%3D%221000%22%20fill%3D%22url%28%23glow%29%22/%3E%0A%0A%20%20%3Ctext%20x%3D%2296%22%20y%3D%22105%22%20fill%3D%22%23ff7a16%22%20font-family%3D%22Arial%22%20font-size%3D%2220%22%20font-weight%3D%22700%22%20letter-spacing%3D%225%22%3EAFTER%3C/text%3E%0A%20%20%3Ctext%20x%3D%2296%22%20y%3D%22200%22%20fill%3D%22%23fff%22%20font-family%3D%22Arial%22%20font-size%3D%2282%22%20font-weight%3D%22700%22%3EOne%20signal.%3C/text%3E%0A%20%20%3Ctext%20x%3D%2296%22%20y%3D%22280%22%20fill%3D%22%23fff%22%20font-family%3D%22Arial%22%20font-size%3D%2282%22%20font-weight%3D%22700%22%3EOne%20decision.%3C/text%3E%0A%20%20%3Ctext%20x%3D%22100%22%20y%3D%22340%22%20fill%3D%22%238994a2%22%20font-family%3D%22Arial%22%20font-size%3D%2225%22%3EPrioritize%20the%20market%20with%20the%20strongest%20momentum.%3C/text%3E%0A%0A%20%20%3Ctext%20x%3D%22100%22%20y%3D%22525%22%20fill%3D%22%238994a2%22%20font-family%3D%22Arial%22%20font-size%3D%2220%22%3EFASTEST%20GROWTH%3C/text%3E%0A%20%20%3Ctext%20x%3D%22100%22%20y%3D%22640%22%20fill%3D%22%23fff%22%20font-family%3D%22Arial%22%20font-size%3D%22132%22%20font-weight%3D%22700%22%3E14.8%25%3C/text%3E%0A%20%20%3Ctext%20x%3D%22103%22%20y%3D%22697%22%20fill%3D%22%23ffc36a%22%20font-family%3D%22Arial%22%20font-size%3D%2230%22%3EAfrica%3C/text%3E%0A%20%20%3Ctext%20x%3D%22103%22%20y%3D%22742%22%20fill%3D%22%236f7987%22%20font-family%3D%22Arial%22%20font-size%3D%2222%22%3EHighest%20YoY%20growth%20in%20the%20current%20market%20set%3C/text%3E%0A%0A%20%20%3Cg%20transform%3D%22translate%28790%20190%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%220%22%20y1%3D%22610%22%20x2%3D%22680%22%20y2%3D%22610%22%20stroke%3D%22%232b333d%22%20stroke-width%3D%222%22/%3E%0A%20%20%20%20%3Cline%20x1%3D%220%22%20y1%3D%22120%22%20x2%3D%220%22%20y2%3D%22610%22%20stroke%3D%22%232b333d%22%20stroke-width%3D%222%22/%3E%0A%0A%20%20%20%20%3Cg%20fill%3D%22%2328313b%22%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2255%22%20y%3D%22335%22%20width%3D%2272%22%20height%3D%22275%22%20rx%3D%2214%22/%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22160%22%20y%3D%22430%22%20width%3D%2272%22%20height%3D%22180%22%20rx%3D%2214%22/%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22265%22%20y%3D%22400%22%20width%3D%2272%22%20height%3D%22210%22%20rx%3D%2214%22/%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22370%22%20y%3D%22365%22%20width%3D%2272%22%20height%3D%22245%22%20rx%3D%2214%22/%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22475%22%20y%3D%22185%22%20width%3D%2272%22%20height%3D%22425%22%20rx%3D%2214%22/%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22580%22%20y%3D%22392%22%20width%3D%2272%22%20height%3D%22218%22%20rx%3D%2214%22/%3E%0A%20%20%20%20%3C/g%3E%0A%20%20%20%20%3Crect%20x%3D%22475%22%20y%3D%22185%22%20width%3D%2272%22%20height%3D%22425%22%20rx%3D%2214%22%20fill%3D%22%23ff7a16%22/%3E%0A%0A%20%20%20%20%3Cg%20fill%3D%22%23818b98%22%20font-family%3D%22Arial%22%20font-size%3D%2216%22%20text-anchor%3D%22middle%22%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%2291%22%20y%3D%22648%22%3EAPAC%3C/text%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22196%22%20y%3D%22648%22%3EEU%3C/text%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22301%22%20y%3D%22648%22%3ENA%3C/text%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22406%22%20y%3D%22648%22%3EMEA%3C/text%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22511%22%20y%3D%22648%22%20fill%3D%22%23fff%22%3EAFR%3C/text%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%22616%22%20y%3D%22648%22%3ELATAM%3C/text%3E%0A%20%20%20%20%3C/g%3E%0A%0A%20%20%20%20%3Ccircle%20cx%3D%22511%22%20cy%3D%22170%22%20r%3D%227%22%20fill%3D%22%23ffc36a%22/%3E%0A%20%20%20%20%3Cline%20x1%3D%22511%22%20y1%3D%22170%22%20x2%3D%22585%22%20y2%3D%2292%22%20stroke%3D%22%23d9974c%22%20stroke-width%3D%222%22/%3E%0A%20%20%20%20%3Crect%20x%3D%22585%22%20y%3D%2245%22%20width%3D%22205%22%20height%3D%2290%22%20rx%3D%2218%22%20fill%3D%22%2311161d%22%20stroke%3D%22%23323b45%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%22607%22%20y%3D%2280%22%20fill%3D%22%23fff%22%20font-family%3D%22Arial%22%20font-size%3D%2220%22%20font-weight%3D%22700%22%3EPriority%20signal%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22607%22%20y%3D%22108%22%20fill%3D%22%238994a2%22%20font-family%3D%22Arial%22%20font-size%3D%2216%22%3EScale%20market%20investment%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E%0A"
+                 alt="After design" />
+          </img-comparison-slider>
+
+          <div class="side-label before">Before</div>
+          <div class="side-label after">After</div>
+        </div>
+
+        <div class="annotation" id="annotation">
+          <strong>One dominant signal</strong>
+          <span>Instead of competing cards, the redesign resolves the message into one metric and one recommended action.</span>
+        </div>
+
+        <div class="upload-bar">
+          <label class="upload-label">
+            Replace Before
+            <input id="beforeUpload"
+                   type="file"
+                   accept="image/png,image/webp,image/jpeg,image/svg+xml">
+          </label>
+
+          <label class="upload-label">
+            Replace After
+            <input id="afterUpload"
+                   type="file"
+                   accept="image/png,image/webp,image/jpeg,image/svg+xml">
+          </label>
+        </div>
+
+      </section>
+    </div>
+  </aside>
+
+</main>
+
+<script defer src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+
+<script>
+gsap.registerPlugin(
+  ScrollTrigger
+);
+
+const slider =
+  document.querySelector("#comparison");
+
+const kicker =
+  document.querySelector("#compareKicker");
+
+const title =
+  document.querySelector("#compareTitle");
+
+const valueEl =
+  document.querySelector("#compareValue");
+
+const labelEl =
+  document.querySelector("#compareLabel");
+
+const annotation =
+  document.querySelector("#annotation");
+
+const progressFill =
+  document.querySelector("#progressFill");
+
+const stepElements =
+  Array.from(
+    document.querySelectorAll(".step")
+  );
+
+let currentTween = null;
+
+
+/* ============================================================
+   COMPARISON POSITION
+   The component owns drag/keyboard behavior.
+   GSAP only drives its public `value` property during scroll states.
+   ============================================================ */
+function animateSlider(
+  target,
+  duration=.85
+){
+  if(currentTween){
+    currentTween.kill();
+  }
+
+  const proxy = {
+    value:Number(slider.value || 50)
+  };
+
+  currentTween =
+    gsap.to(
+      proxy,
+      {
+        value:target,
+        duration,
+        ease:"power3.inOut",
+
+        onUpdate:() => {
+          slider.value =
+            proxy.value;
+        }
+      }
+    );
+
+  return currentTween;
+}
+
+
+/* ============================================================
+   STORY STATES
+   ============================================================ */
+const states = [
+
+  function baseline(){
+    kicker.textContent =
+      "Information Design";
+
+    title.textContent =
+      "Start with the existing state";
+
+    valueEl.textContent =
+      "90%";
+
+    labelEl.textContent =
+      "Before Visible";
+
+    animateSlider(90,.9);
+
+    gsap.to(
+      annotation,
+      {
+        opacity:0,
+        y:10,
+        duration:.25
+      }
+    );
+  },
+
+
+  function compare(){
+    kicker.textContent =
+      "Direct Comparison";
+
+    title.textContent =
+      "Put both states in one frame";
+
+    valueEl.textContent =
+      "50 / 50";
+
+    labelEl.textContent =
+      "Shared View";
+
+    animateSlider(50,.9);
+
+    gsap.to(
+      annotation,
+      {
+        opacity:0,
+        y:10,
+        duration:.25
+      }
+    );
+  },
+
+
+  function result(){
+    kicker.textContent =
+      "Redesigned State";
+
+    title.textContent =
+      "Let the new hierarchy dominate";
+
+    valueEl.textContent =
+      "85%";
+
+    labelEl.textContent =
+      "After Visible";
+
+    animateSlider(15,.9);
+
+    gsap.to(
+      annotation,
+      {
+        opacity:0,
+        y:10,
+        duration:.25
+      }
+    );
+  },
+
+
+  function takeaway(){
+    kicker.textContent =
+      "Key Difference";
+
+    title.textContent =
+      "Less competition, clearer action";
+
+    valueEl.textContent =
+      "65%";
+
+    labelEl.textContent =
+      "After Visible";
+
+    animateSlider(35,.9);
+
+    gsap.to(
+      annotation,
+      {
+        opacity:1,
+        y:0,
+        duration:.48,
+        delay:.35,
+        ease:"power2.out"
+      }
+    );
+  }
+
+];
+
+
+let currentState = -1;
+
+function setActiveStep(index){
+  stepElements
+    .forEach(
+      (step,i) =>
+        step.classList.toggle(
+          "is-active",
+          i === index
+        )
+    );
+
+  if(currentState === index){
+    return;
+  }
+
+  currentState = index;
+  states[index]?.();
+}
+
+
+/* ============================================================
+   SCROLLTRIGGER
+   ============================================================ */
+stepElements
+  .forEach(
+    (step,index) => {
+
+      ScrollTrigger.create({
+        trigger:step,
+        start:"top 56%",
+        end:"bottom 44%",
+
+        onEnter:() => {
+          setActiveStep(index);
+        },
+
+        onEnterBack:() => {
+          setActiveStep(index);
+        }
+      });
+
+    }
+  );
+
+
+ScrollTrigger.create({
+  trigger:".story",
+  start:"top top",
+  end:"bottom bottom",
+
+  onUpdate:self => {
+    progressFill.style.height =
+      `${self.progress * 100}%`;
+  }
+});
+
+
+/* ============================================================
+   USER DRAG FEEDBACK
+   ============================================================ */
+slider.addEventListener(
+  "slide",
+  () => {
+    const v =
+      Math.round(
+        Number(slider.value)
+      );
+
+    valueEl.textContent =
+      `${v} / ${100-v}`;
+
+    labelEl.textContent =
+      "Manual Compare";
+  }
+);
+
+
+/* ============================================================
+   IMAGE REPLACEMENT
+   ============================================================ */
+function bindUpload(
+  inputSelector,
+  imageSelector
+){
+  const input =
+    document.querySelector(
+      inputSelector
+    );
+
+  const image =
+    document.querySelector(
+      imageSelector
+    );
+
+  input.addEventListener(
+    "change",
+    event => {
+
+      const file =
+        event.target.files?.[0];
+
+      if(!file){
+        return;
+      }
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        e => {
+          image.src =
+            e.target.result;
+        };
+
+      reader.readAsDataURL(
+        file
+      );
+    }
+  );
+}
+
+
+bindUpload(
+  "#beforeUpload",
+  "#beforeImage"
+);
+
+bindUpload(
+  "#afterUpload",
+  "#afterImage"
+);
+
+
+/* ============================================================
+   INITIAL
+   ============================================================ */
+setActiveStep(0);
+
+window.addEventListener(
+  "load",
+  () => {
+    requestAnimationFrame(
+      () => {
+        ScrollTrigger.refresh();
+      }
+    );
+  }
+);
+
+
+/* ============================================================
+   GLOBAL API
+   ============================================================ */
+window.comparisonStory = {
+  setState:index => {
+    setActiveStep(index);
+  },
+
+  setValue:value => {
+    animateSlider(
+      Number(value)
+    );
+  },
+
+  refresh:() => {
+    ScrollTrigger.refresh();
+  }
+};
+</script>
+
+</body>
+</html>

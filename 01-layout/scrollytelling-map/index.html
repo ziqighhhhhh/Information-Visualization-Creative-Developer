@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Scroll Story — Scrollytelling Map</title>
+
+<style>
+  :root{
+    --bg:#06080b;
+    --panel:#0a0e13;
+    --text:#f7f8fb;
+    --muted:rgba(235,241,247,.52);
+    --faint:rgba(255,255,255,.08);
+    --accent:#ff7a16;
+    --accent-soft:#ffc36a;
+    --land:#171d24;
+    --land-dim:#10151b;
+  }
+
+  *{box-sizing:border-box}
+
+  html{
+    background:var(--bg);
+    scroll-behavior:auto;
+  }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 73% 38%,rgba(255,122,22,.04),transparent 23%),
+      #06080b;
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  body::-webkit-scrollbar{width:10px}
+  body::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.10);
+    border-radius:999px;
+  }
+
+  .topbar{
+    position:fixed;
+    left:0;
+    right:0;
+    top:0;
+    z-index:80;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    padding:26px 30px;
+    pointer-events:none;
+    background:linear-gradient(180deg,rgba(6,8,11,.94),rgba(6,8,11,.48),transparent);
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.38);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .story{
+    display:grid;
+    grid-template-columns:minmax(340px,40vw) 1fr;
+    min-height:100vh;
+  }
+
+  .steps{
+    position:relative;
+    z-index:20;
+    padding-top:6vh;
+    padding-bottom:6vh;
+  }
+
+  .step{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:clamp(90px,12vh,130px) clamp(28px,5vw,74px);
+    opacity:.34;
+    transition:opacity .3s ease;
+  }
+
+  .step.is-active{opacity:1}
+
+  .step-inner{
+    width:min(500px,88%);
+  }
+
+  .step-index{
+    margin-bottom:18px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  .step h2{
+    margin:0;
+    font-size:clamp(42px,5.4vw,76px);
+    line-height:.92;
+    letter-spacing:-.055em;
+    font-weight:760;
+    text-wrap:balance;
+  }
+
+  .step p{
+    margin:24px 0 0;
+    max-width:430px;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.65;
+  }
+
+  .stage-column{
+    position:relative;
+    min-height:100vh;
+  }
+
+  .stage{
+    position:sticky;
+    top:0;
+    height:100vh;
+    padding:88px 28px 34px;
+    display:grid;
+    place-items:center;
+  }
+
+  .map-card{
+    position:relative;
+    width:min(980px,95%);
+    height:min(680px,74vh);
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:30px;
+    background:
+      radial-gradient(circle at 65% 22%,rgba(255,122,22,.055),transparent 26%),
+      linear-gradient(180deg,rgba(255,255,255,.017),rgba(255,255,255,.006));
+    box-shadow:
+      0 34px 90px rgba(0,0,0,.18),
+      inset 0 0 90px rgba(255,255,255,.008);
+  }
+
+  .map-head{
+    position:absolute;
+    z-index:15;
+    left:28px;
+    right:28px;
+    top:24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+    pointer-events:none;
+  }
+
+  .map-kicker{
+    margin-bottom:7px;
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+
+  .map-title{
+    margin:0;
+    font-size:24px;
+    line-height:1.08;
+    letter-spacing:-.03em;
+    font-weight:700;
+  }
+
+  .map-metric{
+    text-align:right;
+  }
+
+  .map-metric strong{
+    display:block;
+    font-size:38px;
+    line-height:.9;
+    letter-spacing:-.05em;
+    font-weight:760;
+  }
+
+  .map-metric span{
+    display:block;
+    margin-top:8px;
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+  }
+
+  .map-wrap{
+    position:absolute;
+    inset:92px 16px 46px;
+  }
+
+  #map{
+    width:100%;
+    height:100%;
+    overflow:visible;
+  }
+
+  .country{
+    fill:var(--land);
+    stroke:rgba(255,255,255,.055);
+    stroke-width:.55;
+    transition:fill .3s ease,opacity .3s ease;
+  }
+
+  .sphere{
+    fill:none;
+    stroke:rgba(255,255,255,.05);
+    stroke-width:1;
+  }
+
+  .graticule{
+    fill:none;
+    stroke:rgba(255,255,255,.035);
+    stroke-width:.55;
+  }
+
+  .route{
+    fill:none;
+    stroke:var(--accent);
+    stroke-width:1.5;
+    stroke-linecap:round;
+    opacity:0;
+    filter:drop-shadow(0 0 5px rgba(255,122,22,.25));
+  }
+
+  .route.route-secondary{
+    stroke:#ffc36a;
+    stroke-width:1.1;
+  }
+
+  .node{
+    fill:#ffc36a;
+    stroke:#fff3df;
+    stroke-width:.7;
+    opacity:0;
+    filter:drop-shadow(0 0 7px rgba(255,122,22,.55));
+  }
+
+  .node-ring{
+    fill:none;
+    stroke:rgba(255,167,80,.40);
+    stroke-width:1;
+    opacity:0;
+  }
+
+  .node-label{
+    fill:rgba(255,255,255,.70);
+    font-size:9px;
+    font-weight:600;
+    letter-spacing:.03em;
+    opacity:0;
+    paint-order:stroke;
+    stroke:#07090d;
+    stroke-width:3px;
+    stroke-linejoin:round;
+  }
+
+  .annotation{
+    opacity:0;
+  }
+
+  .annotation rect{
+    fill:rgba(7,11,15,.90);
+    stroke:rgba(255,255,255,.09);
+  }
+
+  .annotation .title{
+    fill:#fff;
+    font-size:11px;
+    font-weight:700;
+  }
+
+  .annotation .copy{
+    fill:rgba(255,255,255,.48);
+    font-size:9px;
+  }
+
+  .annotation line{
+    stroke:rgba(255,183,111,.42);
+    stroke-width:1;
+  }
+
+  .map-status{
+    position:absolute;
+    left:28px;
+    bottom:18px;
+    z-index:20;
+    color:rgba(255,255,255,.22);
+    font-size:8px;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+  }
+
+  .progress{
+    position:fixed;
+    right:20px;
+    top:50%;
+    z-index:90;
+    width:2px;
+    height:150px;
+    transform:translateY(-50%);
+    background:rgba(255,255,255,.08);
+  }
+
+  .progress-fill{
+    width:100%;
+    height:0%;
+    background:linear-gradient(180deg,var(--accent),var(--accent-soft));
+    box-shadow:0 0 12px rgba(255,122,22,.28);
+  }
+
+  .error{
+    position:absolute;
+    inset:0;
+    display:none;
+    place-items:center;
+    padding:40px;
+    text-align:center;
+    color:rgba(255,255,255,.55);
+    font-size:13px;
+    line-height:1.6;
+    z-index:30;
+  }
+
+  @media(max-width:900px){
+    .story{display:block}
+
+    .stage-column{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+    }
+
+    .stage{
+      padding:70px 12px 16px;
+    }
+
+    .map-card{
+      width:95vw;
+      height:55vh;
+      margin-top:-17vh;
+    }
+
+    .steps{
+      z-index:20;
+      padding-top:40vh;
+    }
+
+    .step{
+      min-height:105vh;
+      align-items:flex-end;
+      padding:80px 20px 70px;
+    }
+
+    .step-inner{
+      width:100%;
+      padding:22px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.07);
+      background:rgba(6,8,11,.76);
+      backdrop-filter:blur(16px);
+    }
+
+    .step h2{font-size:clamp(36px,11vw,58px)}
+    .step p{font-size:13px}
+    .meta{display:none}
+    .topbar{padding:20px}
+    .progress{right:10px}
+    .map-title{font-size:18px}
+    .map-metric strong{font-size:30px}
+  }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div>
+    <div class="eyebrow">Scroll Story / Scrollytelling Map</div>
+    <h1>Scrollytelling Map</h1>
+  </div>
+
+  <div class="meta">
+    D3 Geo + TopoJSON + GSAP ScrollTrigger<br>
+    stable geography · changing narrative state
+  </div>
+</header>
+
+<div class="progress">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<main class="story">
+
+  <section class="steps">
+
+    <article class="step" data-step="0">
+      <div class="step-inner">
+        <div class="step-index">01 / Global View</div>
+        <h2>Begin With The Whole Network.</h2>
+        <p>
+          Keep the geography stable first. The reader sees the full world before the story narrows to specific markets and routes.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="1">
+      <div class="step-inner">
+        <div class="step-index">02 / Priority Markets</div>
+        <h2>Highlight Where Attention Should Go.</h2>
+        <p>
+          Instead of changing maps, priority countries are elevated while the rest recede. One visual grammar carries the whole story.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="2">
+      <div class="step-inner">
+        <div class="step-index">03 / Routes</div>
+        <h2>Show How Markets Connect.</h2>
+        <p>
+          Animated geodesic routes turn static geography into a flow narrative: origin, direction and destination become immediately legible.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="3">
+      <div class="step-inner">
+        <div class="step-index">04 / Opportunity</div>
+        <h2>End With A Clear Expansion Signal.</h2>
+        <p>
+          The final state dims mature markets and isolates opportunity nodes. The map resolves into a recommendation rather than a decorative animation.
+        </p>
+      </div>
+    </article>
+
+  </section>
+
+
+  <aside class="stage-column">
+    <div class="stage">
+
+      <section class="map-card">
+
+        <div class="map-head">
+          <div>
+            <div class="map-kicker" id="mapKicker">Global Network</div>
+            <h2 class="map-title" id="mapTitle">Market footprint</h2>
+          </div>
+
+          <div class="map-metric">
+            <strong id="mapValue">9</strong>
+            <span id="mapLabel">Visible Markets</span>
+          </div>
+        </div>
+
+        <div class="map-wrap">
+          <svg id="map" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+
+        <div class="map-status" id="mapStatus">
+          Loading world geometry…
+        </div>
+
+        <div class="error" id="error">
+          World geometry could not be loaded. The page shell and scroll logic are still working; check CDN/network access.
+        </div>
+
+      </section>
+    </div>
+  </aside>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+
+<script>
+gsap.registerPlugin(
+  ScrollTrigger
+);
+
+
+/* ============================================================
+   DATA
+   ============================================================ */
+const HUB = {
+  name:"Guangzhou",
+  coords:[113.2644,23.1291]
+};
+
+const MARKETS = [
+  {name:"Singapore", coords:[103.8198,1.3521], id:"702", group:"active"},
+  {name:"Vietnam", coords:[108.2772,14.0583], id:"704", group:"active"},
+  {name:"UAE", coords:[53.8478,23.4241], id:"784", group:"active"},
+  {name:"Saudi Arabia", coords:[45.0792,23.8859], id:"682", group:"priority"},
+  {name:"Uganda", coords:[32.2903,1.3733], id:"800", group:"priority"},
+  {name:"Kenya", coords:[37.9062,-0.0236], id:"404", group:"opportunity"},
+  {name:"Egypt", coords:[30.8025,26.8206], id:"818", group:"opportunity"},
+  {name:"Brazil", coords:[-51.9253,-14.2350], id:"076", group:"priority"},
+  {name:"Mexico", coords:[-102.5528,23.6345], id:"484", group:"opportunity"}
+];
+
+const IDS = {
+  active:new Set(["702","704","784"]),
+  priority:new Set(["682","800","076"]),
+  opportunity:new Set(["404","818","484"])
+};
+
+
+/* ============================================================
+   MAP SETUP
+   ============================================================ */
+const svg =
+  d3.select("#map");
+
+const width = 900;
+const height = 560;
+
+const projection =
+  d3.geoNaturalEarth1()
+    .fitExtent(
+      [[30,40],[870,520]],
+      {type:"Sphere"}
+    );
+
+const path =
+  d3.geoPath(
+    projection
+  );
+
+const sphereG =
+  svg.append("g");
+
+const countryG =
+  svg.append("g");
+
+const routeG =
+  svg.append("g");
+
+const nodeG =
+  svg.append("g");
+
+const annotationG =
+  svg.append("g")
+    .attr("class","annotation");
+
+sphereG
+  .append("path")
+  .datum({type:"Sphere"})
+  .attr("class","sphere")
+  .attr("d",path);
+
+sphereG
+  .append("path")
+  .datum(d3.geoGraticule10())
+  .attr("class","graticule")
+  .attr("d",path);
+
+
+let countries = [];
+let countrySelection = null;
+let routeSelection = null;
+let nodeSelection = null;
+let ringSelection = null;
+let labelSelection = null;
+
+let mapReady = false;
+
+
+/* ============================================================
+   ROUTE HELPER
+   ============================================================ */
+function routeFeature(
+  from,
+  to
+){
+  const interpolate =
+    d3.geoInterpolate(
+      from,
+      to
+    );
+
+  return {
+    type:"LineString",
+    coordinates:
+      d3.range(0,1.001,.025)
+        .map(interpolate)
+  };
+}
+
+
+/* ============================================================
+   WORLD GEOMETRY
+   ============================================================ */
+d3.json(
+  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+)
+.then(world => {
+
+  countries =
+    topojson.feature(
+      world,
+      world.objects.countries
+    ).features;
+
+  countrySelection =
+    countryG
+      .selectAll("path")
+      .data(countries)
+      .join("path")
+      .attr("class","country")
+      .attr("d",path)
+      .attr(
+        "data-id",
+        d => String(d.id).padStart(3,"0")
+      );
+
+  const routes =
+    MARKETS.map(
+      d => ({
+        ...d,
+        feature:routeFeature(
+          HUB.coords,
+          d.coords
+        )
+      })
+    );
+
+  routeSelection =
+    routeG
+      .selectAll("path")
+      .data(routes)
+      .join("path")
+      .attr(
+        "class",
+        d =>
+          d.group === "priority"
+            ? "route"
+            : "route route-secondary"
+      )
+      .attr(
+        "d",
+        d => path(d.feature)
+      );
+
+  routeSelection
+    .each(function(){
+      const length =
+        this.getTotalLength();
+
+      d3.select(this)
+        .attr(
+          "stroke-dasharray",
+          `${length} ${length}`
+        )
+        .attr(
+          "stroke-dashoffset",
+          length
+        );
+    });
+
+  const nodes =
+    [HUB,...MARKETS];
+
+  ringSelection =
+    nodeG
+      .selectAll("circle.node-ring")
+      .data(nodes)
+      .join("circle")
+      .attr("class","node-ring")
+      .attr(
+        "cx",
+        d => projection(d.coords)[0]
+      )
+      .attr(
+        "cy",
+        d => projection(d.coords)[1]
+      )
+      .attr("r",9);
+
+  nodeSelection =
+    nodeG
+      .selectAll("circle.node")
+      .data(nodes)
+      .join("circle")
+      .attr("class","node")
+      .attr(
+        "cx",
+        d => projection(d.coords)[0]
+      )
+      .attr(
+        "cy",
+        d => projection(d.coords)[1]
+      )
+      .attr(
+        "r",
+        d => d === HUB ? 4.2 : 3
+      );
+
+  labelSelection =
+    nodeG
+      .selectAll("text.node-label")
+      .data(nodes)
+      .join("text")
+      .attr("class","node-label")
+      .attr(
+        "x",
+        d => projection(d.coords)[0] + 8
+      )
+      .attr(
+        "y",
+        d => projection(d.coords)[1] - 6
+      )
+      .text(d => d.name);
+
+  buildAnnotation();
+
+  mapReady = true;
+
+  document
+    .querySelector("#mapStatus")
+    .textContent =
+      "World geometry ready · scroll to explore";
+
+  activateState(0);
+
+  requestAnimationFrame(
+    () => {
+      ScrollTrigger.refresh();
+    }
+  );
+
+})
+.catch(error => {
+
+  console.error(error);
+
+  document
+    .querySelector("#mapStatus")
+    .textContent =
+      "World geometry failed";
+
+  document
+    .querySelector("#error")
+    .style.display =
+      "grid";
+});
+
+
+/* ============================================================
+   ANNOTATION
+   ============================================================ */
+function buildAnnotation(){
+
+  const p =
+    projection(
+      [-102.5528,23.6345]
+    );
+
+  annotationG
+    .append("line")
+    .attr("x1",p[0])
+    .attr("y1",p[1])
+    .attr("x2",p[0]-115)
+    .attr("y2",p[1]-44);
+
+  annotationG
+    .append("rect")
+    .attr("x",p[0]-286)
+    .attr("y",p[1]-82)
+    .attr("width",172)
+    .attr("height",58)
+    .attr("rx",12);
+
+  annotationG
+    .append("text")
+    .attr("class","title")
+    .attr("x",p[0]-274)
+    .attr("y",p[1]-58)
+    .text("Opportunity cluster");
+
+  annotationG
+    .append("text")
+    .attr("class","copy")
+    .attr("x",p[0]-274)
+    .attr("y",p[1]-40)
+    .text("Mexico · Kenya · Egypt");
+}
+
+
+/* ============================================================
+   UI HELPERS
+   ============================================================ */
+const mapKicker =
+  document.querySelector("#mapKicker");
+
+const mapTitle =
+  document.querySelector("#mapTitle");
+
+const mapValue =
+  document.querySelector("#mapValue");
+
+const mapLabel =
+  document.querySelector("#mapLabel");
+
+
+function setHeader(
+  kicker,
+  title,
+  value,
+  label
+){
+  mapKicker.textContent = kicker;
+  mapTitle.textContent = title;
+  mapValue.textContent = value;
+  mapLabel.textContent = label;
+}
+
+
+function countryStyle(
+  targetIds,
+  accentIds=new Set()
+){
+
+  countrySelection
+    .transition()
+    .duration(520)
+    .attr(
+      "fill",
+      d => {
+        const id =
+          String(d.id).padStart(3,"0");
+
+        if(
+          accentIds.has(id)
+        ){
+          return "#ff7a16";
+        }
+
+        if(
+          targetIds.has(id)
+        ){
+          return "#7b4a22";
+        }
+
+        return "#141a21";
+      }
+    )
+    .attr(
+      "opacity",
+      d => {
+        const id =
+          String(d.id).padStart(3,"0");
+
+        return (
+          targetIds.size === 0 ||
+          targetIds.has(id) ||
+          accentIds.has(id)
+        )
+          ? 1
+          : .34;
+      }
+    );
+}
+
+
+function showNodes(
+  predicate,
+  showLabels=true
+){
+
+  nodeSelection
+    .transition()
+    .duration(420)
+    .attr(
+      "opacity",
+      d => predicate(d) ? 1 : .10
+    );
+
+  ringSelection
+    .transition()
+    .duration(420)
+    .attr(
+      "opacity",
+      d => predicate(d) ? .65 : 0
+    )
+    .attr(
+      "r",
+      d => predicate(d) ? 11 : 6
+    );
+
+  labelSelection
+    .transition()
+    .duration(420)
+    .attr(
+      "opacity",
+      d =>
+        showLabels && predicate(d)
+          ? .85
+          : 0
+    );
+}
+
+
+function hideRoutes(){
+
+  routeSelection
+    .interrupt()
+    .transition()
+    .duration(260)
+    .attr("opacity",0);
+}
+
+
+function drawRoutes(
+  predicate
+){
+
+  routeSelection
+    .interrupt()
+    .attr(
+      "opacity",
+      d => predicate(d) ? .9 : .05
+    )
+    .each(function(d){
+
+      if(!predicate(d)){
+        return;
+      }
+
+      const length =
+        this.getTotalLength();
+
+      d3.select(this)
+        .attr(
+          "stroke-dasharray",
+          `${length} ${length}`
+        )
+        .attr(
+          "stroke-dashoffset",
+          length
+        )
+        .transition()
+        .duration(950)
+        .delay(
+          Math.random()*180
+        )
+        .ease(d3.easeCubicOut)
+        .attr(
+          "stroke-dashoffset",
+          0
+        );
+
+    });
+}
+
+
+/* ============================================================
+   STORY STATES
+   ============================================================ */
+const states = [
+
+  function state0(){
+
+    setHeader(
+      "Global Network",
+      "Market footprint",
+      "9",
+      "Visible Markets"
+    );
+
+    countryStyle(
+      new Set()
+    );
+
+    hideRoutes();
+
+    showNodes(
+      () => true,
+      false
+    );
+
+    annotationG
+      .transition()
+      .duration(220)
+      .style("opacity",0);
+  },
+
+
+  function state1(){
+
+    setHeader(
+      "Priority Markets",
+      "Core focus markets",
+      "3",
+      "Priority Markets"
+    );
+
+    countryStyle(
+      IDS.priority,
+      IDS.priority
+    );
+
+    hideRoutes();
+
+    showNodes(
+      d =>
+        d === HUB ||
+        d.group === "priority",
+      true
+    );
+
+    annotationG
+      .transition()
+      .duration(220)
+      .style("opacity",0);
+  },
+
+
+  function state2(){
+
+    setHeader(
+      "Route Network",
+      "Connections from the hub",
+      "9",
+      "Active Routes"
+    );
+
+    const allIds =
+      new Set(
+        MARKETS.map(d => d.id)
+      );
+
+    countryStyle(
+      allIds,
+      IDS.priority
+    );
+
+    showNodes(
+      () => true,
+      false
+    );
+
+    drawRoutes(
+      () => true
+    );
+
+    annotationG
+      .transition()
+      .duration(220)
+      .style("opacity",0);
+  },
+
+
+  function state3(){
+
+    setHeader(
+      "Expansion Signal",
+      "Opportunity markets",
+      "3",
+      "Next Markets"
+    );
+
+    countryStyle(
+      IDS.opportunity,
+      IDS.opportunity
+    );
+
+    hideRoutes();
+
+    showNodes(
+      d =>
+        d === HUB ||
+        d.group === "opportunity",
+      true
+    );
+
+    annotationG
+      .transition()
+      .delay(260)
+      .duration(420)
+      .style("opacity",1);
+  }
+
+];
+
+
+let currentState = -1;
+
+function activateState(index){
+
+  if(
+    !mapReady ||
+    currentState === index
+  ){
+    return;
+  }
+
+  currentState =
+    index;
+
+  states[index]?.();
+}
+
+
+/* ============================================================
+   SCROLLTRIGGER
+   ============================================================ */
+const stepElements =
+  Array.from(
+    document.querySelectorAll(".step")
+  );
+
+
+function setActiveStep(index){
+
+  stepElements
+    .forEach(
+      (step,i) =>
+        step.classList.toggle(
+          "is-active",
+          i === index
+        )
+    );
+
+  activateState(index);
+}
+
+
+stepElements
+  .forEach(
+    (step,index) => {
+
+      ScrollTrigger.create({
+        trigger:step,
+        start:"top 56%",
+        end:"bottom 44%",
+
+        onEnter:() => {
+          setActiveStep(index);
+        },
+
+        onEnterBack:() => {
+          setActiveStep(index);
+        }
+      });
+
+    }
+  );
+
+
+ScrollTrigger.create({
+  trigger:".story",
+  start:"top top",
+  end:"bottom bottom",
+
+  onUpdate:self => {
+
+    document
+      .querySelector("#progressFill")
+      .style.height =
+        `${self.progress * 100}%`;
+  }
+});
+
+
+/* ============================================================
+   INITIAL
+   ============================================================ */
+setActiveStep(0);
+
+window.addEventListener(
+  "load",
+  () => {
+    requestAnimationFrame(
+      () => {
+        ScrollTrigger.refresh();
+      }
+    );
+  }
+);
+
+
+/* ============================================================
+   GLOBAL API
+   ============================================================ */
+window.scrollytellingMap = {
+
+  setState:index => {
+    setActiveStep(index);
+  },
+
+  refresh:() => {
+    ScrollTrigger.refresh();
+  }
+};
+</script>
+
+</body>
+</html>

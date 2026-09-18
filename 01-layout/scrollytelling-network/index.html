@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Scroll Story — Scrollytelling Network</title>
+
+<style>
+  :root{
+    --bg:#06080b;
+    --text:#f7f8fb;
+    --muted:rgba(235,241,247,.52);
+    --accent:#ff7a16;
+    --accent-soft:#ffc36a;
+  }
+
+  *{box-sizing:border-box}
+
+  html{
+    background:var(--bg);
+    scroll-behavior:auto;
+  }
+
+  body{
+    margin:0;
+    color:var(--text);
+    background:
+      radial-gradient(circle at 72% 36%,rgba(255,122,22,.04),transparent 22%),
+      #06080b;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  body::-webkit-scrollbar{width:10px}
+  body::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.10);
+    border-radius:999px;
+  }
+
+  .topbar{
+    position:fixed;
+    inset:0 0 auto 0;
+    z-index:80;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    padding:26px 30px;
+    pointer-events:none;
+    background:
+      linear-gradient(180deg,rgba(6,8,11,.94),rgba(6,8,11,.48),transparent);
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.38);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .story{
+    display:grid;
+    grid-template-columns:minmax(340px,40vw) 1fr;
+    min-height:100vh;
+  }
+
+  .steps{
+    position:relative;
+    z-index:20;
+    padding:6vh 0;
+  }
+
+  .step{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:
+      clamp(90px,12vh,130px)
+      clamp(28px,5vw,74px);
+    opacity:.34;
+    transition:opacity .3s ease;
+  }
+
+  .step.is-active{opacity:1}
+
+  .step-inner{
+    width:min(500px,88%);
+  }
+
+  .step-index{
+    margin-bottom:18px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  .step h2{
+    margin:0;
+    font-size:clamp(42px,5.4vw,76px);
+    line-height:.92;
+    letter-spacing:-.055em;
+    font-weight:760;
+    text-wrap:balance;
+  }
+
+  .step p{
+    margin:24px 0 0;
+    max-width:430px;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.65;
+  }
+
+  .stage-column{
+    position:relative;
+    min-height:100vh;
+  }
+
+  .stage{
+    position:sticky;
+    top:0;
+    height:100vh;
+    padding:88px 28px 34px;
+    display:grid;
+    place-items:center;
+  }
+
+  .network-card{
+    position:relative;
+    width:min(980px,95%);
+    height:min(680px,74vh);
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:30px;
+    background:
+      radial-gradient(circle at 64% 28%,rgba(255,122,22,.055),transparent 25%),
+      linear-gradient(180deg,rgba(255,255,255,.017),rgba(255,255,255,.006));
+    box-shadow:
+      0 34px 90px rgba(0,0,0,.18),
+      inset 0 0 90px rgba(255,255,255,.008);
+  }
+
+  .network-head{
+    position:absolute;
+    z-index:20;
+    left:28px;
+    right:28px;
+    top:24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+    pointer-events:none;
+  }
+
+  .network-kicker{
+    margin-bottom:7px;
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+
+  .network-title{
+    margin:0;
+    font-size:24px;
+    line-height:1.08;
+    letter-spacing:-.03em;
+    font-weight:700;
+  }
+
+  .network-metric{
+    text-align:right;
+  }
+
+  .network-metric strong{
+    display:block;
+    font-size:38px;
+    line-height:.9;
+    letter-spacing:-.05em;
+    font-weight:760;
+  }
+
+  .network-metric span{
+    display:block;
+    margin-top:8px;
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+  }
+
+  .network-wrap{
+    position:absolute;
+    inset:90px 18px 42px;
+  }
+
+  #cy{
+    position:absolute;
+    inset:0;
+  }
+
+  .legend{
+    position:absolute;
+    left:28px;
+    bottom:18px;
+    z-index:25;
+    display:flex;
+    gap:16px;
+    color:rgba(255,255,255,.28);
+    font-size:8px;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  .legend span{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#596472;
+  }
+
+  .dot.focus{background:#ff7a16}
+  .dot.opportunity{background:#ffc36a}
+
+  .annotation{
+    position:absolute;
+    z-index:30;
+    right:38px;
+    bottom:48px;
+    width:235px;
+    padding:14px 16px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:16px;
+    background:rgba(7,11,15,.88);
+    backdrop-filter:blur(12px);
+    opacity:0;
+    transform:translateY(10px);
+    pointer-events:none;
+  }
+
+  .annotation strong{
+    display:block;
+    margin-bottom:6px;
+    color:#fff;
+    font-size:12px;
+  }
+
+  .annotation span{
+    color:rgba(255,255,255,.48);
+    font-size:10px;
+    line-height:1.5;
+  }
+
+  .progress{
+    position:fixed;
+    right:20px;
+    top:50%;
+    z-index:90;
+    width:2px;
+    height:150px;
+    transform:translateY(-50%);
+    background:rgba(255,255,255,.08);
+  }
+
+  .progress-fill{
+    width:100%;
+    height:0%;
+    background:linear-gradient(180deg,var(--accent),var(--accent-soft));
+    box-shadow:0 0 12px rgba(255,122,22,.28);
+  }
+
+  @media(max-width:900px){
+    .story{display:block}
+
+    .stage-column{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+    }
+
+    .stage{
+      padding:70px 12px 16px;
+    }
+
+    .network-card{
+      width:95vw;
+      height:55vh;
+      margin-top:-17vh;
+    }
+
+    .steps{
+      z-index:20;
+      padding-top:40vh;
+    }
+
+    .step{
+      min-height:105vh;
+      align-items:flex-end;
+      padding:80px 20px 70px;
+    }
+
+    .step-inner{
+      width:100%;
+      padding:22px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.07);
+      background:rgba(6,8,11,.76);
+      backdrop-filter:blur(16px);
+    }
+
+    .step h2{font-size:clamp(36px,11vw,58px)}
+    .step p{font-size:13px}
+    .meta{display:none}
+    .topbar{padding:20px}
+    .progress{right:10px}
+    .network-title{font-size:18px}
+    .network-metric strong{font-size:30px}
+    .annotation{display:none}
+  }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div>
+    <div class="eyebrow">Scroll Story / Scrollytelling Network</div>
+    <h1>Scrollytelling Network</h1>
+  </div>
+
+  <div class="meta">
+    Cytoscape.js 3.34.3 + GSAP ScrollTrigger<br>
+    graph renderer + section-driven narrative
+  </div>
+</header>
+
+<div class="progress">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<main class="story">
+
+  <section class="steps">
+
+    <article class="step" data-step="0">
+      <div class="step-inner">
+        <div class="step-index">01 / Ecosystem</div>
+        <h2>Show The Whole System First.</h2>
+        <p>
+          Start with the complete relationship graph. The reader sees the core, supporting functions and external channels before the story narrows.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="1">
+      <div class="step-inner">
+        <div class="step-index">02 / Core Path</div>
+        <h2>Reveal The Path That Drives Value.</h2>
+        <p>
+          Dim secondary relationships and isolate the shortest operational path from strategy to market. The graph structure stays fixed while attention changes.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="2">
+      <div class="step-inner">
+        <div class="step-index">03 / Bottleneck</div>
+        <h2>Make The Constraint Visible.</h2>
+        <p>
+          One node becomes the bottleneck and its dependent edges are emphasized. Network storytelling is useful when the message is about relationships rather than isolated metrics.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="3">
+      <div class="step-inner">
+        <div class="step-index">04 / Opportunity</div>
+        <h2>End With The New Connection.</h2>
+        <p>
+          The final state adds an opportunity path between digital demand and the market layer. The conclusion is a structural recommendation, not a decorative graph animation.
+        </p>
+      </div>
+    </article>
+
+  </section>
+
+
+  <aside class="stage-column">
+    <div class="stage">
+
+      <section class="network-card">
+
+        <div class="network-head">
+          <div>
+            <div class="network-kicker" id="networkKicker">Business Ecosystem</div>
+            <h2 class="network-title" id="networkTitle">Relationship overview</h2>
+          </div>
+
+          <div class="network-metric">
+            <strong id="networkValue">10</strong>
+            <span id="networkLabel">Visible Nodes</span>
+          </div>
+        </div>
+
+        <div class="network-wrap">
+          <div id="cy"></div>
+        </div>
+
+        <div class="legend">
+          <span><i class="dot"></i> System</span>
+          <span><i class="dot focus"></i> Focus</span>
+          <span><i class="dot opportunity"></i> Opportunity</span>
+        </div>
+
+        <div class="annotation" id="annotation">
+          <strong>New direct path</strong>
+          <span>Connect digital demand to the market layer instead of routing every signal through the existing channel.</span>
+        </div>
+
+      </section>
+
+    </div>
+  </aside>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/cytoscape@3.34.3/dist/cytoscape.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+
+<script>
+gsap.registerPlugin(
+  ScrollTrigger
+);
+
+
+/* ============================================================
+   GRAPH DATA
+   Fixed positions are intentional:
+   the visual grammar stays stable across story states.
+   ============================================================ */
+const elements = [
+
+  {data:{id:"strategy", label:"Strategy"},       position:{x:430,y:90}},
+  {data:{id:"brand", label:"Brand"},             position:{x:245,y:190}},
+  {data:{id:"rnd", label:"R&D"},                 position:{x:430,y:205}},
+  {data:{id:"operations", label:"Operations"},   position:{x:615,y:190}},
+  {data:{id:"supply", label:"Supply"},           position:{x:710,y:320}},
+  {data:{id:"distribution", label:"Distribution"},position:{x:580,y:420}},
+  {data:{id:"retail", label:"Retail"},           position:{x:350,y:445}},
+  {data:{id:"digital", label:"Digital"},         position:{x:180,y:335}},
+  {data:{id:"service", label:"Service"},         position:{x:410,y:330}},
+  {data:{id:"market", label:"Market"},           position:{x:455,y:545}},
+
+  {data:{id:"e1", source:"strategy", target:"brand"}},
+  {data:{id:"e2", source:"strategy", target:"rnd"}},
+  {data:{id:"e3", source:"strategy", target:"operations"}},
+  {data:{id:"e4", source:"brand", target:"digital"}},
+  {data:{id:"e5", source:"brand", target:"retail"}},
+  {data:{id:"e6", source:"rnd", target:"operations"}},
+  {data:{id:"e7", source:"rnd", target:"service"}},
+  {data:{id:"e8", source:"operations", target:"supply"}},
+  {data:{id:"e9", source:"supply", target:"distribution"}},
+  {data:{id:"e10", source:"distribution", target:"retail"}},
+  {data:{id:"e11", source:"retail", target:"market"}},
+  {data:{id:"e12", source:"digital", target:"market"}},
+  {data:{id:"e13", source:"service", target:"market"}},
+  {data:{id:"e14", source:"operations", target:"service"}},
+
+  {
+    data:{
+      id:"opportunityEdge",
+      source:"digital",
+      target:"distribution"
+    },
+    classes:"opportunity-base"
+  }
+];
+
+
+const cy =
+  cytoscape({
+    container:
+      document.querySelector("#cy"),
+
+    elements,
+
+    layout:{
+      name:"preset",
+      fit:true,
+      padding:48
+    },
+
+    minZoom:.65,
+    maxZoom:1.5,
+
+    userZoomingEnabled:true,
+    userPanningEnabled:true,
+    boxSelectionEnabled:false,
+    selectionType:"single",
+
+    style:[
+
+      {
+        selector:"node",
+        style:{
+          "width":42,
+          "height":42,
+          "background-color":"#596472",
+          "border-width":1,
+          "border-color":"#8692a0",
+          "label":"data(label)",
+          "color":"rgba(255,255,255,.68)",
+          "font-size":"10px",
+          "font-weight":600,
+          "text-valign":"bottom",
+          "text-margin-y":8,
+          "text-outline-width":3,
+          "text-outline-color":"#090c10",
+          "opacity":1,
+          "transition-property":"background-color border-color opacity width height",
+          "transition-duration":".5s",
+          "transition-timing-function":"ease-out"
+        }
+      },
+
+      {
+        selector:"edge",
+        style:{
+          "width":1.4,
+          "line-color":"rgba(255,255,255,.14)",
+          "curve-style":"bezier",
+          "opacity":1,
+          "transition-property":"line-color width opacity",
+          "transition-duration":".5s",
+          "transition-timing-function":"ease-out"
+        }
+      },
+
+      {
+        selector:".muted",
+        style:{
+          "opacity":.12
+        }
+      },
+
+      {
+        selector:"node.focus",
+        style:{
+          "width":52,
+          "height":52,
+          "background-color":"#ff7a16",
+          "border-color":"#ffd19c",
+          "color":"#ffffff"
+        }
+      },
+
+      {
+        selector:"edge.focus",
+        style:{
+          "width":3,
+          "line-color":"#ff7a16",
+          "opacity":1
+        }
+      },
+
+      {
+        selector:"node.critical",
+        style:{
+          "width":60,
+          "height":60,
+          "background-color":"#ff5b32",
+          "border-width":2,
+          "border-color":"#ffd0c4",
+          "color":"#ffffff"
+        }
+      },
+
+      {
+        selector:"edge.critical",
+        style:{
+          "width":3.4,
+          "line-color":"#ff7a16",
+          "opacity":1
+        }
+      },
+
+      {
+        selector:"node.opportunity",
+        style:{
+          "width":54,
+          "height":54,
+          "background-color":"#ffc36a",
+          "border-color":"#fff0d6",
+          "color":"#ffffff"
+        }
+      },
+
+      {
+        selector:"edge.opportunity",
+        style:{
+          "width":3.2,
+          "line-color":"#ffc36a",
+          "line-style":"dashed",
+          "opacity":1
+        }
+      },
+
+      {
+        selector:".opportunity-base",
+        style:{
+          "opacity":0
+        }
+      }
+    ]
+  });
+
+
+/* ============================================================
+   UI
+   ============================================================ */
+const kicker =
+  document.querySelector("#networkKicker");
+
+const title =
+  document.querySelector("#networkTitle");
+
+const valueEl =
+  document.querySelector("#networkValue");
+
+const labelEl =
+  document.querySelector("#networkLabel");
+
+const annotation =
+  document.querySelector("#annotation");
+
+const progressFill =
+  document.querySelector("#progressFill");
+
+const stepElements =
+  Array.from(
+    document.querySelectorAll(".step")
+  );
+
+
+function setHeader(
+  kickerText,
+  titleText,
+  valueText,
+  labelText
+){
+  kicker.textContent = kickerText;
+  title.textContent = titleText;
+  valueEl.textContent = valueText;
+  labelEl.textContent = labelText;
+}
+
+
+function clearClasses(){
+
+  cy.batch(
+    () => {
+      cy.elements()
+        .removeClass(
+          "muted focus critical opportunity"
+        );
+
+      cy
+        .$id("opportunityEdge")
+        .removeClass("opportunity")
+        .addClass("opportunity-base");
+    }
+  );
+}
+
+
+function dimEverythingExcept(
+  collection
+){
+
+  cy.elements()
+    .not(collection)
+    .addClass("muted");
+}
+
+
+/* ============================================================
+   STORY STATES
+   ============================================================ */
+const states = [
+
+  function ecosystem(){
+
+    setHeader(
+      "Business Ecosystem",
+      "Relationship overview",
+      "10",
+      "Visible Nodes"
+    );
+
+    clearClasses();
+
+    cy.nodes()
+      .addClass("focus");
+
+    cy.edges()
+      .removeClass("focus critical opportunity");
+
+    cy.nodes()
+      .removeClass("focus");
+
+    gsap.to(
+      annotation,
+      {
+        opacity:0,
+        y:10,
+        duration:.25
+      }
+    );
+  },
+
+
+  function corePath(){
+
+    setHeader(
+      "Core Path",
+      "Strategy to market",
+      "5",
+      "Focused Nodes"
+    );
+
+    clearClasses();
+
+    const nodes =
+      cy.$(
+        "#strategy, #operations, #supply, #distribution, #market"
+      );
+
+    const edges =
+      cy.$(
+        "#e3, #e8, #e9"
+      )
+      .union(
+        cy.$("#e11")
+      );
+
+    const keep =
+      nodes.union(edges);
+
+    dimEverythingExcept(
+      keep
+    );
+
+    nodes.addClass("focus");
+    edges.addClass("focus");
+
+    gsap.to(
+      annotation,
+      {
+        opacity:0,
+        y:10,
+        duration:.25
+      }
+    );
+  },
+
+
+  function bottleneck(){
+
+    setHeader(
+      "Constraint",
+      "Distribution is the bottleneck",
+      "4",
+      "Dependent Links"
+    );
+
+    clearClasses();
+
+    const criticalNode =
+      cy.$id("distribution");
+
+    const dependent =
+      criticalNode
+        .connectedEdges()
+        .union(criticalNode)
+        .union(
+          criticalNode
+            .neighborhood("node")
+        );
+
+    dimEverythingExcept(
+      dependent
+    );
+
+    criticalNode
+      .addClass("critical");
+
+    criticalNode
+      .connectedEdges()
+      .addClass("critical");
+
+    gsap.to(
+      annotation,
+      {
+        opacity:0,
+        y:10,
+        duration:.25
+      }
+    );
+  },
+
+
+  function opportunity(){
+
+    setHeader(
+      "Opportunity",
+      "Add a direct digital path",
+      "1",
+      "New Connection"
+    );
+
+    clearClasses();
+
+    const digital =
+      cy.$id("digital");
+
+    const distribution =
+      cy.$id("distribution");
+
+    const market =
+      cy.$id("market");
+
+    const newEdge =
+      cy.$id("opportunityEdge");
+
+    const keep =
+      digital
+        .union(distribution)
+        .union(market)
+        .union(newEdge)
+        .union(
+          cy.$("#e9, #e11, #e12")
+        );
+
+    dimEverythingExcept(
+      keep
+    );
+
+    digital
+      .union(distribution)
+      .union(market)
+      .addClass("opportunity");
+
+    newEdge
+      .removeClass("opportunity-base muted")
+      .addClass("opportunity");
+
+    gsap.to(
+      annotation,
+      {
+        opacity:1,
+        y:0,
+        duration:.5,
+        delay:.35,
+        ease:"power2.out"
+      }
+    );
+  }
+
+];
+
+
+let currentState = -1;
+
+function setActiveStep(index){
+
+  stepElements
+    .forEach(
+      (step,i) =>
+        step.classList.toggle(
+          "is-active",
+          i === index
+        )
+    );
+
+  if(currentState === index){
+    return;
+  }
+
+  currentState = index;
+  states[index]?.();
+}
+
+
+/* ============================================================
+   SCROLLTRIGGER
+   ============================================================ */
+stepElements
+  .forEach(
+    (step,index) => {
+
+      ScrollTrigger.create({
+        trigger:step,
+        start:"top 56%",
+        end:"bottom 44%",
+
+        onEnter:() => {
+          setActiveStep(index);
+        },
+
+        onEnterBack:() => {
+          setActiveStep(index);
+        }
+      });
+
+    }
+  );
+
+
+ScrollTrigger.create({
+  trigger:".story",
+  start:"top top",
+  end:"bottom bottom",
+
+  onUpdate:self => {
+    progressFill.style.height =
+      `${self.progress * 100}%`;
+  }
+});
+
+
+/* ============================================================
+   RESPONSIVE REFRESH
+   ============================================================ */
+let resizeTimer = null;
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    clearTimeout(
+      resizeTimer
+    );
+
+    resizeTimer =
+      setTimeout(
+        () => {
+          cy.resize();
+          cy.fit(
+            cy.elements(),
+            48
+          );
+          ScrollTrigger.refresh();
+        },
+        120
+      );
+  }
+);
+
+
+/* ============================================================
+   INITIAL
+   ============================================================ */
+cy.ready(
+  () => {
+    cy.fit(
+      cy.elements(),
+      48
+    );
+
+    setActiveStep(0);
+  }
+);
+
+
+window.addEventListener(
+  "load",
+  () => {
+    requestAnimationFrame(
+      () => {
+        ScrollTrigger.refresh();
+      }
+    );
+  }
+);
+
+
+/* ============================================================
+   GLOBAL API
+   ============================================================ */
+window.scrollytellingNetwork = {
+
+  setState:index => {
+    setActiveStep(index);
+  },
+
+  getGraph:() => cy,
+
+  fit:() => {
+    cy.fit(
+      cy.elements(),
+      48
+    );
+  },
+
+  refresh:() => {
+    cy.resize();
+    ScrollTrigger.refresh();
+  }
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Scroll Story — Scrollytelling Data</title>
+
+<style>
+  :root{
+    --bg:#06080b;
+    --panel:#0a0e13;
+    --text:#f7f8fb;
+    --muted:rgba(235,241,247,.52);
+    --faint:rgba(255,255,255,.08);
+    --accent:#ff7a16;
+    --accent-soft:#ffc36a;
+  }
+
+  *{box-sizing:border-box}
+
+  html{
+    background:var(--bg);
+    scroll-behavior:auto;
+  }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 74% 36%,rgba(255,122,22,.035),transparent 22%),
+      #06080b;
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  body::-webkit-scrollbar{width:10px}
+  body::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.10);
+    border-radius:999px;
+  }
+
+  .topbar{
+    position:fixed;
+    left:0;
+    right:0;
+    top:0;
+    z-index:60;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    padding:26px 30px;
+    pointer-events:none;
+    background:
+      linear-gradient(180deg,rgba(6,8,11,.94),rgba(6,8,11,.48),transparent);
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.38);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .story{
+    display:grid;
+    grid-template-columns:minmax(340px,42vw) 1fr;
+    min-height:100vh;
+  }
+
+  .steps{
+    position:relative;
+    z-index:10;
+    padding-top:8vh;
+    padding-bottom:8vh;
+  }
+
+  .step{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:
+      clamp(90px,12vh,130px)
+      clamp(28px,5vw,74px);
+    opacity:.38;
+    transition:opacity .35s ease;
+  }
+
+  .step.is-active{
+    opacity:1;
+  }
+
+  .step-inner{
+    width:min(500px,88%);
+  }
+
+  .step-index{
+    margin-bottom:18px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  .step h2{
+    margin:0;
+    font-size:clamp(42px,5.4vw,76px);
+    line-height:.92;
+    letter-spacing:-.055em;
+    font-weight:760;
+    text-wrap:balance;
+  }
+
+  .step p{
+    margin:24px 0 0;
+    max-width:430px;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.65;
+  }
+
+  .stage-column{
+    position:relative;
+    min-height:100vh;
+  }
+
+  .stage{
+    position:sticky;
+    top:0;
+    height:100vh;
+    padding:92px 34px 40px;
+    display:grid;
+    place-items:center;
+  }
+
+  .viz-card{
+    position:relative;
+    width:min(860px,92%);
+    height:min(640px,72vh);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:30px;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 70% 20%,rgba(255,122,22,.055),transparent 24%),
+      linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.006));
+    box-shadow:
+      0 34px 90px rgba(0,0,0,.18),
+      inset 0 0 90px rgba(255,255,255,.009);
+  }
+
+  .viz-head{
+    position:absolute;
+    left:28px;
+    right:28px;
+    top:24px;
+    z-index:5;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+  }
+
+  .viz-title-wrap{
+    max-width:60%;
+  }
+
+  .viz-kicker{
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    margin-bottom:7px;
+  }
+
+  .viz-title{
+    margin:0;
+    font-size:24px;
+    line-height:1.08;
+    letter-spacing:-.03em;
+    font-weight:700;
+  }
+
+  .viz-metric{
+    text-align:right;
+  }
+
+  .viz-metric strong{
+    display:block;
+    font-size:38px;
+    line-height:.9;
+    letter-spacing:-.05em;
+    font-weight:760;
+  }
+
+  .viz-metric span{
+    display:block;
+    margin-top:8px;
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+  }
+
+  .chart-wrap{
+    position:absolute;
+    inset:105px 20px 54px;
+  }
+
+  svg{
+    width:100%;
+    height:100%;
+    overflow:visible;
+  }
+
+  .axis text{
+    fill:rgba(255,255,255,.34);
+    font-size:10px;
+  }
+
+  .axis path,
+  .axis line{
+    stroke:rgba(255,255,255,.07);
+  }
+
+  .grid line{
+    stroke:rgba(255,255,255,.05);
+  }
+
+  .bar{
+    rx:8;
+  }
+
+  .bar-label{
+    fill:rgba(255,255,255,.72);
+    font-size:11px;
+    font-weight:650;
+  }
+
+  .value-label{
+    fill:rgba(255,255,255,.46);
+    font-size:10px;
+    text-anchor:end;
+  }
+
+  .annotation{
+    opacity:0;
+  }
+
+  .annotation-line{
+    stroke:rgba(255,185,111,.45);
+    stroke-width:1;
+  }
+
+  .annotation-box{
+    fill:rgba(7,11,15,.88);
+    stroke:rgba(255,255,255,.09);
+  }
+
+  .annotation-title{
+    fill:#fff;
+    font-size:11px;
+    font-weight:700;
+  }
+
+  .annotation-copy{
+    fill:rgba(255,255,255,.48);
+    font-size:9px;
+  }
+
+  .footer-note{
+    position:absolute;
+    left:28px;
+    bottom:20px;
+    color:rgba(255,255,255,.23);
+    font-size:8px;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+  }
+
+  .progress{
+    position:fixed;
+    right:20px;
+    top:50%;
+    z-index:70;
+    width:2px;
+    height:150px;
+    transform:translateY(-50%);
+    background:rgba(255,255,255,.08);
+  }
+
+  .progress-fill{
+    width:100%;
+    height:0%;
+    background:linear-gradient(180deg,var(--accent),var(--accent-soft));
+    box-shadow:0 0 12px rgba(255,122,22,.28);
+  }
+
+  @media(max-width:900px){
+    .story{
+      display:block;
+    }
+
+    .stage-column{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+    }
+
+    .stage{
+      padding:74px 12px 18px;
+    }
+
+    .viz-card{
+      width:94vw;
+      height:58vh;
+      margin-top:-14vh;
+    }
+
+    .steps{
+      position:relative;
+      z-index:10;
+      padding-top:40vh;
+    }
+
+    .step{
+      min-height:105vh;
+      align-items:flex-end;
+      padding:80px 20px 70px;
+    }
+
+    .step-inner{
+      width:100%;
+      padding:22px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.07);
+      background:rgba(6,8,11,.76);
+      backdrop-filter:blur(16px);
+    }
+
+    .step h2{
+      font-size:clamp(36px,11vw,58px);
+    }
+
+    .step p{
+      font-size:13px;
+    }
+
+    .meta{display:none}
+    .topbar{padding:20px}
+    .progress{right:10px}
+
+    .viz-title{
+      font-size:18px;
+    }
+
+    .viz-metric strong{
+      font-size:30px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div>
+    <div class="eyebrow">Scroll Story / Scrollytelling Data</div>
+    <h1>Scrollytelling Data</h1>
+  </div>
+
+  <div class="meta">
+    GSAP ScrollTrigger + D3.js<br>
+    section trigger + stateful visualization
+  </div>
+</header>
+
+<div class="progress">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<main class="story">
+
+  <section class="steps">
+
+    <article class="step" data-step="0">
+      <div class="step-inner">
+        <div class="step-index">01 / Overview</div>
+        <h2>Start With The Full Market.</h2>
+        <p>
+          The first step establishes the baseline. Every region is visible, so the reader understands the overall distribution before attention is narrowed.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="1">
+      <div class="step-inner">
+        <div class="step-index">02 / Focus</div>
+        <h2>Direct Attention To The Leader.</h2>
+        <p>
+          The chart does not change form. Instead, one region is emphasized while the rest recede. The message changes without forcing the reader to relearn the visual encoding.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="2">
+      <div class="step-inner">
+        <div class="step-index">03 / Growth</div>
+        <h2>Change The Metric, Not The Grammar.</h2>
+        <p>
+          The same bars now represent growth instead of sales. Keeping the chart structure stable makes the transition easier to understand.
+        </p>
+      </div>
+    </article>
+
+    <article class="step" data-step="3">
+      <div class="step-inner">
+        <div class="step-index">04 / Insight</div>
+        <h2>End With One Actionable Point.</h2>
+        <p>
+          The final state combines ranking, highlight and annotation. The animation resolves into an explicit takeaway rather than ending as a decorative transition.
+        </p>
+      </div>
+    </article>
+
+  </section>
+
+
+  <aside class="stage-column">
+    <div class="stage">
+
+      <section class="viz-card">
+
+        <div class="viz-head">
+          <div class="viz-title-wrap">
+            <div class="viz-kicker" id="vizKicker">Regional Performance</div>
+            <h2 class="viz-title" id="vizTitle">Global sales by region</h2>
+          </div>
+
+          <div class="viz-metric">
+            <strong id="headlineValue">38%</strong>
+            <span id="headlineLabel">Top Region Share</span>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <svg id="chart" viewBox="0 0 760 470" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+
+        <div class="footer-note">
+          Demo data · reusable scrollytelling structure
+        </div>
+
+      </section>
+    </div>
+  </aside>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const DATA = [
+  {region:"Asia Pacific", sales:38, growth:12.4},
+  {region:"Europe",       sales:24, growth:5.8},
+  {region:"North America",sales:18, growth:7.1},
+  {region:"Middle East",  sales:10, growth:10.3},
+  {region:"Africa",       sales:6,  growth:14.8},
+  {region:"Latin America",sales:4,  growth:9.2}
+];
+
+
+/* ============================================================
+   D3 SETUP
+   ============================================================ */
+const svg =
+  d3.select("#chart");
+
+const width =
+  760;
+
+const height =
+  470;
+
+const margin = {
+  top:24,
+  right:62,
+  bottom:46,
+  left:138
+};
+
+const innerWidth =
+  width -
+  margin.left -
+  margin.right;
+
+const innerHeight =
+  height -
+  margin.top -
+  margin.bottom;
+
+const g =
+  svg
+    .append("g")
+    .attr(
+      "transform",
+      `translate(${margin.left},${margin.top})`
+    );
+
+const y =
+  d3
+    .scaleBand()
+    .domain(
+      DATA.map(d => d.region)
+    )
+    .range([0,innerHeight])
+    .padding(.30);
+
+const x =
+  d3
+    .scaleLinear()
+    .domain([0,40])
+    .range([0,innerWidth]);
+
+const xAxisG =
+  g
+    .append("g")
+    .attr("class","axis x-axis")
+    .attr(
+      "transform",
+      `translate(0,${innerHeight})`
+    );
+
+const yAxisG =
+  g
+    .append("g")
+    .attr("class","axis y-axis");
+
+const gridG =
+  g
+    .append("g")
+    .attr("class","grid");
+
+const barsG =
+  g
+    .append("g");
+
+const valuesG =
+  g
+    .append("g");
+
+const annotationG =
+  g
+    .append("g")
+    .attr("class","annotation");
+
+
+/* ============================================================
+   STATIC Y AXIS
+   ============================================================ */
+yAxisG
+  .call(
+    d3.axisLeft(y)
+      .tickSize(0)
+  );
+
+yAxisG
+  .select(".domain")
+  .remove();
+
+
+/* ============================================================
+   BAR ELEMENTS
+   ============================================================ */
+const bars =
+  barsG
+    .selectAll("rect")
+    .data(DATA)
+    .join("rect")
+    .attr("class","bar")
+    .attr("x",0)
+    .attr("y",d => y(d.region))
+    .attr("height",y.bandwidth())
+    .attr("width",0)
+    .attr("fill","rgba(255,255,255,.18)");
+
+const values =
+  valuesG
+    .selectAll("text")
+    .data(DATA)
+    .join("text")
+    .attr("class","value-label")
+    .attr(
+      "x",
+      d => x(d.sales) - 8
+    )
+    .attr(
+      "y",
+      d =>
+        y(d.region) +
+        y.bandwidth()/2 +
+        3
+    )
+    .text(d => `${d.sales}%`);
+
+
+/* ============================================================
+   ANNOTATION
+   ============================================================ */
+annotationG
+  .append("line")
+  .attr("class","annotation-line")
+  .attr("x1",x(14.8))
+  .attr(
+    "y1",
+    y("Africa") +
+    y.bandwidth()/2
+  )
+  .attr("x2",x(29))
+  .attr(
+    "y2",
+    y("Africa") -
+    18
+  );
+
+annotationG
+  .append("rect")
+  .attr("class","annotation-box")
+  .attr("x",x(29))
+  .attr(
+    "y",
+    y("Africa") - 56
+  )
+  .attr("width",188)
+  .attr("height",58)
+  .attr("rx",12);
+
+annotationG
+  .append("text")
+  .attr("class","annotation-title")
+  .attr("x",x(29)+12)
+  .attr(
+    "y",
+    y("Africa") - 34
+  )
+  .text("Fastest growth");
+
+annotationG
+  .append("text")
+  .attr("class","annotation-copy")
+  .attr("x",x(29)+12)
+  .attr(
+    "y",
+    y("Africa") - 17
+  )
+  .text("14.8% YoY · highest in the set");
+
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const title =
+  document.querySelector("#vizTitle");
+
+const kicker =
+  document.querySelector("#vizKicker");
+
+const headlineValue =
+  document.querySelector("#headlineValue");
+
+const headlineLabel =
+  document.querySelector("#headlineLabel");
+
+function drawAxis(
+  max,
+  suffix
+){
+
+  x.domain([0,max]);
+
+  xAxisG
+    .transition()
+    .duration(650)
+    .call(
+      d3.axisBottom(x)
+        .ticks(5)
+        .tickFormat(d => `${d}${suffix}`)
+    );
+
+  gridG
+    .transition()
+    .duration(650)
+    .call(
+      d3.axisBottom(x)
+        .ticks(5)
+        .tickSize(innerHeight)
+        .tickFormat("")
+    )
+    .attr(
+      "transform",
+      `translate(0,0)`
+    );
+
+  gridG
+    .select(".domain")
+    .remove();
+}
+
+
+function updateBars({
+  metric,
+  max,
+  suffix,
+  highlight,
+  dimOthers=false,
+  sort=false
+}){
+
+  const data =
+    sort
+      ? [...DATA].sort(
+          (a,b) =>
+            b[metric] - a[metric]
+        )
+      : DATA;
+
+  y.domain(
+    data.map(d => d.region)
+  );
+
+  yAxisG
+    .transition()
+    .duration(650)
+    .call(
+      d3.axisLeft(y)
+        .tickSize(0)
+    );
+
+  yAxisG
+    .select(".domain")
+    .remove();
+
+  drawAxis(
+    max,
+    suffix
+  );
+
+  bars
+    .data(
+      data,
+      d => d.region
+    )
+    .transition()
+    .duration(720)
+    .ease(d3.easeCubicInOut)
+    .attr(
+      "y",
+      d => y(d.region)
+    )
+    .attr(
+      "height",
+      y.bandwidth()
+    )
+    .attr(
+      "width",
+      d => x(d[metric])
+    )
+    .attr(
+      "fill",
+      d => {
+        if(
+          d.region === highlight
+        ){
+          return "#ff7a16";
+        }
+
+        return dimOthers
+          ? "rgba(255,255,255,.10)"
+          : "rgba(255,255,255,.20)";
+      }
+    );
+
+  values
+    .data(
+      data,
+      d => d.region
+    )
+    .transition()
+    .duration(720)
+    .ease(d3.easeCubicInOut)
+    .attr(
+      "x",
+      d =>
+        Math.max(
+          34,
+          x(d[metric]) - 8
+        )
+    )
+    .attr(
+      "y",
+      d =>
+        y(d.region) +
+        y.bandwidth()/2 +
+        3
+    )
+    .style(
+      "fill",
+      d =>
+        d.region === highlight
+          ? "#fff"
+          : "rgba(255,255,255,.46)"
+    )
+    .tween(
+      "text",
+      function(d){
+
+        const node =
+          this;
+
+        const current =
+          parseFloat(
+            node.textContent
+          ) || 0;
+
+        const target =
+          d[metric];
+
+        const interp =
+          d3.interpolateNumber(
+            current,
+            target
+          );
+
+        return t => {
+          const v =
+            interp(t);
+
+          node.textContent =
+            metric === "growth"
+              ? `${v.toFixed(1)}%`
+              : `${Math.round(v)}%`;
+        };
+      }
+    );
+}
+
+
+/* ============================================================
+   STORY STATES
+   ============================================================ */
+function state0(){
+
+  kicker.textContent =
+    "Regional Performance";
+
+  title.textContent =
+    "Global sales by region";
+
+  headlineValue.textContent =
+    "38%";
+
+  headlineLabel.textContent =
+    "Top Region Share";
+
+  annotationG
+    .transition()
+    .duration(280)
+    .style("opacity",0);
+
+  updateBars({
+    metric:"sales",
+    max:40,
+    suffix:"%",
+    highlight:null,
+    dimOthers:false,
+    sort:false
+  });
+}
+
+
+function state1(){
+
+  kicker.textContent =
+    "Market Leader";
+
+  title.textContent =
+    "Asia Pacific leads the mix";
+
+  headlineValue.textContent =
+    "1.6×";
+
+  headlineLabel.textContent =
+    "Vs. Europe";
+
+  annotationG
+    .transition()
+    .duration(280)
+    .style("opacity",0);
+
+  updateBars({
+    metric:"sales",
+    max:40,
+    suffix:"%",
+    highlight:"Asia Pacific",
+    dimOthers:true,
+    sort:false
+  });
+}
+
+
+function state2(){
+
+  kicker.textContent =
+    "Growth View";
+
+  title.textContent =
+    "Growth changes the ranking";
+
+  headlineValue.textContent =
+    "14.8%";
+
+  headlineLabel.textContent =
+    "Fastest Growth";
+
+  annotationG
+    .transition()
+    .duration(280)
+    .style("opacity",0);
+
+  updateBars({
+    metric:"growth",
+    max:16,
+    suffix:"%",
+    highlight:"Africa",
+    dimOthers:true,
+    sort:true
+  });
+}
+
+
+function state3(){
+
+  kicker.textContent =
+    "Actionable Insight";
+
+  title.textContent =
+    "Scale where momentum is strongest";
+
+  headlineValue.textContent =
+    "Africa";
+
+  headlineLabel.textContent =
+    "Priority Signal";
+
+  updateBars({
+    metric:"growth",
+    max:16,
+    suffix:"%",
+    highlight:"Africa",
+    dimOthers:true,
+    sort:true
+  });
+
+  setTimeout(
+    () => {
+      annotationG
+        .transition()
+        .duration(420)
+        .style("opacity",1);
+    },
+    380
+  );
+}
+
+
+const states = [
+  state0,
+  state1,
+  state2,
+  state3
+];
+
+
+/* ============================================================
+   SCROLLTRIGGER
+   Mature scroll trigger engine; no ResizeObserver dependency
+   from Scrollama and no custom intersection math.
+   ============================================================ */
+gsap.registerPlugin(
+  ScrollTrigger
+);
+
+const stepElements =
+  Array.from(
+    document.querySelectorAll(".step")
+  );
+
+
+function activateStep(
+  index
+){
+
+  stepElements
+    .forEach(
+      (step,i) =>
+        step.classList.toggle(
+          "is-active",
+          i === index
+        )
+    );
+
+  states[index]?.();
+}
+
+
+/* One trigger per narrative step. */
+stepElements
+  .forEach(
+    (step,index) => {
+
+      ScrollTrigger.create({
+        trigger:step,
+        start:"top 56%",
+        end:"bottom 44%",
+
+        onEnter:() => {
+          activateStep(index);
+        },
+
+        onEnterBack:() => {
+          activateStep(index);
+        }
+      });
+
+    }
+  );
+
+
+/* Global story progress for the right-side progress rail. */
+ScrollTrigger.create({
+  trigger:".story",
+  start:"top top",
+  end:"bottom bottom",
+
+  onUpdate:self => {
+
+    document
+      .querySelector("#progressFill")
+      .style.height =
+        `${self.progress * 100}%`;
+  }
+});
+
+
+/* ============================================================
+   INITIAL RENDER
+   ============================================================ */
+state0();
+
+bars
+  .transition()
+  .delay(
+    (d,i) => i*70
+  )
+  .duration(700)
+  .attr(
+    "width",
+    d => x(d.sales)
+  );
+
+activateStep(0);
+
+window.addEventListener(
+  "load",
+  () => {
+    requestAnimationFrame(
+      () => {
+        ScrollTrigger.refresh();
+      }
+    );
+  }
+);
+
+
+/* ============================================================
+   OPTIONAL GLOBAL API
+   ============================================================ */
+window.scrollytellingData = {
+  setState:index => {
+    activateStep(index);
+  },
+
+  refresh:() => {
+    ScrollTrigger.refresh();
+  }
+};
+</script>
+
+</body>
+</html>
