@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mask Line Reveal — Reusable Asset</title>
+
+<style>
+  :root{
+    --bg:#070a0f;
+    --panel:#0d1219;
+    --line:rgba(255,255,255,.08);
+    --text:#f6f8fb;
+    --muted:#7f8b98;
+    --accent:#ff7a16;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    width:100%;
+    height:100%;
+    margin:0;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 52% 48%,rgba(255,122,22,.052),transparent 24%),
+      linear-gradient(180deg,#090c11,#06080c 72%);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  body{
+    display:grid;
+    place-items:center;
+  }
+
+  .stage{
+    position:relative;
+    width:min(1180px,100vw);
+    height:min(760px,100vh);
+    padding:34px;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+  }
+
+  .topbar{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:24px;
+  }
+
+  .eyebrow{
+    margin-bottom:8px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:18px;
+    font-weight:680;
+    letter-spacing:-.02em;
+  }
+
+  .meta{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.6;
+    text-align:right;
+  }
+
+  .hero{
+    display:grid;
+    place-items:center;
+    min-height:0;
+  }
+
+  .copy{
+    width:min(980px,92%);
+  }
+
+  .kicker{
+    margin:0 0 16px;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+
+  .headline{
+    margin:0;
+    max-width:980px;
+    font-size:clamp(46px,7.7vw,104px);
+    line-height:.91;
+    font-weight:770;
+    letter-spacing:-.058em;
+    text-wrap:balance;
+  }
+
+  /*
+    The wrapper created by JS is the actual mask.
+    It owns the clipping, while SplitType's .line moves inside it.
+  */
+  .line-mask{
+    display:block;
+    overflow:hidden;
+    padding-bottom:.07em;
+    margin-bottom:-.07em;
+  }
+
+  .line-mask > .line{
+    display:block;
+    will-change:transform,opacity,filter,clip-path;
+    transform-origin:left center;
+  }
+
+  .body-copy{
+    width:min(650px,90%);
+    margin:28px 0 0;
+    color:#9aa5b1;
+    font-size:clamp(13px,1.2vw,17px);
+    line-height:1.55;
+  }
+
+  .body-copy .line-mask{
+    padding-bottom:.05em;
+    margin-bottom:-.05em;
+  }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:9px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+  }
+
+  button,
+  select{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:999px;
+    background:rgba(255,255,255,.025);
+    color:#dce4eb;
+    padding:9px 13px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.05em;
+    cursor:pointer;
+  }
+
+  button:hover,
+  select:hover{
+    background:rgba(255,255,255,.055);
+    border-color:rgba(255,255,255,.18);
+  }
+
+  .accent-btn{
+    border-color:rgba(255,122,22,.28);
+    color:#ffd0aa;
+    background:rgba(255,122,22,.07);
+  }
+
+  .accent-btn:hover{
+    background:rgba(255,122,22,.12);
+  }
+
+  .guide{
+    position:absolute;
+    left:34px;
+    bottom:26px;
+    color:rgba(255,255,255,.24);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  @media(max-width:700px){
+    .stage{padding:20px}
+    .meta{display:none}
+    .headline{font-size:clamp(44px,15vw,74px)}
+    .copy{width:96%}
+    .guide{display:none}
+  }
+</style>
+</head>
+
+<body>
+<main class="stage">
+
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">Effects / Text Reveal</div>
+      <h1>Mask Line Reveal</h1>
+    </div>
+
+    <div class="meta">
+      SplitType + Anime.js<br>
+      Overflow-mask composition
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="copy">
+      <p class="kicker reveal-kicker">Editorial Motion System</p>
+
+      <h2 class="headline reveal-headline">
+        Ideas Enter With Rhythm
+        And Leave With Impact
+      </h2>
+
+      <p class="body-copy reveal-body">
+        A line-based reveal for editorial layouts, hero statements, campaign headlines and premium presentation pages.
+      </p>
+    </div>
+  </section>
+
+  <footer class="controls">
+    <select id="effectSelect" aria-label="Effect">
+      <option value="rise">Vertical Rise</option>
+      <option value="drop">Vertical Drop</option>
+      <option value="slide">Horizontal Slide</option>
+      <option value="skew">Skew Reveal</option>
+    </select>
+
+    <select id="alignSelect" aria-label="Stagger direction">
+      <option value="first">Top to Bottom</option>
+      <option value="last">Bottom to Top</option>
+      <option value="center">From Center</option>
+    </select>
+
+    <button class="accent-btn" id="replayBtn">Replay</button>
+    <button id="randomBtn">Randomize</button>
+  </footer>
+
+  <div class="guide">Edit CONFIG only when reusing</div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+
+<script>
+/* ============================================================
+   REUSE CONFIG
+   ============================================================ */
+const CONFIG = {
+  target: ".reveal-headline",
+  effect: "rise",            // rise | drop | slide | skew
+  stagger: 110,
+  duration: 920,
+  delay: 160,
+  easing: "easeOutExpo",
+  staggerFrom: "first"       // first | last | center
+};
+
+
+/* ============================================================
+   SPLIT + MASK ENGINE
+   SplitType solves line detection.
+   We only add a lightweight wrapper around each generated line.
+   ============================================================ */
+const registry = new Map();
+
+function prepareMaskedLines(target) {
+  const el = typeof target === "string"
+    ? document.querySelector(target)
+    : target;
+
+  if (!el) return null;
+
+  const previous = registry.get(el);
+
+  if (previous) {
+    previous.instance.revert();
+  }
+
+  /*
+    SplitType determines visual lines based on the current layout.
+  */
+  const instance = new SplitType(el, {
+    types: "lines"
+  });
+
+  const masks = [];
+
+  instance.lines.forEach(line => {
+    const mask = document.createElement("span");
+    mask.className = "line-mask";
+
+    line.parentNode.insertBefore(mask,line);
+    mask.appendChild(line);
+
+    masks.push(mask);
+  });
+
+  const state = {
+    instance,
+    lines: instance.lines,
+    masks
+  };
+
+  registry.set(el,state);
+
+  return state;
+}
+
+
+/* ============================================================
+   EFFECT PRESETS
+   These remain presets inside one stable asset.
+   ============================================================ */
+const EFFECTS = {
+  rise: {
+    from: {
+      translateY: "115%",
+      opacity: 0
+    },
+    to: {
+      translateY: "0%",
+      opacity: 1
+    }
+  },
+
+  drop: {
+    from: {
+      translateY: "-115%",
+      opacity: 0
+    },
+    to: {
+      translateY: "0%",
+      opacity: 1
+    }
+  },
+
+  slide: {
+    from: {
+      translateX: "-105%",
+      opacity: 0
+    },
+    to: {
+      translateX: "0%",
+      opacity: 1
+    }
+  },
+
+  skew: {
+    from: {
+      translateY: "108%",
+      skewY: 8,
+      opacity: 0
+    },
+    to: {
+      translateY: "0%",
+      skewY: 0,
+      opacity: 1
+    }
+  }
+};
+
+
+/* ============================================================
+   PUBLIC API
+   ============================================================ */
+function createMaskLineReveal({
+  target,
+  effect = "rise",
+  stagger = 110,
+  duration = 920,
+  delay = 0,
+  easing = "easeOutExpo",
+  staggerFrom = "first"
+}) {
+
+  const state = prepareMaskedLines(target);
+
+  if (!state) return null;
+
+  const preset = EFFECTS[effect] || EFFECTS.rise;
+
+  anime.set(state.lines,{
+    ...preset.from
+  });
+
+  return anime({
+    targets: state.lines,
+    ...preset.to,
+    delay: anime.stagger(stagger,{
+      start: delay,
+      from: staggerFrom
+    }),
+    duration,
+    easing
+  });
+}
+
+
+/* ============================================================
+   SUPPORTING COPY
+   Same line-mask engine, different timing.
+   ============================================================ */
+function animateSupportingCopy(){
+
+  createMaskLineReveal({
+    target: ".reveal-kicker",
+    effect: "rise",
+    stagger: 0,
+    duration: 560,
+    delay: 70,
+    easing: "easeOutCubic"
+  });
+
+  createMaskLineReveal({
+    target: ".reveal-body",
+    effect: "rise",
+    stagger: 80,
+    duration: 650,
+    delay: 650,
+    easing: "easeOutCubic"
+  });
+}
+
+
+/* ============================================================
+   DEMO RUNNER
+   ============================================================ */
+function runDemo(){
+
+  anime.remove("*");
+
+  createMaskLineReveal({
+    ...CONFIG,
+    effect:
+      document.querySelector("#effectSelect").value,
+    staggerFrom:
+      document.querySelector("#alignSelect").value
+  });
+
+  animateSupportingCopy();
+}
+
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+document.querySelector("#replayBtn")
+  .addEventListener("click",runDemo);
+
+document.querySelector("#effectSelect")
+  .addEventListener("change",runDemo);
+
+document.querySelector("#alignSelect")
+  .addEventListener("change",runDemo);
+
+document.querySelector("#randomBtn")
+  .addEventListener("click",() => {
+
+    const effects =
+      ["rise","drop","slide","skew"];
+
+    const directions =
+      ["first","last","center"];
+
+    const effect =
+      effects[Math.floor(Math.random()*effects.length)];
+
+    const direction =
+      directions[Math.floor(Math.random()*directions.length)];
+
+    document.querySelector("#effectSelect").value =
+      effect;
+
+    document.querySelector("#alignSelect").value =
+      direction;
+
+    runDemo();
+  });
+
+
+/* ============================================================
+   INITIAL PLAY
+   ============================================================ */
+window.addEventListener("load",() => {
+  setTimeout(runDemo,120);
+});
+
+
+/* ============================================================
+   RESIZE
+   Line splitting depends on width, so rebuild after layout changes.
+   ============================================================ */
+let resizeTimer = null;
+
+window.addEventListener("resize",() => {
+  clearTimeout(resizeTimer);
+
+  resizeTimer = setTimeout(
+    runDemo,
+    140
+  );
+});
+</script>
+</body>
+</html>

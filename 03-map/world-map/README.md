@@ -50,6 +50,12 @@
 - 节点 tooltip → `05-components/tooltip/`
 - 径向渐变背景 + 暗角 → `02-background/`
 
+## 相关资产
+
+- `../choropleth/`：同一底图配方的分级设色表达（国家面填色 + 聚焦压暗）
+- `../flow-map/`：同一底图配方的流向动画表达（dash 流动 + 粒子包）
+- 三个资产底图代码同源——**已出现 3 次，达到拆分阈值**，可考虑抽公共 basemap 模块。
+
 ## 来源
 
 自研资产（原 `world-map-global-network.html`），2026-09 归档入 `03-map/`。

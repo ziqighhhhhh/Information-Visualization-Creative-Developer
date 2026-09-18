@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>World Map — Highlighted Markets</title>
+
+<style>
+  :root{
+    --bg:#06101b;
+    --country:#102235;
+    --country-stroke:#28445e;
+    --grid:rgba(122,167,205,.10);
+
+    --core:#ff7a16;
+    --core-soft:rgba(255,122,22,.34);
+
+    --active:#f2b84b;
+    --active-soft:rgba(242,184,75,.26);
+
+    --potential:#5b8fb9;
+    --potential-soft:rgba(91,143,185,.24);
+
+    --text:#f3f7fa;
+    --muted:#8fa1b3;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  body{
+    background:
+      radial-gradient(circle at 51% 45%,rgba(30,91,145,.11),transparent 34%),
+      radial-gradient(circle at 61% 55%,rgba(255,122,22,.025),transparent 22%),
+      var(--bg);
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    isolation:isolate;
+  }
+
+  .stage::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:3;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.24) 100%),
+      linear-gradient(180deg,rgba(255,255,255,.012),transparent 18%,transparent 82%,rgba(0,0,0,.10));
+  }
+
+  .header{
+    position:absolute;
+    left:32px;
+    top:28px;
+    z-index:20;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    margin-bottom:8px;
+    color:var(--core);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:22px;
+    font-weight:680;
+    letter-spacing:-.03em;
+  }
+
+  .subtitle{
+    margin:8px 0 0;
+    max-width:450px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.55;
+  }
+
+  .summary{
+    position:absolute;
+    top:28px;
+    right:30px;
+    z-index:20;
+    display:flex;
+    gap:10px;
+    pointer-events:none;
+  }
+
+  .summary-card{
+    min-width:100px;
+    padding:10px 13px;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:12px;
+    background:rgba(7,18,30,.48);
+    backdrop-filter:blur(10px);
+  }
+
+  .summary-card strong{
+    display:block;
+    margin-bottom:2px;
+    font-size:18px;
+    font-weight:730;
+    color:#fff;
+  }
+
+  .summary-card span{
+    color:var(--muted);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  #map{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:1;
+  }
+
+  .sphere{
+    fill:rgba(7,20,33,.16);
+    stroke:rgba(126,174,214,.10);
+    stroke-width:1;
+  }
+
+  .graticule{
+    fill:none;
+    stroke:var(--grid);
+    stroke-width:.5;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .country{
+    fill:var(--country);
+    stroke:var(--country-stroke);
+    stroke-width:.55;
+    vector-effect:non-scaling-stroke;
+    cursor:pointer;
+    transition:filter .18s ease, opacity .18s ease;
+  }
+
+  .country:hover{
+    filter:brightness(1.18);
+  }
+
+  .country.core{
+    fill:var(--core);
+    stroke:#ffc98c;
+    stroke-width:.85;
+    filter:url(#coreGlow);
+  }
+
+  .country.active{
+    fill:var(--active);
+    stroke:#f7d996;
+    stroke-width:.7;
+  }
+
+  .country.potential{
+    fill:var(--potential);
+    stroke:#83afd1;
+    stroke-width:.65;
+  }
+
+  .country.dimmed{
+    opacity:.42;
+  }
+
+  .country.selected{
+    filter:url(#selectedGlow);
+  }
+
+  .country-label{
+    fill:#fff;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.015em;
+    paint-order:stroke;
+    stroke:rgba(2,8,13,.90);
+    stroke-width:3px;
+    stroke-linejoin:round;
+    pointer-events:none;
+  }
+
+  .market-dot{
+    pointer-events:none;
+  }
+
+  .market-dot circle.core-dot{
+    fill:#fff3e4;
+    stroke:var(--core);
+    stroke-width:2;
+    vector-effect:non-scaling-stroke;
+    filter:url(#nodeGlow);
+  }
+
+  .market-dot circle.pulse{
+    fill:none;
+    stroke:var(--core);
+    stroke-width:1;
+    opacity:.38;
+    vector-effect:non-scaling-stroke;
+    transform-box:fill-box;
+    transform-origin:center;
+    animation:pulse 2.5s ease-out infinite;
+  }
+
+  .market-dot circle.pulse.second{
+    animation-delay:1.25s;
+  }
+
+  @keyframes pulse{
+    0%{transform:scale(.5);opacity:.52}
+    75%,100%{transform:scale(2.4);opacity:0}
+  }
+
+  .legend{
+    position:absolute;
+    left:30px;
+    bottom:24px;
+    z-index:20;
+    display:flex;
+    gap:15px;
+    align-items:center;
+    color:rgba(220,230,239,.55);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  .legend-item{
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+
+  .swatch{
+    width:9px;
+    height:9px;
+    border-radius:2px;
+  }
+
+  .swatch.core{background:var(--core);box-shadow:0 0 10px var(--core-soft)}
+  .swatch.active{background:var(--active)}
+  .swatch.potential{background:var(--potential)}
+
+  .tooltip{
+    position:absolute;
+    z-index:40;
+    pointer-events:none;
+    opacity:0;
+    min-width:175px;
+    padding:11px 12px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:10px;
+    background:rgba(5,14,23,.94);
+    box-shadow:0 12px 36px rgba(0,0,0,.32);
+    backdrop-filter:blur(12px);
+    transform:translate(13px,13px);
+    transition:opacity .11s ease;
+  }
+
+  .tooltip .status{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:6px;
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  .tooltip .status i{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+  }
+
+  .tooltip strong{
+    display:block;
+    margin-bottom:4px;
+    color:#fff;
+    font-size:13px;
+  }
+
+  .tooltip p{
+    margin:0;
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.45;
+  }
+
+  .controls{
+    position:absolute;
+    right:27px;
+    bottom:24px;
+    z-index:30;
+    display:flex;
+    gap:9px;
+  }
+
+  button{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.11);
+    border-radius:999px;
+    background:rgba(7,18,30,.56);
+    color:#dce6ef;
+    padding:9px 13px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.04em;
+    cursor:pointer;
+    backdrop-filter:blur(10px);
+  }
+
+  button:hover{
+    background:rgba(255,255,255,.07);
+    color:#fff;
+  }
+
+  .loading{
+    position:absolute;
+    inset:0;
+    z-index:50;
+    display:grid;
+    place-items:center;
+    background:var(--bg);
+    color:var(--muted);
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    transition:opacity .35s ease;
+  }
+
+  .loading.hidden{
+    opacity:0;
+    pointer-events:none;
+  }
+
+  @media(max-width:760px){
+    .header{left:18px;top:18px}
+    .summary{display:none}
+    .legend{left:18px;bottom:18px;gap:10px}
+    .controls{right:14px;bottom:14px}
+    h1{font-size:18px}
+    .subtitle{display:none}
+  }
+</style>
+</head>
+
+<body>
+<main class="stage">
+
+  <header class="header">
+    <div class="eyebrow">Visualization / Highlighted Markets</div>
+    <h1>Market Priorities</h1>
+    <p class="subtitle">
+      A reusable choropleth-style market layer for highlighting core, active and potential markets.
+      Country groups are data-driven; the map engine remains unchanged.
+    </p>
+  </header>
+
+  <div class="summary">
+    <div class="summary-card"><strong id="coreCount">0</strong><span>Core</span></div>
+    <div class="summary-card"><strong id="activeCount">0</strong><span>Active</span></div>
+    <div class="summary-card"><strong id="potentialCount">0</strong><span>Potential</span></div>
+  </div>
+
+  <svg id="map" aria-label="Highlighted global markets">
+    <defs>
+      <filter id="coreGlow" x="-80%" y="-80%" width="260%" height="260%">
+        <feGaussianBlur stdDeviation="2.2" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+
+      <filter id="selectedGlow" x="-100%" y="-100%" width="300%" height="300%">
+        <feGaussianBlur stdDeviation="3.5" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+
+      <filter id="nodeGlow" x="-200%" y="-200%" width="500%" height="500%">
+        <feGaussianBlur stdDeviation="2" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="legend">
+    <div class="legend-item"><i class="swatch core"></i>Core market</div>
+    <div class="legend-item"><i class="swatch active"></i>Active market</div>
+    <div class="legend-item"><i class="swatch potential"></i>Potential market</div>
+  </div>
+
+  <div class="controls">
+    <button id="replayBtn">Replay</button>
+    <button id="resetBtn">Reset view</button>
+  </div>
+
+  <div class="tooltip" id="tooltip">
+    <div class="status"><i></i><span></span></div>
+    <strong></strong>
+    <p></p>
+  </div>
+
+  <div class="loading" id="loading">Loading world atlas…</div>
+
+</main>
+
+<!-- Mature open-source primitives:
+     D3 v7 + topojson-client v3 + world-atlas v2
+-->
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+
+<script>
+/* ============================================================
+   REUSE CONFIG
+   ISO numeric country codes are used instead of display names so
+   the asset is robust across naming variations.
+
+   Common examples:
+   Brazil 076, Saudi Arabia 682, Uganda 800, Vietnam 704,
+   Singapore 702, UAE 784, Mexico 484, Kenya 404, Egypt 818.
+   ============================================================ */
+const CONFIG = {
+  atlasUrl:
+    "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json",
+
+  core: [
+    {id:76,  name:"Brazil",       note:"Core priority market"},
+    {id:682, name:"Saudi Arabia", note:"Core priority market"},
+    {id:800, name:"Uganda",       note:"Core priority market"}
+  ],
+
+  active: [
+    {id:704, name:"Vietnam",              note:"Active market"},
+    {id:702, name:"Singapore",            note:"Active market"},
+    {id:784, name:"United Arab Emirates", note:"Active market"}
+  ],
+
+  potential: [
+    {id:484, name:"Mexico", note:"Potential market"},
+    {id:404, name:"Kenya",  note:"Potential market"},
+    {id:818, name:"Egypt",  note:"Potential market"}
+  ]
+};
+
+
+/* ============================================================
+   LOOKUPS
+   ============================================================ */
+const categories = {
+  core:      new Map(CONFIG.core.map(d => [Number(d.id),d])),
+  active:    new Map(CONFIG.active.map(d => [Number(d.id),d])),
+  potential: new Map(CONFIG.potential.map(d => [Number(d.id),d]))
+};
+
+function marketMeta(feature){
+  const id = Number(feature.id);
+
+  if(categories.core.has(id)){
+    return {category:"core",...categories.core.get(id)};
+  }
+
+  if(categories.active.has(id)){
+    return {category:"active",...categories.active.get(id)};
+  }
+
+  if(categories.potential.has(id)){
+    return {category:"potential",...categories.potential.get(id)};
+  }
+
+  return null;
+}
+
+
+/* ============================================================
+   D3 SETUP
+   ============================================================ */
+const svg = d3.select("#map");
+const tooltip = d3.select("#tooltip");
+const loading = document.querySelector("#loading");
+
+const gRoot = svg.append("g").attr("class","map-root");
+const gBase = gRoot.append("g").attr("class","base-layer");
+const gLabels = gRoot.append("g").attr("class","label-layer");
+const gDots = gRoot.append("g").attr("class","dot-layer");
+
+const projection = d3.geoNaturalEarth1();
+const geoPath = d3.geoPath(projection);
+const graticule = d3.geoGraticule10();
+
+let width = 0;
+let height = 0;
+let worldData = null;
+let selectedId = null;
+
+const zoom = d3.zoom()
+  .scaleExtent([1,5])
+  .on("zoom",event => {
+    gRoot.attr("transform",event.transform);
+  });
+
+svg.call(zoom);
+
+
+/* ============================================================
+   FIT / BASE MAP
+   ============================================================ */
+function fitProjection(features){
+  width = window.innerWidth;
+  height = window.innerHeight;
+
+  svg.attr("viewBox",`0 0 ${width} ${height}`);
+
+  projection.fitExtent(
+    [
+      [width*.045,height*.13],
+      [width*.955,height*.88]
+    ],
+    {
+      type:"FeatureCollection",
+      features
+    }
+  );
+}
+
+function drawBase(features){
+  gBase.selectAll("*").remove();
+
+  gBase.append("path")
+    .datum({type:"Sphere"})
+    .attr("class","sphere")
+    .attr("d",geoPath);
+
+  gBase.append("path")
+    .datum(graticule)
+    .attr("class","graticule")
+    .attr("d",geoPath);
+
+  gBase.selectAll(".country")
+    .data(features,d => d.id)
+    .join("path")
+    .attr("class",d => {
+      const meta = marketMeta(d);
+      return `country${meta ? " "+meta.category : ""}`;
+    })
+    .attr("d",geoPath)
+    .on("mouseenter",(event,d) => {
+      const meta = marketMeta(d);
+
+      tooltip
+        .style("opacity",1)
+        .style("left",`${event.clientX}px`)
+        .style("top",`${event.clientY}px`);
+
+      const status = tooltip.select(".status");
+      const dot = status.select("i");
+      const statusText = status.select("span");
+
+      if(meta){
+        const color = meta.category === "core"
+          ? "var(--core)"
+          : meta.category === "active"
+          ? "var(--active)"
+          : "var(--potential)";
+
+        dot.style("background",color);
+        statusText.text(meta.category+" market");
+        tooltip.select("strong").text(meta.name);
+        tooltip.select("p").text(meta.note);
+      }else{
+        dot.style("background","var(--country-stroke)");
+        statusText.text("Other market");
+        tooltip.select("strong").text(d.properties?.name || `Country ${d.id}`);
+        tooltip.select("p").text("Not currently highlighted.");
+      }
+    })
+    .on("mousemove",event => {
+      tooltip
+        .style("left",`${event.clientX}px`)
+        .style("top",`${event.clientY}px`);
+    })
+    .on("mouseleave",() => {
+      tooltip.style("opacity",0);
+    })
+    .on("click",(event,d) => {
+      event.stopPropagation();
+      focusCountry(d);
+    });
+}
+
+
+/* ============================================================
+   CORE LABELS + PULSE NODES
+   Only core markets get persistent labels to avoid clutter.
+   ============================================================ */
+function drawCoreLabels(features){
+  gLabels.selectAll("*").remove();
+  gDots.selectAll("*").remove();
+
+  const coreFeatures = features.filter(d => {
+    const meta = marketMeta(d);
+    return meta && meta.category === "core";
+  });
+
+  gLabels.selectAll(".country-label")
+    .data(coreFeatures,d => d.id)
+    .join("text")
+    .attr("class","country-label")
+    .attr("x",d => geoPath.centroid(d)[0] + 7)
+    .attr("y",d => geoPath.centroid(d)[1] - 7)
+    .text(d => marketMeta(d).name);
+
+  const dots = gDots.selectAll(".market-dot")
+    .data(coreFeatures,d => d.id)
+    .join("g")
+    .attr("class","market-dot")
+    .attr("transform",d => {
+      const [x,y] = geoPath.centroid(d);
+      return `translate(${x},${y})`;
+    });
+
+  dots.append("circle")
+    .attr("class","pulse")
+    .attr("r",5);
+
+  dots.append("circle")
+    .attr("class","pulse second")
+    .attr("r",5);
+
+  dots.append("circle")
+    .attr("class","core-dot")
+    .attr("r",3);
+}
+
+
+/* ============================================================
+   FOCUS / FILTER EFFECT
+   Clicking a market zooms to it and dims unrelated countries.
+   ============================================================ */
+function focusCountry(feature){
+  selectedId = Number(feature.id);
+
+  gBase.selectAll(".country")
+    .classed("selected",d => Number(d.id) === selectedId)
+    .classed("dimmed",d => Number(d.id) !== selectedId);
+
+  const [[x0,y0],[x1,y1]] = geoPath.bounds(feature);
+  const dx = x1-x0;
+  const dy = y1-y0;
+  const x = (x0+x1)/2;
+  const y = (y0+y1)/2;
+
+  const scale = Math.max(
+    1,
+    Math.min(
+      4.5,
+      .68 / Math.max(dx/width,dy/height)
+    )
+  );
+
+  svg.transition()
+    .duration(850)
+    .ease(d3.easeCubicInOut)
+    .call(
+      zoom.transform,
+      d3.zoomIdentity
+        .translate(width/2,height/2)
+        .scale(scale)
+        .translate(-x,-y)
+    );
+}
+
+function resetView(){
+  selectedId = null;
+
+  gBase.selectAll(".country")
+    .classed("selected",false)
+    .classed("dimmed",false);
+
+  svg.transition()
+    .duration(700)
+    .ease(d3.easeCubicInOut)
+    .call(zoom.transform,d3.zoomIdentity);
+}
+
+
+/* ============================================================
+   INTRO ANIMATION
+   D3 transitions only — no custom animation engine required.
+   ============================================================ */
+function replayAnimation(){
+  gBase.selectAll(".country")
+    .interrupt()
+    .style("opacity",0)
+    .transition()
+    .delay((d,i) => Math.min(420,i*3))
+    .duration(520)
+    .ease(d3.easeCubicOut)
+    .style("opacity",1);
+
+  gLabels.selectAll(".country-label")
+    .interrupt()
+    .style("opacity",0)
+    .attr("transform","translate(0,6)")
+    .transition()
+    .delay((d,i) => 530+i*90)
+    .duration(480)
+    .ease(d3.easeCubicOut)
+    .style("opacity",1)
+    .attr("transform","translate(0,0)");
+
+  gDots.selectAll(".market-dot")
+    .interrupt()
+    .style("opacity",0)
+    .attr("transform",function(d){
+      const [x,y] = geoPath.centroid(d);
+      return `translate(${x},${y}) scale(.2)`;
+    })
+    .transition()
+    .delay((d,i) => 470+i*100)
+    .duration(650)
+    .ease(d3.easeBackOut.overshoot(1.4))
+    .style("opacity",1)
+    .attr("transform",function(d){
+      const [x,y] = geoPath.centroid(d);
+      return `translate(${x},${y}) scale(1)`;
+    });
+}
+
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  if(!worldData) return;
+
+  const features = topojson.feature(
+    worldData,
+    worldData.objects.countries
+  ).features;
+
+  fitProjection(features);
+  drawBase(features);
+  drawCoreLabels(features);
+  replayAnimation();
+
+  document.querySelector("#coreCount").textContent = CONFIG.core.length;
+  document.querySelector("#activeCount").textContent = CONFIG.active.length;
+  document.querySelector("#potentialCount").textContent = CONFIG.potential.length;
+}
+
+
+/* ============================================================
+   LOAD DATA
+   ============================================================ */
+d3.json(
+  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+)
+.then(data => {
+  worldData = data;
+  render();
+
+  requestAnimationFrame(() => {
+    loading.classList.add("hidden");
+  });
+})
+.catch(error => {
+  loading.textContent = "World atlas failed to load";
+  console.error(error);
+});
+
+
+/* ============================================================
+   CONTROLS / RESIZE
+   ============================================================ */
+document.querySelector("#replayBtn")
+  .addEventListener("click",replayAnimation);
+
+document.querySelector("#resetBtn")
+  .addEventListener("click",resetView);
+
+let resizeTimer = null;
+
+window.addEventListener("resize",() => {
+  clearTimeout(resizeTimer);
+
+  resizeTimer = setTimeout(() => {
+    render();
+  },120);
+});
+</script>
+</body>
+</html>

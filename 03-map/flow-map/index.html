@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>World Map — Animated Routes</title>
+
+<style>
+  :root{
+    --bg:#06101b;
+    --country:#102235;
+    --country-stroke:#28445e;
+    --grid:rgba(122,167,205,.10);
+
+    --orange:#ff7a16;
+    --gold:#ffc766;
+    --ice:#dff4ff;
+
+    --text:#f3f7fa;
+    --muted:#8fa1b3;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  body{
+    background:
+      radial-gradient(circle at 54% 48%,rgba(30,91,145,.12),transparent 34%),
+      radial-gradient(circle at 60% 58%,rgba(255,122,22,.03),transparent 25%),
+      var(--bg);
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    isolation:isolate;
+  }
+
+  .stage::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:5;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.24) 100%),
+      linear-gradient(180deg,rgba(255,255,255,.012),transparent 18%,transparent 82%,rgba(0,0,0,.10));
+  }
+
+  .header{
+    position:absolute;
+    left:32px;
+    top:28px;
+    z-index:20;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    margin-bottom:8px;
+    color:var(--orange);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:22px;
+    font-weight:680;
+    letter-spacing:-.03em;
+  }
+
+  .subtitle{
+    margin:8px 0 0;
+    max-width:490px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.55;
+  }
+
+  .stats{
+    position:absolute;
+    top:28px;
+    right:30px;
+    z-index:20;
+    display:flex;
+    gap:10px;
+    pointer-events:none;
+  }
+
+  .stat{
+    min-width:104px;
+    padding:10px 13px;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:12px;
+    background:rgba(7,18,30,.50);
+    backdrop-filter:blur(10px);
+  }
+
+  .stat strong{
+    display:block;
+    margin-bottom:2px;
+    color:#fff;
+    font-size:18px;
+    font-weight:730;
+  }
+
+  .stat span{
+    color:var(--muted);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  #map{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:1;
+  }
+
+  #particles{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:2;
+    pointer-events:none;
+  }
+
+  .sphere{
+    fill:rgba(7,20,33,.16);
+    stroke:rgba(126,174,214,.10);
+    stroke-width:1;
+  }
+
+  .graticule{
+    fill:none;
+    stroke:var(--grid);
+    stroke-width:.5;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .country{
+    fill:var(--country);
+    stroke:var(--country-stroke);
+    stroke-width:.55;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .route-glow,
+  .route-base,
+  .route-flow{
+    fill:none;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    pointer-events:none;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .route-glow{
+    stroke:var(--orange);
+    opacity:.11;
+    filter:url(#routeGlow);
+  }
+
+  .route-base{
+    stroke:rgba(255,160,76,.28);
+  }
+
+  .route-flow{
+    stroke:url(#routeGradient);
+    stroke-dasharray:8 12;
+    animation:dashFlow 1.1s linear infinite;
+  }
+
+  @keyframes dashFlow{
+    to{stroke-dashoffset:-40}
+  }
+
+  .node{
+    cursor:pointer;
+  }
+
+  .node-core{
+    fill:#fff4e7;
+    stroke:var(--orange);
+    stroke-width:2;
+    vector-effect:non-scaling-stroke;
+    filter:url(#nodeGlow);
+  }
+
+  .node-ring{
+    fill:none;
+    stroke:var(--orange);
+    stroke-width:1;
+    opacity:.32;
+    vector-effect:non-scaling-stroke;
+    transform-box:fill-box;
+    transform-origin:center;
+    animation:pulse 2.6s ease-out infinite;
+  }
+
+  .node-ring.second{
+    animation-delay:1.3s;
+  }
+
+  .hub .node-core{
+    stroke:var(--gold);
+    stroke-width:2.4;
+  }
+
+  .node-label{
+    fill:#d3dde7;
+    font-size:10px;
+    font-weight:650;
+    paint-order:stroke;
+    stroke:var(--bg);
+    stroke-width:3px;
+    stroke-linejoin:round;
+    pointer-events:none;
+  }
+
+  @keyframes pulse{
+    0%{transform:scale(.55);opacity:.46}
+    75%,100%{transform:scale(2.45);opacity:0}
+  }
+
+  .tooltip{
+    position:absolute;
+    z-index:40;
+    pointer-events:none;
+    opacity:0;
+    min-width:180px;
+    padding:11px 12px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:10px;
+    background:rgba(5,14,23,.94);
+    box-shadow:0 12px 36px rgba(0,0,0,.32);
+    backdrop-filter:blur(12px);
+    transform:translate(13px,13px);
+    transition:opacity .11s ease;
+  }
+
+  .tooltip strong{
+    display:block;
+    margin-bottom:4px;
+    color:#fff;
+    font-size:13px;
+  }
+
+  .tooltip span{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.45;
+  }
+
+  .legend{
+    position:absolute;
+    left:30px;
+    bottom:24px;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    color:rgba(220,230,239,.55);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  .legend-item{
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+
+  .legend-route{
+    width:28px;
+    height:2px;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--orange),var(--gold),transparent);
+    box-shadow:0 0 8px rgba(255,122,22,.4);
+  }
+
+  .legend-dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--orange);
+    box-shadow:0 0 9px var(--orange);
+  }
+
+  .controls{
+    position:absolute;
+    right:27px;
+    bottom:24px;
+    z-index:30;
+    display:flex;
+    gap:9px;
+  }
+
+  button{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.11);
+    border-radius:999px;
+    background:rgba(7,18,30,.56);
+    color:#dce6ef;
+    padding:9px 13px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.04em;
+    cursor:pointer;
+    backdrop-filter:blur(10px);
+  }
+
+  button:hover{
+    background:rgba(255,255,255,.07);
+    color:#fff;
+  }
+
+  .loading{
+    position:absolute;
+    inset:0;
+    z-index:50;
+    display:grid;
+    place-items:center;
+    background:var(--bg);
+    color:var(--muted);
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    transition:opacity .35s ease;
+  }
+
+  .loading.hidden{
+    opacity:0;
+    pointer-events:none;
+  }
+
+  @media(max-width:760px){
+    .header{left:18px;top:18px}
+    .stats{display:none}
+    .legend{left:18px;bottom:18px}
+    .controls{right:14px;bottom:14px}
+    h1{font-size:18px}
+    .subtitle{display:none}
+  }
+</style>
+</head>
+
+<body>
+<main class="stage">
+
+  <header class="header">
+    <div class="eyebrow">Visualization / Animated Routes</div>
+    <h1>Global Trade Flow</h1>
+    <p class="subtitle">
+      Directional route animation for logistics, trade and market expansion.
+      The rendering engine is D3; motion is driven by native SVG and a thin canvas particle layer.
+    </p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><strong id="routeCount">0</strong><span>Routes</span></div>
+    <div class="stat"><strong id="flowCount">0</strong><span>Flow Index</span></div>
+  </div>
+
+  <svg id="map" aria-label="Animated world routes">
+    <defs>
+      <filter id="routeGlow" x="-120%" y="-120%" width="340%" height="340%">
+        <feGaussianBlur stdDeviation="5.5"/>
+      </filter>
+
+      <filter id="nodeGlow" x="-200%" y="-200%" width="500%" height="500%">
+        <feGaussianBlur stdDeviation="2" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+
+      <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ff6a00"/>
+        <stop offset="55%" stop-color="#ff9f38"/>
+        <stop offset="100%" stop-color="#ffd99f"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <canvas id="particles"></canvas>
+
+  <div class="tooltip" id="tooltip">
+    <strong></strong>
+    <span></span>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><i class="legend-route"></i>Directional flow</div>
+    <div class="legend-item"><i class="legend-dot"></i>Market node</div>
+  </div>
+
+  <div class="controls">
+    <button id="replayBtn">Replay</button>
+    <button id="pauseBtn">Pause</button>
+    <button id="resetBtn">Reset view</button>
+  </div>
+
+  <div class="loading" id="loading">Loading world atlas…</div>
+
+</main>
+
+<!-- Mature open-source stack:
+     D3 v7 + topojson-client v3 + world-atlas v2
+-->
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+
+<script>
+/* ============================================================
+   CONFIG ONLY
+   Reuse this asset by changing hub + routes.
+   ============================================================ */
+const CONFIG = {
+  atlasUrl:
+    "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json",
+
+  hub:{
+    id:"guangzhou",
+    name:"Guangzhou",
+    region:"Global Hub",
+    lon:113.2644,
+    lat:23.1291
+  },
+
+  routes:[
+    {
+      id:"singapore",
+      name:"Singapore",
+      region:"Southeast Asia",
+      lon:103.8198,
+      lat:1.3521,
+      volume:82,
+      speed:1.12
+    },
+    {
+      id:"dubai",
+      name:"Dubai",
+      region:"Middle East",
+      lon:55.2708,
+      lat:25.2048,
+      volume:96,
+      speed:.95
+    },
+    {
+      id:"nairobi",
+      name:"Nairobi",
+      region:"East Africa",
+      lon:36.8219,
+      lat:-1.2921,
+      volume:70,
+      speed:.84
+    },
+    {
+      id:"sao-paulo",
+      name:"São Paulo",
+      region:"South America",
+      lon:-46.6333,
+      lat:-23.5505,
+      volume:88,
+      speed:.72
+    },
+    {
+      id:"london",
+      name:"London",
+      region:"Europe",
+      lon:-0.1276,
+      lat:51.5072,
+      volume:76,
+      speed:.78
+    },
+    {
+      id:"los-angeles",
+      name:"Los Angeles",
+      region:"North America",
+      lon:-118.2437,
+      lat:34.0522,
+      volume:91,
+      speed:.68
+    }
+  ]
+};
+
+
+/* ============================================================
+   D3 MAP SETUP
+   ============================================================ */
+const svg = d3.select("#map");
+const canvas = document.querySelector("#particles");
+const ctx = canvas.getContext("2d");
+const tooltip = d3.select("#tooltip");
+const loading = document.querySelector("#loading");
+
+const gRoot = svg.append("g").attr("class","map-root");
+const gBase = gRoot.append("g").attr("class","base-layer");
+const gRoutes = gRoot.append("g").attr("class","route-layer");
+const gNodes = gRoot.append("g").attr("class","node-layer");
+
+const projection = d3.geoNaturalEarth1();
+const geoPath = d3.geoPath(projection);
+const graticule = d3.geoGraticule10();
+
+let width = 0;
+let height = 0;
+let dpr = 1;
+let worldData = null;
+let paused = false;
+let animationStart = performance.now();
+
+const routeRuntime = [];
+
+const zoom = d3.zoom()
+  .scaleExtent([1,5])
+  .on("zoom",event => {
+    gRoot.attr("transform",event.transform);
+  });
+
+svg.call(zoom);
+
+
+/* ============================================================
+   GREAT-CIRCLE ROUTE
+   D3 geoInterpolate gives a geodesic path on the sphere.
+   ============================================================ */
+function createGeoRoute(from,to,steps=100){
+  const interpolate = d3.geoInterpolate(
+    [from.lon,from.lat],
+    [to.lon,to.lat]
+  );
+
+  return {
+    type:"LineString",
+    coordinates:d3.range(steps+1).map(i => interpolate(i/steps))
+  };
+}
+
+
+/* ============================================================
+   RESPONSIVE PROJECTION
+   ============================================================ */
+function fitProjection(features){
+  width = window.innerWidth;
+  height = window.innerHeight;
+  dpr = Math.min(window.devicePixelRatio || 1,2);
+
+  svg.attr("viewBox",`0 0 ${width} ${height}`);
+
+  canvas.width = Math.round(width*dpr);
+  canvas.height = Math.round(height*dpr);
+  canvas.style.width = width+"px";
+  canvas.style.height = height+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  projection.fitExtent(
+    [
+      [width*.045,height*.13],
+      [width*.955,height*.88]
+    ],
+    {
+      type:"FeatureCollection",
+      features
+    }
+  );
+}
+
+
+/* ============================================================
+   BASE MAP
+   ============================================================ */
+function drawBase(features){
+  gBase.selectAll("*").remove();
+
+  gBase.append("path")
+    .datum({type:"Sphere"})
+    .attr("class","sphere")
+    .attr("d",geoPath);
+
+  gBase.append("path")
+    .datum(graticule)
+    .attr("class","graticule")
+    .attr("d",geoPath);
+
+  gBase.selectAll(".country")
+    .data(features)
+    .join("path")
+    .attr("class","country")
+    .attr("d",geoPath);
+}
+
+
+/* ============================================================
+   ROUTES
+   Stroke width is data-driven by volume.
+   ============================================================ */
+function drawRoutes(){
+  gRoutes.selectAll("*").remove();
+  routeRuntime.length = 0;
+
+  const routes = CONFIG.routes.map(route => ({
+    ...route,
+    geometry:createGeoRoute(CONFIG.hub,route)
+  }));
+
+  const groups = gRoutes.selectAll(".route")
+    .data(routes,d => d.id)
+    .join("g")
+    .attr("class","route");
+
+  groups.append("path")
+    .attr("class","route-glow")
+    .attr("d",d => geoPath(d.geometry))
+    .attr("stroke-width",d => 5 + d.volume*.045);
+
+  groups.append("path")
+    .attr("class","route-base")
+    .attr("d",d => geoPath(d.geometry))
+    .attr("stroke-width",d => .65 + d.volume*.008);
+
+  groups.append("path")
+    .attr("class","route-flow")
+    .attr("d",d => geoPath(d.geometry))
+    .attr("stroke-width",d => .55 + d.volume*.006)
+    .style("animation-duration",d => `${1.45/d.speed}s`);
+
+  groups.select(".route-flow").each(function(d){
+    routeRuntime.push({
+      data:d,
+      path:this,
+      length:this.getTotalLength(),
+      phase:Math.random()
+    });
+  });
+
+  document.querySelector("#routeCount").textContent = routes.length;
+  document.querySelector("#flowCount").textContent =
+    routes.reduce((sum,d) => sum+d.volume,0);
+}
+
+
+/* ============================================================
+   NODES
+   ============================================================ */
+function drawNodes(){
+  gNodes.selectAll("*").remove();
+
+  const nodes = [
+    {...CONFIG.hub,isHub:true},
+    ...CONFIG.routes.map(d => ({...d,isHub:false}))
+  ];
+
+  const groups = gNodes.selectAll(".node")
+    .data(nodes,d => d.id)
+    .join("g")
+    .attr("class",d => `node${d.isHub ? " hub" : ""}`)
+    .attr("transform",d => {
+      const p = projection([d.lon,d.lat]);
+      return `translate(${p[0]},${p[1]})`;
+    })
+    .on("mouseenter",(event,d) => {
+      tooltip
+        .style("opacity",1)
+        .style("left",`${event.clientX}px`)
+        .style("top",`${event.clientY}px`);
+
+      tooltip.select("strong").text(d.name);
+
+      tooltip.select("span").text(
+        d.isHub
+          ? d.region
+          : `${d.region} · flow ${d.volume}`
+      );
+    })
+    .on("mousemove",event => {
+      tooltip
+        .style("left",`${event.clientX}px`)
+        .style("top",`${event.clientY}px`);
+    })
+    .on("mouseleave",() => {
+      tooltip.style("opacity",0);
+    })
+    .on("click",(event,d) => {
+      event.stopPropagation();
+
+      const [x,y] = projection([d.lon,d.lat]);
+
+      svg.transition()
+        .duration(850)
+        .ease(d3.easeCubicInOut)
+        .call(
+          zoom.transform,
+          d3.zoomIdentity
+            .translate(width/2,height/2)
+            .scale(2.55)
+            .translate(-x,-y)
+        );
+    });
+
+  groups.append("circle")
+    .attr("class","node-ring")
+    .attr("r",d => d.isHub ? 7 : 5);
+
+  groups.append("circle")
+    .attr("class","node-ring second")
+    .attr("r",d => d.isHub ? 7 : 5);
+
+  groups.append("circle")
+    .attr("class","node-core")
+    .attr("r",d => d.isHub ? 4.2 : 3.1);
+
+  groups.append("text")
+    .attr("class","node-label")
+    .attr("x",8)
+    .attr("y",-7)
+    .text(d => d.name);
+}
+
+
+/* ============================================================
+   INTRO ANIMATION
+   D3 transitions are enough for route reveal.
+   ============================================================ */
+function replay(){
+  animationStart = performance.now();
+
+  svg.selectAll(".route-base, .route-flow")
+    .each(function(){
+      const length = this.getTotalLength();
+
+      d3.select(this)
+        .interrupt()
+        .attr("stroke-dasharray",`${length} ${length}`)
+        .attr("stroke-dashoffset",length)
+        .style("opacity",0)
+        .transition()
+        .delay((d,i) => 150+i*80)
+        .duration(1250)
+        .ease(d3.easeCubicOut)
+        .style("opacity",null)
+        .attr("stroke-dashoffset",0)
+        .on("end",function(){
+          const sel = d3.select(this);
+
+          if(this.classList.contains("route-flow")){
+            sel
+              .attr("stroke-dasharray","8 12")
+              .attr("stroke-dashoffset",null);
+          }else{
+            sel
+              .attr("stroke-dasharray",null)
+              .attr("stroke-dashoffset",null);
+          }
+        });
+    });
+
+  svg.selectAll(".node")
+    .interrupt()
+    .style("opacity",0)
+    .attr("transform",function(d){
+      const p = projection([d.lon,d.lat]);
+      return `translate(${p[0]},${p[1]}) scale(.2)`;
+    })
+    .transition()
+    .delay((d,i) => 560+i*70)
+    .duration(650)
+    .ease(d3.easeBackOut.overshoot(1.35))
+    .style("opacity",1)
+    .attr("transform",function(d){
+      const p = projection([d.lon,d.lat]);
+      return `translate(${p[0]},${p[1]}) scale(1)`;
+    });
+}
+
+
+/* ============================================================
+   PARTICLE LAYER
+   We intentionally keep this as a thin glue layer:
+   - D3 owns the route geometry
+   - native SVG gives us getPointAtLength()
+   - canvas only paints moving packets
+   ============================================================ */
+function drawParticles(now){
+  ctx.clearRect(0,0,width,height);
+
+  if(paused){
+    requestAnimationFrame(drawParticles);
+    return;
+  }
+
+  routeRuntime.forEach((route,index) => {
+    const count = Math.max(
+      2,
+      Math.round(route.data.volume/24)
+    );
+
+    for(let i=0;i<count;i++){
+      const speed = route.data.speed * .000075;
+      const t = (
+        route.phase +
+        i/count +
+        (now-animationStart)*speed
+      ) % 1;
+
+      const p = route.path.getPointAtLength(
+        route.length*t
+      );
+
+      const alpha = .30 + .70*Math.sin(Math.PI*t);
+      const radius = 1.15 + route.data.volume*.006;
+
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,radius*3.2,0,Math.PI*2);
+      ctx.fillStyle = `rgba(255,122,22,${alpha*.055})`;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,radius,0,Math.PI*2);
+      ctx.fillStyle = `rgba(255,220,175,${alpha})`;
+      ctx.shadowColor = "rgba(255,122,22,.75)";
+      ctx.shadowBlur = 9;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  if(!worldData) return;
+
+  const features = topojson.feature(
+    worldData,
+    worldData.objects.countries
+  ).features;
+
+  fitProjection(features);
+  drawBase(features);
+  drawRoutes();
+  drawNodes();
+  replay();
+}
+
+
+/* ============================================================
+   DATA LOAD
+   ============================================================ */
+d3.json(CONFIG.atlasUrl)
+  .then(data => {
+    worldData = data;
+    render();
+
+    requestAnimationFrame(() => {
+      loading.classList.add("hidden");
+    });
+
+    requestAnimationFrame(drawParticles);
+  })
+  .catch(error => {
+    loading.textContent = "World atlas failed to load";
+    console.error(error);
+  });
+
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+document.querySelector("#replayBtn")
+  .addEventListener("click",replay);
+
+document.querySelector("#pauseBtn")
+  .addEventListener("click",event => {
+    paused = !paused;
+    event.currentTarget.textContent = paused ? "Resume" : "Pause";
+  });
+
+document.querySelector("#resetBtn")
+  .addEventListener("click",() => {
+    svg.transition()
+      .duration(700)
+      .ease(d3.easeCubicInOut)
+      .call(zoom.transform,d3.zoomIdentity);
+  });
+
+
+/* ============================================================
+   RESIZE
+   ============================================================ */
+let resizeTimer = null;
+
+window.addEventListener("resize",() => {
+  clearTimeout(resizeTimer);
+
+  resizeTimer = setTimeout(() => {
+    render();
+  },120);
+});
+</script>
+</body>
+</html>

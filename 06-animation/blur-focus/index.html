@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Blur Focus Reveal — Reusable Asset</title>
+
+<style>
+  :root{
+    --bg:#070a0f;
+    --panel:#0c1118;
+    --line:rgba(255,255,255,.08);
+    --text:#f5f7fa;
+    --muted:#7e8996;
+    --accent:#ff7a16;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    width:100%;
+    height:100%;
+    margin:0;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 46%,rgba(255,122,22,.055),transparent 24%),
+      linear-gradient(180deg,#090d12,#06080c 72%);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  body{
+    display:grid;
+    place-items:center;
+  }
+
+  .stage{
+    position:relative;
+    width:min(1180px,100vw);
+    height:min(760px,100vh);
+    padding:34px;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    overflow:hidden;
+  }
+
+  .stage::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:48%;
+    width:520px;
+    height:520px;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(255,120,20,.055),rgba(255,120,20,.012) 42%,transparent 72%);
+    filter:blur(20px);
+    pointer-events:none;
+  }
+
+  .topbar{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:24px;
+  }
+
+  .eyebrow{
+    margin-bottom:8px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.19em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:18px;
+    font-weight:680;
+    letter-spacing:-.02em;
+  }
+
+  .meta{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.6;
+    text-align:right;
+  }
+
+  .hero{
+    position:relative;
+    z-index:2;
+    display:grid;
+    place-items:center;
+    min-height:0;
+  }
+
+  .copy{
+    width:min(980px,92%);
+    text-align:center;
+  }
+
+  .kicker{
+    margin:0 0 18px;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+
+  .headline{
+    margin:0 auto;
+    max-width:980px;
+    font-size:clamp(48px,7.8vw,104px);
+    line-height:.92;
+    font-weight:770;
+    letter-spacing:-.058em;
+    text-wrap:balance;
+  }
+
+  .headline .char,
+  .headline .word,
+  .headline .line,
+  .kicker .word,
+  .body-copy .word{
+    will-change:transform,opacity,filter;
+  }
+
+  .body-copy{
+    width:min(660px,90%);
+    margin:28px auto 0;
+    color:#9aa5b1;
+    font-size:clamp(13px,1.2vw,17px);
+    line-height:1.55;
+  }
+
+  .focus-marker{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:180px;
+    height:180px;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.035);
+    box-shadow:
+      0 0 0 24px rgba(255,255,255,.012),
+      0 0 80px rgba(255,122,22,.035);
+    pointer-events:none;
+  }
+
+  .controls{
+    position:relative;
+    z-index:2;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:9px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+  }
+
+  button,
+  select{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:999px;
+    background:rgba(255,255,255,.025);
+    color:#dce4eb;
+    padding:9px 13px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.05em;
+    cursor:pointer;
+  }
+
+  button:hover,
+  select:hover{
+    background:rgba(255,255,255,.055);
+    border-color:rgba(255,255,255,.18);
+  }
+
+  .accent-btn{
+    border-color:rgba(255,122,22,.28);
+    color:#ffd0aa;
+    background:rgba(255,122,22,.07);
+  }
+
+  .accent-btn:hover{
+    background:rgba(255,122,22,.12);
+  }
+
+  .guide{
+    position:absolute;
+    right:34px;
+    bottom:26px;
+    z-index:2;
+    color:rgba(255,255,255,.24);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  @media(max-width:700px){
+    .stage{padding:20px}
+    .meta{display:none}
+    .headline{font-size:clamp(44px,15vw,74px)}
+    .copy{width:96%}
+    .guide{display:none}
+  }
+</style>
+</head>
+
+<body>
+<main class="stage">
+
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">Effects / Text Reveal</div>
+      <h1>Blur Focus Reveal</h1>
+    </div>
+
+    <div class="meta">
+      SplitType + Anime.js<br>
+      Blur-to-sharp focus system
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="focus-marker"></div>
+
+    <div class="copy">
+      <p class="kicker reveal-kicker">
+        Precision Creates Presence
+      </p>
+
+      <h2 class="headline reveal-title">
+        From Atmosphere
+        Into Focus
+      </h2>
+
+      <p class="body-copy reveal-body">
+        A premium focus transition for campaign headlines, cinematic hero sections and high-impact product storytelling.
+      </p>
+    </div>
+  </section>
+
+  <footer class="controls">
+    <select id="modeSelect" aria-label="Split mode">
+      <option value="chars">Characters</option>
+      <option value="words">Words</option>
+      <option value="lines">Lines</option>
+    </select>
+
+    <select id="focusSelect" aria-label="Focus direction">
+      <option value="center">From Center</option>
+      <option value="first">Left to Right</option>
+      <option value="last">Right to Left</option>
+      <option value="random">Random</option>
+    </select>
+
+    <select id="depthSelect" aria-label="Depth">
+      <option value="soft">Soft Depth</option>
+      <option value="medium" selected>Medium Depth</option>
+      <option value="deep">Deep Depth</option>
+    </select>
+
+    <button class="accent-btn" id="replayBtn">Replay</button>
+    <button id="randomBtn">Randomize</button>
+  </footer>
+
+  <div class="guide">Edit CONFIG only when reusing</div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+
+<script>
+/* ============================================================
+   REUSE CONFIG
+   ============================================================ */
+const CONFIG = {
+  target: ".reveal-title",
+  split: "chars",            // chars | words | lines
+  from: "center",            // center | first | last | random
+  depth: "medium",           // soft | medium | deep
+  stagger: 28,
+  duration: 880,
+  delay: 120,
+  easing: "easeOutExpo"
+};
+
+
+/* ============================================================
+   SPLIT REGISTRY
+   ============================================================ */
+const registry = new Map();
+
+function splitTarget(target, mode){
+  const el =
+    typeof target === "string"
+      ? document.querySelector(target)
+      : target;
+
+  if(!el) return null;
+
+  const previous =
+    registry.get(el);
+
+  if(previous){
+    previous.revert();
+  }
+
+  const types =
+    mode === "chars"
+      ? "lines, words, chars"
+      : mode === "words"
+      ? "lines, words"
+      : "lines";
+
+  const instance =
+    new SplitType(el,{
+      types
+    });
+
+  registry.set(
+    el,
+    instance
+  );
+
+  return instance;
+}
+
+
+/* ============================================================
+   DEPTH PRESETS
+   The asset identity stays "blur-focus-reveal".
+   These are only tuning presets.
+   ============================================================ */
+const DEPTHS = {
+  soft:{
+    blur:7,
+    y:8,
+    scale:.985,
+    opacity:.16
+  },
+
+  medium:{
+    blur:15,
+    y:16,
+    scale:.965,
+    opacity:.08
+  },
+
+  deep:{
+    blur:26,
+    y:30,
+    scale:.925,
+    opacity:0
+  }
+};
+
+
+/* ============================================================
+   ORDER HELPER
+   Anime.js has built-in stagger directions for first/last/center.
+   For random focus, we shuffle the actual items.
+   ============================================================ */
+function orderItems(items,from){
+  if(from !== "random"){
+    return {
+      items,
+      staggerFrom:from
+    };
+  }
+
+  const shuffled =
+    [...items]
+      .map(item => ({
+        item,
+        n:Math.random()
+      }))
+      .sort((a,b) => a.n-b.n)
+      .map(entry => entry.item);
+
+  return {
+    items:shuffled,
+    staggerFrom:"first"
+  };
+}
+
+
+/* ============================================================
+   PUBLIC API
+   ============================================================ */
+function createBlurFocusReveal({
+  target,
+  split = "chars",
+  from = "center",
+  depth = "medium",
+  stagger = 28,
+  duration = 880,
+  delay = 0,
+  easing = "easeOutExpo"
+}){
+
+  const instance =
+    splitTarget(
+      target,
+      split
+    );
+
+  if(!instance){
+    return null;
+  }
+
+  const rawItems =
+    split === "chars"
+      ? instance.chars
+      : split === "words"
+      ? instance.words
+      : instance.lines;
+
+  const ordered =
+    orderItems(
+      rawItems,
+      from
+    );
+
+  const preset =
+    DEPTHS[depth] ||
+    DEPTHS.medium;
+
+  /*
+    Keep blur / opacity / position in one coherent depth model.
+  */
+  anime.set(
+    ordered.items,
+    {
+      opacity:preset.opacity,
+      translateY:preset.y,
+      scale:preset.scale,
+      filter:`blur(${preset.blur}px)`
+    }
+  );
+
+  return anime({
+    targets:ordered.items,
+
+    opacity:1,
+    translateY:0,
+    scale:1,
+    filter:"blur(0px)",
+
+    delay:anime.stagger(
+      stagger,
+      {
+        start:delay,
+        from:ordered.staggerFrom
+      }
+    ),
+
+    duration,
+    easing
+  });
+}
+
+
+/* ============================================================
+   SUPPORTING COPY
+   ============================================================ */
+function animateSupportingCopy(){
+
+  createBlurFocusReveal({
+    target:".reveal-kicker",
+    split:"words",
+    from:"first",
+    depth:"soft",
+    stagger:24,
+    duration:560,
+    delay:60,
+    easing:"easeOutCubic"
+  });
+
+  createBlurFocusReveal({
+    target:".reveal-body",
+    split:"words",
+    from:"center",
+    depth:"soft",
+    stagger:18,
+    duration:650,
+    delay:620,
+    easing:"easeOutCubic"
+  });
+}
+
+
+/* ============================================================
+   DEMO RUNNER
+   ============================================================ */
+function runDemo(){
+
+  anime.remove("*");
+
+  createBlurFocusReveal({
+    ...CONFIG,
+
+    split:
+      document.querySelector("#modeSelect").value,
+
+    from:
+      document.querySelector("#focusSelect").value,
+
+    depth:
+      document.querySelector("#depthSelect").value
+  });
+
+  animateSupportingCopy();
+}
+
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+document.querySelector("#replayBtn")
+  .addEventListener(
+    "click",
+    runDemo
+  );
+
+document.querySelector("#modeSelect")
+  .addEventListener(
+    "change",
+    runDemo
+  );
+
+document.querySelector("#focusSelect")
+  .addEventListener(
+    "change",
+    runDemo
+  );
+
+document.querySelector("#depthSelect")
+  .addEventListener(
+    "change",
+    runDemo
+  );
+
+document.querySelector("#randomBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      const modes =
+        ["chars","words","lines"];
+
+      const directions =
+        ["center","first","last","random"];
+
+      const depths =
+        ["soft","medium","deep"];
+
+      document.querySelector("#modeSelect").value =
+        modes[
+          Math.floor(
+            Math.random()*modes.length
+          )
+        ];
+
+      document.querySelector("#focusSelect").value =
+        directions[
+          Math.floor(
+            Math.random()*directions.length
+          )
+        ];
+
+      document.querySelector("#depthSelect").value =
+        depths[
+          Math.floor(
+            Math.random()*depths.length
+          )
+        ];
+
+      runDemo();
+    }
+  );
+
+
+/* ============================================================
+   INITIAL PLAY
+   ============================================================ */
+window.addEventListener(
+  "load",
+  () => {
+    setTimeout(
+      runDemo,
+      120
+    );
+  }
+);
+
+
+/* ============================================================
+   RESPONSIVE RESPLIT
+   ============================================================ */
+let resizeTimer = null;
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    clearTimeout(
+      resizeTimer
+    );
+
+    resizeTimer =
+      setTimeout(
+        runDemo,
+        140
+      );
+  }
+);
+</script>
+</body>
+</html>
