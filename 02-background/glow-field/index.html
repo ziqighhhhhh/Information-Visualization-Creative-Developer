@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Shader Glow — Reusable Background Asset</title>
+
+<style>
+  :root{
+    --bg:#05080d;
+    --text:#f6f8fb;
+    --muted:rgba(235,241,247,.56);
+    --accent:#ff7a16;
+    --line:rgba(255,255,255,.09);
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    isolation:isolate;
+    background:#05080d;
+  }
+
+  #vanta-fog{
+    position:absolute;
+    inset:0;
+    z-index:0;
+  }
+
+  /*
+    Thin art-direction overlays only.
+    Vanta remains the actual animated shader renderer.
+  */
+  .glow-core{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:
+      radial-gradient(circle at 52% 48%,rgba(255,255,255,.045),transparent 18%),
+      radial-gradient(circle at 58% 52%,rgba(255,122,22,.04),transparent 31%);
+    mix-blend-mode:screen;
+  }
+
+  .grain{
+    position:absolute;
+    inset:-50%;
+    z-index:2;
+    opacity:.04;
+    pointer-events:none;
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    animation:grainShift .33s steps(2) infinite;
+  }
+
+  @keyframes grainShift{
+    0%{transform:translate3d(0,0,0)}
+    25%{transform:translate3d(1.3%,-.8%,0)}
+    50%{transform:translate3d(-1%,1%,0)}
+    75%{transform:translate3d(.8%,.6%,0)}
+    100%{transform:translate3d(0,0,0)}
+  }
+
+  .grade{
+    position:absolute;
+    inset:0;
+    z-index:3;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 50%,transparent 0 42%,rgba(0,0,0,.10) 68%,rgba(0,0,0,.48) 100%),
+      linear-gradient(180deg,rgba(0,0,0,.10),transparent 25%,rgba(0,0,0,.26));
+  }
+
+  .ui{
+    position:absolute;
+    inset:0;
+    z-index:6;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    padding:30px 32px;
+    pointer-events:none;
+  }
+
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.44);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .hero{
+    align-self:center;
+    width:min(760px,82vw);
+    margin-left:clamp(0px,5vw,80px);
+  }
+
+  .hero-kicker{
+    margin:0 0 18px;
+    color:rgba(255,255,255,.54);
+    font-size:11px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+  }
+
+  .hero-title{
+    margin:0;
+    max-width:760px;
+    font-size:clamp(52px,8vw,108px);
+    line-height:.89;
+    font-weight:760;
+    letter-spacing:-.063em;
+    text-wrap:balance;
+    text-shadow:0 10px 40px rgba(0,0,0,.18);
+  }
+
+  .hero-copy{
+    width:min(590px,78vw);
+    margin:24px 0 0;
+    color:var(--muted);
+    font-size:clamp(13px,1.2vw,17px);
+    line-height:1.6;
+  }
+
+  .bottom{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:20px;
+  }
+
+  .legend{
+    color:rgba(255,255,255,.34);
+    font-size:9px;
+    line-height:1.55;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+  }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    gap:8px;
+    pointer-events:auto;
+  }
+
+  button{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:999px;
+    background:rgba(0,0,0,.22);
+    color:rgba(255,255,255,.76);
+    padding:9px 12px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.05em;
+    cursor:pointer;
+    backdrop-filter:blur(12px);
+  }
+
+  button:hover{
+    color:#fff;
+    background:rgba(255,255,255,.07);
+    border-color:rgba(255,255,255,.24);
+  }
+
+  button.active{
+    color:#fff;
+    border-color:rgba(255,122,22,.34);
+    background:rgba(255,122,22,.10);
+  }
+
+  .status{
+    position:absolute;
+    left:32px;
+    bottom:62px;
+    z-index:8;
+    color:rgba(255,255,255,.29);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  @media(max-width:760px){
+    .ui{padding:20px}
+    .meta{display:none}
+    .hero{margin-left:0;width:92vw}
+    .hero-title{font-size:clamp(46px,16vw,76px)}
+    .bottom{align-items:flex-start;flex-direction:column}
+    .controls{justify-content:flex-start}
+    .status{left:20px;bottom:125px}
+  }
+</style>
+</head>
+
+<body>
+<main class="stage">
+
+  <div id="vanta-fog"></div>
+  <div class="glow-core"></div>
+  <div class="grain"></div>
+  <div class="grade"></div>
+
+  <div class="ui">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Background System / Shader Glow</div>
+        <h1>Shader Glow</h1>
+      </div>
+
+      <div class="meta">
+        Vanta.js FOG + Three.js<br>
+        Shader-driven glow field
+      </div>
+    </header>
+
+    <section class="hero">
+      <p class="hero-kicker">Reusable Background Asset</p>
+
+      <h2 class="hero-title">
+        Let Light Behave Like Atmosphere
+      </h2>
+
+      <p class="hero-copy">
+        A reusable shader-driven glow background for hero sections, product launches, cinematic brand pages and ambient presentation scenes.
+      </p>
+    </section>
+
+    <footer class="bottom">
+      <div class="legend">
+        Engine = Vanta FOG<br>
+        Glue = palette + speed + blur + zoom
+      </div>
+
+      <div class="controls">
+        <button data-preset="ember" class="active">Ember</button>
+        <button data-preset="aurora">Aurora</button>
+        <button data-preset="ice">Ice</button>
+        <button data-preset="noir">Noir</button>
+        <button id="speedBtn">Speed 1×</button>
+        <button id="interactionBtn">Interaction On</button>
+        <button id="grainBtn">Grain On</button>
+      </div>
+    </footer>
+  </div>
+
+  <div class="status" id="status">Initializing shader glow…</div>
+
+</main>
+
+<!-- Vanta official usage pattern: Three.js first, then specific effect -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
+
+<script>
+/* ============================================================
+   PRESETS
+
+   Vanta FOG owns the shader and animation loop.
+   These are only art-direction values.
+   ============================================================ */
+const PRESETS = {
+
+  ember:{
+    highlightColor:0xff8a24,
+    midtoneColor:0xd46b12,
+    lowlightColor:0x29160d,
+    baseColor:0x05080d,
+    blurFactor:.72,
+    zoom:.78,
+    speed:1.15
+  },
+
+  aurora:{
+    highlightColor:0x59f0d1,
+    midtoneColor:0x7b6df5,
+    lowlightColor:0x17395f,
+    baseColor:0x05080d,
+    blurFactor:.64,
+    zoom:.82,
+    speed:.92
+  },
+
+  ice:{
+    highlightColor:0xcff6ff,
+    midtoneColor:0x5ca8e8,
+    lowlightColor:0x17395b,
+    baseColor:0x05080d,
+    blurFactor:.78,
+    zoom:.86,
+    speed:.78
+  },
+
+  noir:{
+    highlightColor:0xd7dde3,
+    midtoneColor:0x6b737d,
+    lowlightColor:0x20262d,
+    baseColor:0x040609,
+    blurFactor:.86,
+    zoom:.88,
+    speed:.66
+  }
+
+};
+
+
+/* ============================================================
+   STABLE WRAPPER API
+   ============================================================ */
+class ShaderGlowBackground {
+
+  constructor({
+    el,
+    preset="ember",
+    interaction=true
+  }){
+    this.el = el;
+    this.preset = preset;
+    this.interaction = interaction;
+    this.speedMultiplier = 1;
+    this.effect = null;
+  }
+
+
+  init(){
+
+    const options =
+      this._resolvedOptions();
+
+    this.effect =
+      VANTA.FOG({
+        el:this.el,
+
+        mouseControls:this.interaction,
+        touchControls:this.interaction,
+        gyroControls:false,
+
+        minHeight:200,
+        minWidth:200,
+        scale:1,
+        scaleMobile:1,
+
+        ...options
+      });
+
+    return this;
+  }
+
+
+  _resolvedOptions(){
+
+    const preset =
+      PRESETS[this.preset];
+
+    return {
+      ...preset,
+      speed:
+        preset.speed *
+        this.speedMultiplier
+    };
+  }
+
+
+  setPreset(name){
+
+    if(!PRESETS[name] || !this.effect){
+      return;
+    }
+
+    this.preset = name;
+
+    this.effect.setOptions(
+      this._resolvedOptions()
+    );
+  }
+
+
+  setSpeedMultiplier(multiplier){
+
+    const value =
+      Number(multiplier) || 1;
+
+    this.speedMultiplier =
+      value;
+
+    if(this.effect){
+      this.effect.setOptions(
+        this._resolvedOptions()
+      );
+    }
+
+    return this.speedMultiplier;
+  }
+
+
+  setInteraction(enabled){
+
+    this.interaction =
+      Boolean(enabled);
+
+    /*
+      Rebuild only because the input-control flags are constructor options.
+      Shader effect itself remains Vanta.
+    */
+    if(this.effect){
+      this.effect.destroy();
+    }
+
+    this.init();
+
+    return this.interaction;
+  }
+
+
+  resize(){
+    if(this.effect){
+      this.effect.resize();
+    }
+  }
+
+
+  destroy(){
+    if(this.effect){
+      this.effect.destroy();
+      this.effect = null;
+    }
+  }
+
+}
+
+
+/* ============================================================
+   BOOTSTRAP
+   ============================================================ */
+(function(){
+
+  const status =
+    document.querySelector("#status");
+
+  const grain =
+    document.querySelector(".grain");
+
+  const background =
+    new ShaderGlowBackground({
+      el:"#vanta-fog",
+      preset:"ember",
+      interaction:true
+    });
+
+
+  try{
+
+    background.init();
+
+    status.textContent =
+      "Shader glow ready · ember";
+
+  }catch(error){
+
+    status.textContent =
+      "Vanta FOG failed to initialize";
+
+    console.error(error);
+
+    return;
+  }
+
+
+  /* ==========================================================
+     PRESETS
+     ========================================================== */
+  document
+    .querySelectorAll("[data-preset]")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll("[data-preset]")
+            .forEach(el => {
+              el.classList.remove("active");
+            });
+
+          button.classList.add("active");
+
+          const preset =
+            button.dataset.preset;
+
+          background.setPreset(
+            preset
+          );
+
+          status.textContent =
+            `Preset · ${preset}`;
+        }
+      );
+
+    });
+
+
+  /* ==========================================================
+     SPEED
+     ========================================================== */
+  const speedSteps =
+    [0.55,1,1.65];
+
+  let speedIndex =
+    1;
+
+  document
+    .querySelector("#speedBtn")
+    .addEventListener(
+      "click",
+      event => {
+
+        speedIndex =
+          (speedIndex + 1) %
+          speedSteps.length;
+
+        const multiplier =
+          speedSteps[speedIndex];
+
+        background.setSpeedMultiplier(
+          multiplier
+        );
+
+        event.currentTarget.textContent =
+          `Speed ${multiplier}×`;
+
+        status.textContent =
+          `Speed multiplier · ${multiplier}×`;
+      }
+    );
+
+
+  /* ==========================================================
+     INTERACTION
+     ========================================================== */
+  document
+    .querySelector("#interactionBtn")
+    .addEventListener(
+      "click",
+      event => {
+
+        const enabled =
+          background.setInteraction(
+            !background.interaction
+          );
+
+        event.currentTarget.textContent =
+          enabled
+            ? "Interaction On"
+            : "Interaction Off";
+
+        status.textContent =
+          enabled
+            ? "Mouse interaction enabled"
+            : "Mouse interaction disabled";
+      }
+    );
+
+
+  /* ==========================================================
+     GRAIN
+     ========================================================== */
+  document
+    .querySelector("#grainBtn")
+    .addEventListener(
+      "click",
+      event => {
+
+        const visible =
+          grain.style.display !== "none";
+
+        grain.style.display =
+          visible
+            ? "none"
+            : "block";
+
+        event.currentTarget.textContent =
+          visible
+            ? "Grain Off"
+            : "Grain On";
+      }
+    );
+
+
+  /* ==========================================================
+     GLOBAL API
+     ========================================================== */
+  window.shaderGlow = {
+
+    setPreset:
+      name =>
+        background.setPreset(name),
+
+    setSpeed:
+      multiplier =>
+        background.setSpeedMultiplier(multiplier),
+
+    setInteraction:
+      enabled =>
+        background.setInteraction(enabled),
+
+    resize:
+      () =>
+        background.resize(),
+
+    destroy:
+      () =>
+        background.destroy()
+  };
+
+
+  window.addEventListener(
+    "beforeunload",
+    () => {
+      background.destroy();
+    }
+  );
+
+})();
+</script>
+</body>
+</html>

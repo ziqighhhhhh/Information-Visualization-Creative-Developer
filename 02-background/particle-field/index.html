@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Particle Field — Reusable Background Asset</title>
+
+<style>
+  :root{
+    --bg:#05080d;
+    --text:#f5f7fa;
+    --muted:rgba(236,242,247,.58);
+    --line:rgba(255,255,255,.09);
+    --accent:#ff7a16;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    isolation:isolate;
+    background:
+      radial-gradient(circle at 58% 46%,rgba(27,66,103,.16),transparent 30%),
+      radial-gradient(circle at 40% 58%,rgba(255,122,22,.04),transparent 25%),
+      var(--bg);
+  }
+
+  #tsparticles{
+    position:absolute;
+    inset:0;
+    z-index:0;
+  }
+
+  #tsparticles canvas{
+    display:block !important;
+  }
+
+  .grade{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 46%,transparent 0 34%,rgba(0,0,0,.12) 64%,rgba(0,0,0,.45) 100%),
+      linear-gradient(180deg,rgba(2,5,9,.08),transparent 28%,rgba(2,5,9,.25));
+  }
+
+  .grain{
+    position:absolute;
+    inset:-50%;
+    z-index:2;
+    opacity:.045;
+    pointer-events:none;
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.68'/%3E%3C/svg%3E");
+    animation:grainMove .35s steps(2) infinite;
+  }
+
+  @keyframes grainMove{
+    0%{transform:translate3d(0,0,0)}
+    25%{transform:translate3d(1.5%,-1%,0)}
+    50%{transform:translate3d(-1%,1.2%,0)}
+    75%{transform:translate3d(1%,.6%,0)}
+    100%{transform:translate3d(0,0,0)}
+  }
+
+  .ui{
+    position:absolute;
+    inset:0;
+    z-index:5;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    padding:30px 32px;
+    pointer-events:none;
+  }
+
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.45);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .hero{
+    align-self:center;
+    width:min(780px,82vw);
+    margin-left:clamp(0px,6vw,88px);
+  }
+
+  .hero-kicker{
+    margin:0 0 18px;
+    color:rgba(255,255,255,.54);
+    font-size:12px;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+  }
+
+  .hero-title{
+    margin:0;
+    max-width:780px;
+    font-size:clamp(52px,8.2vw,112px);
+    line-height:.88;
+    font-weight:760;
+    letter-spacing:-.064em;
+    text-wrap:balance;
+    text-shadow:0 8px 40px rgba(0,0,0,.14);
+  }
+
+  .hero-copy{
+    margin:24px 0 0;
+    width:min(600px,80vw);
+    color:var(--muted);
+    font-size:clamp(13px,1.25vw,17px);
+    line-height:1.6;
+  }
+
+  .bottom{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:24px;
+  }
+
+  .legend{
+    color:rgba(255,255,255,.36);
+    font-size:9px;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    line-height:1.55;
+  }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    gap:8px;
+    pointer-events:auto;
+  }
+
+  button{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:999px;
+    background:rgba(0,0,0,.18);
+    color:rgba(255,255,255,.78);
+    padding:9px 12px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.05em;
+    cursor:pointer;
+    backdrop-filter:blur(12px);
+  }
+
+  button:hover{
+    color:#fff;
+    background:rgba(255,255,255,.08);
+    border-color:rgba(255,255,255,.24);
+  }
+
+  button.active{
+    color:#fff;
+    border-color:rgba(255,122,22,.36);
+    background:rgba(255,122,22,.10);
+  }
+
+  .status{
+    position:absolute;
+    left:32px;
+    bottom:62px;
+    z-index:8;
+    color:rgba(255,255,255,.30);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  @media(max-width:720px){
+    .ui{padding:20px}
+    .meta{display:none}
+    .hero{margin-left:0;width:92vw}
+    .hero-title{font-size:clamp(48px,16vw,78px)}
+    .bottom{align-items:flex-start;flex-direction:column}
+    .controls{justify-content:flex-start}
+    .status{left:20px;bottom:116px}
+  }
+</style>
+</head>
+
+<body>
+<main class="stage">
+
+  <div id="tsparticles"></div>
+
+  <div class="grade"></div>
+  <div class="grain"></div>
+
+  <div class="ui">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Background System / Particle Field</div>
+        <h1>Particle Field</h1>
+      </div>
+
+      <div class="meta">
+        tsParticles v4 / Slim Bundle<br>
+        Config-driven background system
+      </div>
+    </header>
+
+    <section class="hero">
+      <p class="hero-kicker">Reusable Background Asset</p>
+
+      <h2 class="hero-title">
+        Give Empty Space A Pulse
+      </h2>
+
+      <p class="hero-copy">
+        A reusable particle background for technology pages, data stories, brand presentations and ambient hero sections.
+      </p>
+    </section>
+
+    <footer class="bottom">
+      <div class="legend">
+        Engine = tsParticles<br>
+        Glue = presets + palette + density + interaction
+      </div>
+
+      <div class="controls">
+        <button data-preset="ambient" class="active">Ambient</button>
+        <button data-preset="constellation">Constellation</button>
+        <button data-preset="stream">Stream</button>
+        <button data-preset="dust">Dust</button>
+        <button id="toggleInteractionBtn">Interaction On</button>
+      </div>
+    </footer>
+  </div>
+
+  <div class="status" id="status">Initializing particle engine…</div>
+
+</main>
+
+<!-- Official CDN pattern:
+     engine first, then slim bundle, then loadSlim(tsParticles)
+-->
+<script src="https://cdn.jsdelivr.net/npm/@tsparticles/engine@4/tsparticles.engine.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js"></script>
+
+<script>
+/* ============================================================
+   REUSE CONFIG
+
+   In a real page, normally only change:
+   - preset
+   - colors
+   - density
+   - interaction
+   ============================================================ */
+const CONFIG = {
+  preset: "ambient",
+
+  colors: {
+    warm: [
+      "#ff7a16",
+      "#ffc36a",
+      "#dbefff"
+    ],
+
+    cool: [
+      "#55c7ff",
+      "#95a7ff",
+      "#dcecff"
+    ]
+  },
+
+  density: 1,
+
+  interaction: true
+};
+
+
+/* ============================================================
+   PRESET FACTORY
+
+   We use tsParticles' own renderer, motion, retina handling,
+   interactivity, links and lifecycle.
+
+   This function is only configuration glue.
+   ============================================================ */
+function createPreset(
+  name,
+  {
+    colors,
+    density = 1,
+    interaction = true
+  }
+){
+
+  const common = {
+    fullScreen: {
+      enable: false
+    },
+
+    background: {
+      color: {
+        value: "transparent"
+      }
+    },
+
+    detectRetina: true,
+
+    fpsLimit: 60,
+
+    particles: {
+      color: {
+        value: colors
+      },
+
+      shape: {
+        type: "circle"
+      },
+
+      opacity: {
+        value: {
+          min: .16,
+          max: .62
+        }
+      },
+
+      size: {
+        value: {
+          min: .6,
+          max: 2.4
+        }
+      },
+
+      move: {
+        enable: true,
+        outModes: {
+          default: "out"
+        }
+      }
+    },
+
+    interactivity: {
+      detectsOn: "window",
+
+      events: {
+        onHover: {
+          enable: interaction,
+          mode: "repulse"
+        },
+
+        resize: {
+          enable: true
+        }
+      },
+
+      modes: {
+        repulse: {
+          distance: 110,
+          duration: .35,
+          factor: 3
+        }
+      }
+    }
+  };
+
+
+  if(name === "constellation"){
+
+    return {
+      ...common,
+
+      particles: {
+        ...common.particles,
+
+        number: {
+          value: Math.round(74*density),
+          density: {
+            enable: true,
+            width: 1200,
+            height: 800
+          }
+        },
+
+        opacity: {
+          value: {
+            min: .18,
+            max: .52
+          }
+        },
+
+        size: {
+          value: {
+            min: .8,
+            max: 2.1
+          }
+        },
+
+        links: {
+          enable: true,
+          distance: 138,
+          color: "#8fb4cc",
+          opacity: .13,
+          width: .7
+        },
+
+        move: {
+          ...common.particles.move,
+          speed: .48,
+          direction: "none",
+          random: true,
+          straight: false
+        }
+      }
+    };
+  }
+
+
+  if(name === "stream"){
+
+    return {
+      ...common,
+
+      particles: {
+        ...common.particles,
+
+        number: {
+          value: Math.round(92*density),
+          density: {
+            enable: true,
+            width: 1200,
+            height: 800
+          }
+        },
+
+        opacity: {
+          value: {
+            min: .12,
+            max: .46
+          }
+        },
+
+        size: {
+          value: {
+            min: .5,
+            max: 1.8
+          }
+        },
+
+        links: {
+          enable: false
+        },
+
+        move: {
+          ...common.particles.move,
+          speed: 1.45,
+          direction: "right",
+          random: true,
+          straight: false
+        }
+      }
+    };
+  }
+
+
+  if(name === "dust"){
+
+    return {
+      ...common,
+
+      particles: {
+        ...common.particles,
+
+        number: {
+          value: Math.round(150*density),
+          density: {
+            enable: true,
+            width: 1200,
+            height: 800
+          }
+        },
+
+        opacity: {
+          value: {
+            min: .05,
+            max: .24
+          }
+        },
+
+        size: {
+          value: {
+            min: .35,
+            max: 1.15
+          }
+        },
+
+        links: {
+          enable: false
+        },
+
+        move: {
+          ...common.particles.move,
+          speed: .22,
+          direction: "none",
+          random: true,
+          straight: false
+        }
+      }
+    };
+  }
+
+
+  /* ambient */
+  return {
+    ...common,
+
+    particles: {
+      ...common.particles,
+
+      number: {
+        value: Math.round(88*density),
+        density: {
+          enable: true,
+          width: 1200,
+          height: 800
+        }
+      },
+
+      opacity: {
+        value: {
+          min: .10,
+          max: .48
+        }
+      },
+
+      size: {
+        value: {
+          min: .55,
+          max: 2.25
+        }
+      },
+
+      links: {
+        enable: false
+      },
+
+      move: {
+        ...common.particles.move,
+        speed: .38,
+        direction: "none",
+        random: true,
+        straight: false
+      }
+    }
+  };
+}
+
+
+/* ============================================================
+   STABLE WRAPPER API
+   ============================================================ */
+class ParticleField {
+
+  constructor({
+    id,
+    preset,
+    colors,
+    density,
+    interaction
+  }){
+    this.id = id;
+    this.preset = preset;
+    this.colors = colors;
+    this.density = density;
+    this.interaction = interaction;
+
+    this.container = null;
+  }
+
+
+  async init(){
+
+    /*
+      Required by tsParticles v4 when using the slim CDN bundle.
+    */
+    await loadSlim(
+      tsParticles
+    );
+
+    await this.render();
+
+    return this;
+  }
+
+
+  async render(){
+
+    if(this.container){
+      this.container.destroy();
+      this.container = null;
+    }
+
+    const options =
+      createPreset(
+        this.preset,
+        {
+          colors:this.colors,
+          density:this.density,
+          interaction:this.interaction
+        }
+      );
+
+    this.container =
+      await tsParticles.load({
+        id:this.id,
+        options
+      });
+  }
+
+
+  async setPreset(name){
+
+    this.preset = name;
+
+    await this.render();
+
+    return name;
+  }
+
+
+  async setInteraction(enabled){
+
+    this.interaction =
+      Boolean(enabled);
+
+    await this.render();
+
+    return this.interaction;
+  }
+
+
+  async setDensity(value){
+
+    this.density =
+      Math.max(
+        .25,
+        Number(value) || 1
+      );
+
+    await this.render();
+
+    return this.density;
+  }
+}
+
+
+/* ============================================================
+   BOOTSTRAP
+   Classic-script safe: async work lives inside an async IIFE.
+   ============================================================ */
+(async function bootstrapParticleField(){
+
+  const status =
+    document.querySelector("#status");
+
+  const field =
+    new ParticleField({
+      id:"tsparticles",
+      preset:CONFIG.preset,
+      colors:CONFIG.colors.warm,
+      density:CONFIG.density,
+      interaction:CONFIG.interaction
+    });
+
+  try{
+
+    await field.init();
+
+    status.textContent =
+      `Particle field ready · ${CONFIG.preset}`;
+
+  }catch(error){
+
+    status.textContent =
+      "Particle engine failed to initialize";
+
+    console.error(error);
+
+    return;
+  }
+
+
+  /* ==========================================================
+     DEMO CONTROLS
+     ========================================================== */
+  document
+    .querySelectorAll("[data-preset]")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          document
+            .querySelectorAll("[data-preset]")
+            .forEach(el => {
+              el.classList.remove("active");
+            });
+
+          button.classList.add("active");
+
+          const preset =
+            button.dataset.preset;
+
+          status.textContent =
+            `Loading · ${preset}`;
+
+          await field.setPreset(
+            preset
+          );
+
+          status.textContent =
+            `Preset · ${preset}`;
+        }
+      );
+
+    });
+
+
+  document
+    .querySelector("#toggleInteractionBtn")
+    .addEventListener(
+      "click",
+      async event => {
+
+        const enabled =
+          await field.setInteraction(
+            !field.interaction
+          );
+
+        event.currentTarget.textContent =
+          enabled
+            ? "Interaction On"
+            : "Interaction Off";
+
+        status.textContent =
+          enabled
+            ? "Mouse repulse enabled"
+            : "Mouse interaction disabled";
+      }
+    );
+
+
+  /* ==========================================================
+     OPTIONAL GLOBAL API
+     ========================================================== */
+  window.particleField = {
+
+    setPreset:
+      name =>
+        field.setPreset(name),
+
+    setInteraction:
+      enabled =>
+        field.setInteraction(enabled),
+
+    setDensity:
+      value =>
+        field.setDensity(value)
+  };
+
+})();
+</script>
+</body>
+</html>

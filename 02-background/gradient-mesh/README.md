@@ -40,6 +40,14 @@ mesh-gradient.js@0.0.5（esm.sh，ES module 引入）
 - **噪点颗粒**：内联 SVG `feTurbulence` data-URI + `steps(2)` 关键帧抖动，零图片请求
 - **seed 可复现**：喜欢的构图记下 seed（status 栏会显示），`regenerate(seed)` 可精确还原
 
+## 相关资产
+
+- `../particle-field/`：粒子场背景
+- `../dot-grid/`：点阵背景
+- `../glow-field/`：辉光氛围背景（Vanta FOG）
+
+三个背景资产同为「上游引擎 + 胶水层 + CSS 调色层（grade/grain/vignette）」结构——调色层配方已达复用阈值，再次使用时考虑抽为共享片段。
+
 ## 来源
 
 自研资产（原 `gradient-mesh.html`），2026-09 归档入 `02-background/`。
