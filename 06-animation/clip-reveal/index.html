@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Logo Reveal — Mask Reveal</title>
+
+<style>
+  :root{
+    --bg:#06090d;
+    --text:#f6f8fb;
+    --muted:rgba(235,241,247,.54);
+    --accent:#ff7a16;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 48%,rgba(255,122,22,.045),transparent 25%),
+      linear-gradient(180deg,#090d12,#05070b 72%);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    isolation:isolate;
+  }
+
+  .stage::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 50%,transparent 0 40%,rgba(0,0,0,.10) 68%,rgba(0,0,0,.46) 100%);
+  }
+
+  .topbar{
+    position:absolute;
+    left:30px;
+    right:30px;
+    top:28px;
+    z-index:20;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.42);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .reveal-zone{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    padding:88px 32px 126px;
+  }
+
+  .asset-shell{
+    position:relative;
+    width:min(820px,78vw);
+    aspect-ratio:16/8.5;
+    display:grid;
+    place-items:center;
+  }
+
+  .asset-glow{
+    position:absolute;
+    inset:8%;
+    border-radius:50%;
+    background:
+      radial-gradient(circle,rgba(255,122,22,.13),rgba(255,122,22,.035) 42%,transparent 72%);
+    filter:blur(24px);
+    opacity:.7;
+    pointer-events:none;
+  }
+
+  .asset-frame{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:28px;
+    overflow:hidden;
+    will-change:clip-path,transform,filter,opacity;
+  }
+
+  .asset-frame::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    border-radius:inherit;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.08),
+      inset 0 -80px 100px rgba(0,0,0,.20);
+  }
+
+  .asset-frame img{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    user-select:none;
+    pointer-events:none;
+  }
+
+  .sheen{
+    position:absolute;
+    inset:-20%;
+    pointer-events:none;
+    opacity:0;
+    transform:translateX(-70%) rotate(14deg);
+    background:
+      linear-gradient(
+        90deg,
+        transparent 34%,
+        rgba(255,255,255,.03) 42%,
+        rgba(255,255,255,.40) 50%,
+        rgba(255,178,95,.14) 57%,
+        transparent 66%
+      );
+    mix-blend-mode:screen;
+    filter:blur(3px);
+    will-change:transform,opacity;
+  }
+
+  .edge-flash{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:60%;
+    height:1px;
+    transform:translate(-50%,-50%) scaleX(0);
+    background:
+      linear-gradient(90deg,transparent,rgba(255,122,22,.4),rgba(255,255,255,.65),rgba(255,122,22,.4),transparent);
+    box-shadow:0 0 24px rgba(255,122,22,.28);
+    opacity:0;
+    pointer-events:none;
+  }
+
+  .caption{
+    position:absolute;
+    left:50%;
+    top:calc(50% + min(31vh,250px));
+    transform:translateX(-50%);
+    color:rgba(255,255,255,.28);
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    white-space:nowrap;
+    pointer-events:none;
+  }
+
+  .controls{
+    position:absolute;
+    left:50%;
+    bottom:28px;
+    z-index:30;
+    transform:translateX(-50%);
+    width:min(1000px,94vw);
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:8px;
+  }
+
+  button,
+  select,
+  .upload-label{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:999px;
+    background:rgba(0,0,0,.25);
+    color:rgba(255,255,255,.76);
+    padding:9px 12px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.045em;
+    cursor:pointer;
+    backdrop-filter:blur(12px);
+  }
+
+  button:hover,
+  select:hover,
+  .upload-label:hover{
+    color:#fff;
+    background:rgba(255,255,255,.07);
+    border-color:rgba(255,255,255,.24);
+  }
+
+  button.active,
+  .primary{
+    color:#fff;
+    border-color:rgba(255,122,22,.36);
+    background:rgba(255,122,22,.10);
+  }
+
+  input[type=file]{
+    display:none;
+  }
+
+  .status{
+    position:absolute;
+    left:30px;
+    bottom:30px;
+    z-index:20;
+    color:rgba(255,255,255,.25);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  @media(max-width:780px){
+    .topbar{left:20px;right:20px;top:20px}
+    .meta{display:none}
+    .reveal-zone{padding:82px 18px 165px}
+    .asset-shell{width:92vw}
+    .caption{top:auto;bottom:140px}
+    .controls{bottom:18px;width:94vw}
+    .status{display:none}
+  }
+</style>
+</head>
+
+<body>
+<main class="stage">
+
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">Logo Reveal / Mask Reveal</div>
+      <h1>Mask Reveal</h1>
+    </div>
+
+    <div class="meta">
+      Anime.js + CSS clip-path<br>
+      Image / logo / product compatible
+    </div>
+  </div>
+
+  <section class="reveal-zone">
+
+    <div class="asset-shell">
+
+      <div class="asset-glow"></div>
+
+      <div class="asset-frame" id="assetFrame">
+        <img id="assetImage" alt="Reveal asset">
+        <div class="sheen" id="sheen"></div>
+      </div>
+
+      <div class="edge-flash" id="edgeFlash"></div>
+    </div>
+
+    <div class="caption">
+      solid asset → clip mask → reveal → settle
+    </div>
+  </section>
+
+  <div class="controls">
+    <button data-mode="wipe" class="active">Wipe</button>
+    <button data-mode="center">Center</button>
+    <button data-mode="iris">Iris</button>
+    <button data-mode="diagonal">Diagonal</button>
+
+    <select id="directionSelect">
+      <option value="left" selected>Left → Right</option>
+      <option value="right">Right → Left</option>
+      <option value="up">Bottom → Top</option>
+      <option value="down">Top → Bottom</option>
+    </select>
+
+    <select id="durationSelect">
+      <option value="650">Fast</option>
+      <option value="950" selected>Standard</option>
+      <option value="1350">Cinematic</option>
+    </select>
+
+    <label class="upload-label">
+      Upload Asset
+      <input id="assetUpload" type="file" accept="image/png,image/webp,image/jpeg,image/svg+xml">
+    </label>
+
+    <button class="primary" id="replayBtn">Replay</button>
+  </div>
+
+  <div class="status" id="status">Ready</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+
+<script>
+/* ============================================================
+   BUILT-IN ASSET
+   This is only a neutral placeholder.
+   Upload any real logo / image / product PNG to replace it.
+   ============================================================ */
+const DEFAULT_ASSET_SVG = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 850">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0b1016"/>
+      <stop offset=".55" stop-color="#151017"/>
+      <stop offset="1" stop-color="#080b10"/>
+    </linearGradient>
+    <radialGradient id="halo" cx=".52" cy=".48" r=".46">
+      <stop offset="0" stop-color="#ff8a22" stop-opacity=".26"/>
+      <stop offset=".46" stop-color="#ff7a16" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#ff7a16" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mark" x1="0" x2="1">
+      <stop offset="0" stop-color="#ff7a16"/>
+      <stop offset=".55" stop-color="#ffc36a"/>
+      <stop offset="1" stop-color="#fff3df"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="850" fill="url(#bg)"/>
+  <rect width="1600" height="850" fill="url(#halo)"/>
+
+  <g transform="translate(800 350)">
+    <path d="M0 -170 L55 -48 L188 -26 L91 65 L115 196 L0 132 L-115 196 L-91 65 L-188 -26 L-55 -48 Z"
+          fill="none" stroke="url(#mark)" stroke-width="24" stroke-linejoin="round"/>
+  </g>
+
+  <text x="800" y="665" text-anchor="middle"
+        fill="#f7f9fb"
+        font-size="112"
+        font-family="Arial, Helvetica, sans-serif"
+        font-weight="700"
+        letter-spacing="-5">NOVA<tspan fill="#ff7a16">FORM</tspan></text>
+
+  <text x="800" y="724" text-anchor="middle"
+        fill="#aab4bf"
+        font-size="26"
+        font-family="Arial, Helvetica, sans-serif"
+        letter-spacing="12">IDENTITY SYSTEM</text>
+</svg>`;
+
+
+function svgToDataUrl(svg){
+  return (
+    "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(svg)
+  );
+}
+
+
+const CONFIG = {
+  mode:"wipe",
+  direction:"left",
+  duration:950
+};
+
+
+const PRESETS = {
+
+  wipe:{
+    left:{
+      from:"inset(0 100% 0 0 round 28px)",
+      to:"inset(0 0% 0 0 round 28px)"
+    },
+    right:{
+      from:"inset(0 0 0 100% round 28px)",
+      to:"inset(0 0 0 0% round 28px)"
+    },
+    up:{
+      from:"inset(100% 0 0 0 round 28px)",
+      to:"inset(0% 0 0 0 round 28px)"
+    },
+    down:{
+      from:"inset(0 0 100% 0 round 28px)",
+      to:"inset(0 0 0% 0 round 28px)"
+    }
+  },
+
+  center:{
+    left:{
+      from:"inset(0 49.85% 0 49.85% round 28px)",
+      to:"inset(0 0% 0 0% round 28px)"
+    },
+    right:{
+      from:"inset(0 49.85% 0 49.85% round 28px)",
+      to:"inset(0 0% 0 0% round 28px)"
+    },
+    up:{
+      from:"inset(49.85% 0 49.85% 0 round 28px)",
+      to:"inset(0% 0 0% 0 round 28px)"
+    },
+    down:{
+      from:"inset(49.85% 0 49.85% 0 round 28px)",
+      to:"inset(0% 0 0% 0 round 28px)"
+    }
+  },
+
+  iris:{
+    left:{
+      from:"circle(0% at 50% 50%)",
+      to:"circle(74% at 50% 50%)"
+    },
+    right:{
+      from:"circle(0% at 50% 50%)",
+      to:"circle(74% at 50% 50%)"
+    },
+    up:{
+      from:"circle(0% at 50% 50%)",
+      to:"circle(74% at 50% 50%)"
+    },
+    down:{
+      from:"circle(0% at 50% 50%)",
+      to:"circle(74% at 50% 50%)"
+    }
+  },
+
+  diagonal:{
+    left:{
+      from:"polygon(0 0,0 0,0 100%,0 100%)",
+      to:"polygon(0 0,100% 0,100% 100%,0 100%)"
+    },
+    right:{
+      from:"polygon(100% 0,100% 0,100% 100%,100% 100%)",
+      to:"polygon(0 0,100% 0,100% 100%,0 100%)"
+    },
+    up:{
+      from:"polygon(0 100%,100% 100%,100% 100%,0 100%)",
+      to:"polygon(0 0,100% 0,100% 100%,0 100%)"
+    },
+    down:{
+      from:"polygon(0 0,100% 0,100% 0,0 0)",
+      to:"polygon(0 0,100% 0,100% 100%,0 100%)"
+    }
+  }
+};
+
+
+/* ============================================================
+   STABLE WRAPPER
+   Anime.js owns timing / interpolation.
+   CSS clip-path is the actual reveal primitive.
+   ============================================================ */
+class MaskReveal {
+
+  constructor({
+    frame,
+    image,
+    mode="wipe",
+    direction="left",
+    duration=950
+  }){
+    this.frame =
+      typeof frame === "string"
+        ? document.querySelector(frame)
+        : frame;
+
+    this.image =
+      typeof image === "string"
+        ? document.querySelector(image)
+        : image;
+
+    this.mode = mode;
+    this.direction = direction;
+    this.duration = duration;
+    this.timeline = null;
+  }
+
+
+  _preset(){
+
+    return (
+      PRESETS[this.mode] ||
+      PRESETS.wipe
+    )[
+      this.direction
+    ] ||
+    PRESETS.wipe.left;
+  }
+
+
+  play(){
+
+    if(this.timeline){
+      this.timeline.pause();
+    }
+
+    anime.remove([
+      this.frame,
+      "#sheen",
+      "#edgeFlash"
+    ]);
+
+    const preset =
+      this._preset();
+
+    anime.set(
+      this.frame,
+      {
+        clipPath:preset.from,
+        opacity:1,
+        scale:1.025,
+        filter:"blur(5px)"
+      }
+    );
+
+    anime.set(
+      "#sheen",
+      {
+        translateX:"-70%",
+        opacity:0
+      }
+    );
+
+    anime.set(
+      "#edgeFlash",
+      {
+        opacity:0,
+        scaleX:0
+      }
+    );
+
+
+    this.timeline =
+      anime.timeline({
+        autoplay:true
+      });
+
+
+    this.timeline
+
+      /*
+        Main mask reveal.
+      */
+      .add({
+        targets:this.frame,
+
+        clipPath:[
+          {
+            value:preset.to
+          }
+        ],
+
+        scale:[
+          {
+            value:1,
+            duration:
+              this.duration
+          }
+        ],
+
+        filter:[
+          {
+            value:"blur(0px)",
+            duration:
+              this.duration * .78
+          }
+        ],
+
+        duration:
+          this.duration,
+
+        easing:
+          "easeInOutQuart"
+      },0)
+
+
+      /*
+        Light sweep near the reveal's final third.
+      */
+      .add({
+        targets:"#sheen",
+
+        translateX:[
+          {
+            value:"75%"
+          }
+        ],
+
+        opacity:[
+          {
+            value:.85,
+            duration:90
+          },
+          {
+            value:0,
+            duration:
+              Math.max(
+                180,
+                this.duration*.30
+              )
+          }
+        ],
+
+        duration:
+          this.duration*.62,
+
+        easing:
+          "easeOutCubic"
+      },
+      this.duration*.38)
+
+
+      /*
+        Tiny horizontal flash to give a completed-lockup feeling.
+      */
+      .add({
+        targets:"#edgeFlash",
+
+        opacity:[
+          {
+            value:.7,
+            duration:70
+          },
+          {
+            value:0,
+            duration:230
+          }
+        ],
+
+        scaleX:[
+          {
+            value:1,
+            duration:160
+          },
+          {
+            value:1.15,
+            duration:170
+          }
+        ],
+
+        duration:330,
+
+        easing:"easeOutExpo"
+      },
+      this.duration*.80);
+
+
+    return this.timeline;
+  }
+
+
+  setMode(mode){
+    this.mode = mode;
+    return this.play();
+  }
+
+
+  setDirection(direction){
+    this.direction = direction;
+    return this.play();
+  }
+
+
+  setDuration(duration){
+    this.duration =
+      Number(duration) || 950;
+
+    return this.play();
+  }
+
+
+  setAsset(src){
+    this.image.src = src;
+    return src;
+  }
+}
+
+
+/* ============================================================
+   INIT
+   ============================================================ */
+const assetImage =
+  document.querySelector(
+    "#assetImage"
+  );
+
+assetImage.src =
+  svgToDataUrl(
+    DEFAULT_ASSET_SVG
+  );
+
+
+const reveal =
+  new MaskReveal({
+    frame:"#assetFrame",
+    image:"#assetImage",
+    mode:CONFIG.mode,
+    direction:CONFIG.direction,
+    duration:CONFIG.duration
+  });
+
+
+const status =
+  document.querySelector(
+    "#status"
+  );
+
+
+assetImage.addEventListener(
+  "load",
+  () => {
+
+    setTimeout(
+      () => {
+        reveal.play();
+      },
+      140
+    );
+  },
+  {once:true}
+);
+
+
+/* ============================================================
+   MODE
+   ============================================================ */
+document
+  .querySelectorAll("[data-mode]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        document
+          .querySelectorAll("[data-mode]")
+          .forEach(el => {
+            el.classList.remove(
+              "active"
+            );
+          });
+
+        button.classList.add(
+          "active"
+        );
+
+        const mode =
+          button.dataset.mode;
+
+        reveal.setMode(
+          mode
+        );
+
+        status.textContent =
+          `Mode · ${mode}`;
+      }
+    );
+
+  });
+
+
+/* ============================================================
+   DIRECTION
+   ============================================================ */
+document
+  .querySelector("#directionSelect")
+  .addEventListener(
+    "change",
+    event => {
+
+      reveal.setDirection(
+        event.target.value
+      );
+
+      status.textContent =
+        `Direction · ${event.target.value}`;
+    }
+  );
+
+
+/* ============================================================
+   DURATION
+   ============================================================ */
+document
+  .querySelector("#durationSelect")
+  .addEventListener(
+    "change",
+    event => {
+
+      reveal.setDuration(
+        event.target.value
+      );
+
+      status.textContent =
+        `Duration · ${event.target.value}ms`;
+    }
+  );
+
+
+/* ============================================================
+   REPLAY
+   ============================================================ */
+document
+  .querySelector("#replayBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      reveal.play();
+
+      status.textContent =
+        "Replay";
+    }
+  );
+
+
+/* ============================================================
+   UPLOAD ANY IMAGE / SVG
+   ============================================================ */
+document
+  .querySelector("#assetUpload")
+  .addEventListener(
+    "change",
+    event => {
+
+      const file =
+        event.target.files &&
+        event.target.files[0];
+
+      if(!file){
+        return;
+      }
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        e => {
+
+          assetImage.onload =
+            () => {
+
+              reveal.play();
+
+              status.textContent =
+                `Asset · ${file.name}`;
+            };
+
+          reveal.setAsset(
+            e.target.result
+          );
+        };
+
+      reader.readAsDataURL(
+        file
+      );
+    }
+  );
+
+
+/* ============================================================
+   GLOBAL API
+   ============================================================ */
+window.maskReveal = {
+
+  play:
+    () =>
+      reveal.play(),
+
+  setMode:
+    mode =>
+      reveal.setMode(mode),
+
+  setDirection:
+    direction =>
+      reveal.setDirection(direction),
+
+  setDuration:
+    duration =>
+      reveal.setDuration(duration),
+
+  setAsset:
+    src =>
+      reveal.setAsset(src)
+};
+</script>
+</body>
+</html>

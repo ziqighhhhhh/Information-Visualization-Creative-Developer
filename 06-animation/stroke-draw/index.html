@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Logo Reveal — Stroke Draw</title>
+
+<style>
+  :root{
+    --bg:#06090d;
+    --text:#f6f8fb;
+    --muted:rgba(235,241,247,.54);
+    --accent:#ff7a16;
+    --stroke:#ff9d42;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 48%,rgba(255,122,22,.045),transparent 26%),
+      linear-gradient(180deg,#090d12,#05070b 72%);
+    color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    isolation:isolate;
+  }
+
+  .stage::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 50%,transparent 0 40%,rgba(0,0,0,.10) 68%,rgba(0,0,0,.45) 100%);
+  }
+
+  .topbar{
+    position:absolute;
+    left:30px;
+    right:30px;
+    top:28px;
+    z-index:20;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:24px;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    margin-bottom:7px;
+    color:var(--accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+  }
+
+  h1{
+    margin:0;
+    font-size:20px;
+    font-weight:690;
+    letter-spacing:-.025em;
+  }
+
+  .meta{
+    text-align:right;
+    color:rgba(255,255,255,.42);
+    font-size:10px;
+    line-height:1.55;
+  }
+
+  .draw-zone{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    padding:92px 36px 128px;
+  }
+
+  .logo-frame{
+    position:relative;
+    width:min(760px,78vw);
+    height:min(460px,55vh);
+    display:grid;
+    place-items:center;
+  }
+
+  #svgHost{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:grid;
+    place-items:center;
+    filter:
+      drop-shadow(0 0 10px rgba(255,122,22,.08))
+      drop-shadow(0 0 28px rgba(255,122,22,.05));
+  }
+
+  #svgHost svg{
+    width:100%;
+    height:100%;
+    max-width:100%;
+    max-height:100%;
+    overflow:visible;
+  }
+
+  #svgHost svg *{
+    vector-effect:non-scaling-stroke;
+  }
+
+  .ambient{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:min(42vw,520px);
+    height:min(42vw,520px);
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:
+      radial-gradient(circle,rgba(255,122,22,.08),rgba(255,122,22,.025) 36%,transparent 70%);
+    filter:blur(16px);
+    opacity:.65;
+    pointer-events:none;
+  }
+
+  .caption{
+    position:absolute;
+    left:50%;
+    top:calc(50% + min(29vh,240px));
+    transform:translateX(-50%);
+    color:rgba(255,255,255,.29);
+    font-size:9px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    white-space:nowrap;
+    pointer-events:none;
+  }
+
+  .controls{
+    position:absolute;
+    left:50%;
+    bottom:28px;
+    z-index:30;
+    transform:translateX(-50%);
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:8px;
+    width:min(1000px,94vw);
+  }
+
+  button,
+  select,
+  .upload-label{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:999px;
+    background:rgba(0,0,0,.25);
+    color:rgba(255,255,255,.76);
+    padding:9px 12px;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.045em;
+    cursor:pointer;
+    backdrop-filter:blur(12px);
+  }
+
+  button:hover,
+  select:hover,
+  .upload-label:hover{
+    color:#fff;
+    background:rgba(255,255,255,.07);
+    border-color:rgba(255,255,255,.24);
+  }
+
+  button.active,
+  .primary{
+    color:#fff;
+    border-color:rgba(255,122,22,.36);
+    background:rgba(255,122,22,.10);
+  }
+
+  input[type=file]{
+    display:none;
+  }
+
+  .status{
+    position:absolute;
+    left:30px;
+    bottom:30px;
+    z-index:20;
+    color:rgba(255,255,255,.25);
+    font-size:9px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  @media(max-width:780px){
+    .topbar{left:20px;right:20px;top:20px}
+    .meta{display:none}
+    .draw-zone{padding:80px 20px 170px}
+    .logo-frame{width:90vw;height:46vh}
+    .caption{top:auto;bottom:140px}
+    .controls{bottom:18px;width:94vw}
+    .status{display:none}
+  }
+</style>
+</head>
+
+<body>
+<main class="stage">
+
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">Logo Reveal / Stroke Draw</div>
+      <h1>Stroke Draw</h1>
+    </div>
+
+    <div class="meta">
+      Vivus.js + inline SVG<br>
+      Pathformer + stroke animation
+    </div>
+  </div>
+
+  <section class="draw-zone">
+
+    <div class="ambient"></div>
+
+    <div class="logo-frame">
+      <div id="svgHost"></div>
+    </div>
+
+    <div class="caption">
+      SVG → path length → progressive stroke reveal
+    </div>
+  </section>
+
+  <div class="controls">
+    <button data-shape="monogram" class="active">Monogram</button>
+    <button data-shape="signature">Signature</button>
+    <button data-shape="symbol">Symbol</button>
+    <button data-shape="badge">Badge</button>
+
+    <select id="typeSelect">
+      <option value="oneByOne" selected>One By One</option>
+      <option value="delayed">Delayed</option>
+      <option value="sync">Sync</option>
+    </select>
+
+    <select id="durationSelect">
+      <option value="80">Fast</option>
+      <option value="140" selected>Standard</option>
+      <option value="220">Cinematic</option>
+    </select>
+
+    <select id="strokeSelect">
+      <option value="#ff7a16">Orange</option>
+      <option value="#ffc36a">Gold</option>
+      <option value="#f6f8fb">White</option>
+      <option value="#8bd6ff">Ice</option>
+    </select>
+
+    <label class="upload-label">
+      Upload SVG
+      <input id="svgUpload" type="file" accept=".svg,image/svg+xml">
+    </label>
+
+    <button id="reverseBtn">Reverse</button>
+    <button class="primary" id="replayBtn">Replay</button>
+  </div>
+
+  <div class="status" id="status">Ready</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/vivus@0.4.6/dist/vivus.min.js"></script>
+
+<script>
+/* ============================================================
+   BUILT-IN SVG SOURCES
+   Vivus handles path timing and Pathformer conversion.
+   ============================================================ */
+const SHAPES = {
+
+  monogram: `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420">
+    <path d="M105 310 L185 95 L265 310"
+          fill="none" stroke="#ff7a16" stroke-width="10"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M145 210 L225 210"
+          fill="none" stroke="#ff7a16" stroke-width="10"
+          stroke-linecap="round"/>
+    <path d="M330 100 L330 310"
+          fill="none" stroke="#ff7a16" stroke-width="10"
+          stroke-linecap="round"/>
+    <path d="M330 105 L485 305"
+          fill="none" stroke="#ff7a16" stroke-width="10"
+          stroke-linecap="round"/>
+    <path d="M485 105 L485 310"
+          fill="none" stroke="#ff7a16" stroke-width="10"
+          stroke-linecap="round"/>
+    <path d="M555 108 C640 145 640 270 555 308"
+          fill="none" stroke="#ff7a16" stroke-width="10"
+          stroke-linecap="round"/>
+  </svg>`,
+
+  signature: `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360">
+    <path d="M90 235
+             C130 130 175 112 194 164
+             C207 201 153 270 135 230
+             C119 194 218 166 286 183
+             C342 197 326 258 287 240
+             C253 225 325 158 378 166
+             C431 174 402 242 378 234
+             C350 225 427 164 487 176
+             C542 187 525 246 496 237
+             C474 229 532 177 583 178
+             C642 180 635 239 602 237
+             C574 236 626 192 691 192
+             C738 192 774 207 815 225"
+          fill="none" stroke="#ff7a16" stroke-width="8"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`,
+
+  symbol: `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 620">
+    <polygon points="310,60 375,225 552,237 416,350 460,522 310,430 160,522 204,350 68,237 245,225"
+             fill="none" stroke="#ff7a16" stroke-width="11" stroke-linejoin="round"/>
+    <circle cx="310" cy="300" r="95"
+            fill="none" stroke="#ff7a16" stroke-width="9"/>
+    <line x1="310" y1="205" x2="310" y2="395"
+          stroke="#ff7a16" stroke-width="9" stroke-linecap="round"/>
+    <line x1="215" y1="300" x2="405" y2="300"
+          stroke="#ff7a16" stroke-width="9" stroke-linecap="round"/>
+  </svg>`,
+
+  badge: `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520">
+    <rect x="95" y="80" width="530" height="360" rx="64"
+          fill="none" stroke="#ff7a16" stroke-width="9"/>
+    <path d="M190 340 L270 155 L350 340"
+          fill="none" stroke="#ff7a16" stroke-width="9"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M225 260 L315 260"
+          fill="none" stroke="#ff7a16" stroke-width="9"
+          stroke-linecap="round"/>
+    <path d="M410 160 L410 340"
+          fill="none" stroke="#ff7a16" stroke-width="9"
+          stroke-linecap="round"/>
+    <path d="M410 160 L530 340"
+          fill="none" stroke="#ff7a16" stroke-width="9"
+          stroke-linecap="round"/>
+    <path d="M530 160 L530 340"
+          fill="none" stroke="#ff7a16" stroke-width="9"
+          stroke-linecap="round"/>
+  </svg>`
+};
+
+
+/* ============================================================
+   STABLE WRAPPER
+   ============================================================ */
+class StrokeDrawReveal {
+
+  constructor({
+    host,
+    svg,
+    type="oneByOne",
+    duration=140,
+    stroke="#ff7a16"
+  }){
+    this.host =
+      typeof host === "string"
+        ? document.querySelector(host)
+        : host;
+
+    this.svg = svg;
+    this.type = type;
+    this.duration = duration;
+    this.stroke = stroke;
+    this.vivus = null;
+  }
+
+
+  mount(svg=this.svg){
+
+    this.svg = svg;
+
+    this.host.innerHTML =
+      svg;
+
+    const svgEl =
+      this.host.querySelector("svg");
+
+    if(!svgEl){
+      throw new Error(
+        "No SVG element found."
+      );
+    }
+
+    svgEl.removeAttribute("width");
+    svgEl.removeAttribute("height");
+
+    this._applyStroke(
+      this.stroke
+    );
+
+    return svgEl;
+  }
+
+
+  _applyStroke(color){
+
+    this.stroke = color;
+
+    const drawable =
+      this.host.querySelectorAll(
+        "path, line, polyline, polygon, circle, ellipse, rect"
+      );
+
+    drawable.forEach(
+      el => {
+
+        el.setAttribute(
+          "stroke",
+          color
+        );
+
+        /*
+          Preserve an explicitly meaningful fill only if user supplies one.
+          For logo-drawing use, default to line art.
+        */
+        if(
+          !el.hasAttribute("fill") ||
+          el.getAttribute("fill") !== "none"
+        ){
+          el.setAttribute(
+            "fill",
+            "none"
+          );
+        }
+      }
+    );
+  }
+
+
+  _createVivus(){
+
+    const svgEl =
+      this.host.querySelector("svg");
+
+    if(!svgEl){
+      return;
+    }
+
+    /*
+      Vivus owns:
+      - path length measurement
+      - dasharray / dashoffset setup
+      - sequencing
+      - RAF animation
+      - Pathformer for basic SVG shapes
+    */
+    this.vivus =
+      new Vivus(
+        svgEl,
+        {
+          type:this.type,
+          duration:this.duration,
+          start:"manual",
+          animTimingFunction:
+            Vivus.EASE,
+          pathTimingFunction:
+            Vivus.EASE_OUT,
+          forceRender:false
+        }
+      );
+
+    return this.vivus;
+  }
+
+
+  play(){
+
+    if(this.vivus){
+      this.vivus.destroy();
+      this.vivus = null;
+    }
+
+    /*
+      Re-mount original SVG so replay always starts from clean markup.
+    */
+    this.mount(
+      this.svg
+    );
+
+    this._createVivus();
+
+    this.vivus
+      .stop()
+      .reset()
+      .play(1);
+
+    return this.vivus;
+  }
+
+
+  reverse(){
+
+    if(!this.vivus){
+      this._createVivus();
+    }
+
+    this.vivus.play(-1);
+
+    return this.vivus;
+  }
+
+
+  setSvg(svg){
+
+    this.svg = svg;
+
+    this.mount(
+      svg
+    );
+
+    return this.play();
+  }
+
+
+  setType(type){
+
+    this.type =
+      type;
+
+    return this.play();
+  }
+
+
+  setDuration(duration){
+
+    this.duration =
+      Number(duration) || 140;
+
+    return this.play();
+  }
+
+
+  setStroke(color){
+
+    this.stroke =
+      color;
+
+    return this.play();
+  }
+
+}
+
+
+/* ============================================================
+   BOOTSTRAP
+   ============================================================ */
+const status =
+  document.querySelector(
+    "#status"
+  );
+
+const reveal =
+  new StrokeDrawReveal({
+    host:"#svgHost",
+    svg:SHAPES.monogram,
+    type:"oneByOne",
+    duration:140,
+    stroke:"#ff7a16"
+  });
+
+
+try{
+
+  reveal.mount();
+
+  setTimeout(
+    () => {
+      reveal.play();
+    },
+    180
+  );
+
+}catch(error){
+
+  status.textContent =
+    "Vivus initialization failed";
+
+  console.error(
+    error
+  );
+}
+
+
+/* ============================================================
+   BUILT-IN SHAPES
+   ============================================================ */
+document
+  .querySelectorAll("[data-shape]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        document
+          .querySelectorAll("[data-shape]")
+          .forEach(el => {
+            el.classList.remove(
+              "active"
+            );
+          });
+
+        button.classList.add(
+          "active"
+        );
+
+        const name =
+          button.dataset.shape;
+
+        reveal.setSvg(
+          SHAPES[name]
+        );
+
+        status.textContent =
+          `Shape · ${name}`;
+      }
+    );
+
+  });
+
+
+/* ============================================================
+   TYPE
+   ============================================================ */
+document
+  .querySelector("#typeSelect")
+  .addEventListener(
+    "change",
+    event => {
+
+      reveal.setType(
+        event.target.value
+      );
+
+      status.textContent =
+        `Vivus type · ${event.target.value}`;
+    }
+  );
+
+
+/* ============================================================
+   DURATION
+   ============================================================ */
+document
+  .querySelector("#durationSelect")
+  .addEventListener(
+    "change",
+    event => {
+
+      reveal.setDuration(
+        event.target.value
+      );
+
+      status.textContent =
+        `Duration · ${event.target.value}`;
+    }
+  );
+
+
+/* ============================================================
+   STROKE COLOR
+   ============================================================ */
+document
+  .querySelector("#strokeSelect")
+  .addEventListener(
+    "change",
+    event => {
+
+      reveal.setStroke(
+        event.target.value
+      );
+
+      status.textContent =
+        `Stroke · ${event.target.value}`;
+    }
+  );
+
+
+/* ============================================================
+   REPLAY / REVERSE
+   ============================================================ */
+document
+  .querySelector("#replayBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      reveal.play();
+
+      status.textContent =
+        "Replay";
+    }
+  );
+
+
+document
+  .querySelector("#reverseBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      reveal.reverse();
+
+      status.textContent =
+        "Reverse";
+    }
+  );
+
+
+/* ============================================================
+   UPLOAD SVG
+   ============================================================ */
+document
+  .querySelector("#svgUpload")
+  .addEventListener(
+    "change",
+    event => {
+
+      const file =
+        event.target.files &&
+        event.target.files[0];
+
+      if(!file){
+        return;
+      }
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        e => {
+
+          const svg =
+            String(
+              e.target.result || ""
+            );
+
+          if(
+            !svg.includes("<svg")
+          ){
+            status.textContent =
+              "Invalid SVG";
+
+            return;
+          }
+
+          document
+            .querySelectorAll("[data-shape]")
+            .forEach(el => {
+              el.classList.remove(
+                "active"
+              );
+            });
+
+          try{
+
+            reveal.setSvg(
+              svg
+            );
+
+            status.textContent =
+              `Custom SVG · ${file.name}`;
+
+          }catch(error){
+
+            status.textContent =
+              "SVG could not be drawn";
+
+            console.error(
+              error
+            );
+          }
+        };
+
+      reader.readAsText(
+        file
+      );
+    }
+  );
+
+
+/* ============================================================
+   GLOBAL API
+   ============================================================ */
+window.strokeDraw = {
+
+  play:
+    () =>
+      reveal.play(),
+
+  reverse:
+    () =>
+      reveal.reverse(),
+
+  setSvg:
+    svg =>
+      reveal.setSvg(svg),
+
+  setType:
+    type =>
+      reveal.setType(type),
+
+  setDuration:
+    duration =>
+      reveal.setDuration(duration),
+
+  setStroke:
+    color =>
+      reveal.setStroke(color)
+};
+</script>
+</body>
+</html>
