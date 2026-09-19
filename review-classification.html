@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>资产分类审核 · 95 个</title>
+<style>
+  :root{--bg:#0b0e13;--panel:#121722;--line:#232c3a;--text:#e8eef6;--muted:#7c8a9c;
+        --L1:#3b82f6;--L2:#22c55e;--L3:#f59e0b;--L4:#a855f7;--T:#6b7280;--broken:#e5484d}
+  *{box-sizing:border-box}
+  body{margin:0;height:100vh;display:flex;background:var(--bg);color:var(--text);
+       font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;overflow:hidden}
+  #side{width:380px;min-width:380px;border-right:1px solid var(--line);display:flex;flex-direction:column}
+  #head{padding:12px 14px;border-bottom:1px solid var(--line)}
+  #head h1{margin:0 0 8px;font-size:15px}
+  #stats{font-size:12px;color:var(--muted);line-height:1.8}
+  #stats b{color:var(--text)}
+  #progressWrap{height:4px;background:#1b2330;border-radius:99px;margin-top:8px;overflow:hidden}
+  #progressBar{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#3b82f6);transition:width .3s}
+  #tools{padding:8px 14px;border-bottom:1px solid var(--line);display:flex;gap:8px}
+  #tools button{flex:1;font-size:11px;padding:6px 8px}
+  #items{flex:1;overflow-y:auto;padding-bottom:60px}
+  .grp{padding:10px 14px 4px;font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;position:sticky;top:0;background:var(--bg);z-index:2}
+  .item{padding:7px 14px;border-bottom:1px solid #161c26;cursor:pointer;font-size:12px;display:flex;gap:8px;align-items:center}
+  .item:hover{background:#161d2a}
+  .item.cur{background:#1b2637;outline:1px solid #2f4055}
+  .item.flash{animation:flash .7s ease}
+  @keyframes flash{0%{background:#1f3d2a}100%{background:transparent}}
+  .dot{width:7px;height:7px;border-radius:50%;background:#39424f;flex:none}
+  .dot.ok{background:#22c55e}
+  .dot.bad{background:var(--broken)}
+  .item .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tags{display:flex;gap:4px;flex:none}
+  .badge{font-size:10px;padding:1px 6px;border-radius:99px;border:1px solid currentColor;color:#4a5563}
+  .badge.on{font-weight:700}
+  .b-L1{color:var(--L1)} .b-L2{color:var(--L2)} .b-L3{color:var(--L3)} .b-L4{color:var(--L4)}
+  .b-T{color:var(--T)} .b-bad{color:var(--broken)}
+  #main{flex:1;display:flex;flex-direction:column;min-width:0}
+  #bar{padding:10px 16px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+  #bar .id{font-size:15px;font-weight:700}
+  #bar .meta{font-size:12px;color:var(--muted)}
+  #bar .sig{font-size:11px;color:#5d6b7d}
+  #bar .open{margin-left:auto;font-size:11px;color:#7db4e8;text-decoration:none}
+  #frame{flex:1;border:0;background:#fff}
+  #foot{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  button{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:8px 13px;border-radius:8px;font-size:13px;cursor:pointer}
+  button:hover{filter:brightness(1.3)}
+  button.sel{outline:2px solid #fff;font-weight:700;background:#1d2735}
+  button.bad{border-color:#5a2b29;color:#f2c9c7}
+  button.bad.sel{outline:2px solid #f2c9c7}
+  .k{font-size:11px;color:var(--muted)}
+  input{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;width:220px}
+  #export{margin-left:auto;border-color:#2c4a6b}
+  .legend{padding:8px 14px;font-size:11px;color:var(--muted);line-height:1.7;border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div id="side">
+  <div id="head">
+    <h1>资产分类审核（可多选）</h1>
+    <div id="stats"></div>
+    <div id="progressWrap"><div id="progressBar"></div></div>
+  </div>
+  <div class="legend">
+    层可<b>多选</b>：点按钮切换选中，<b>Enter</b> 进入下一条<br>
+    <b>1</b> 背景板 &nbsp;<b>2</b> 页面主体 &nbsp;<b>3</b> 页面元件 &nbsp;<b>4</b> 串联件 &nbsp;<b>5</b> 模板<br>
+    <b>B</b> 无法工作 &nbsp;<b>U</b> 清空本条 &nbsp;<b>↑↓</b> 切换
+  </div>
+  <div id="tools">
+    <button id="jumpUndecided">跳到下一个未裁定</button>
+    <button id="clearAll">清空全部</button>
+  </div>
+  <div id="items"></div>
+</div>
+<div id="main">
+  <div id="bar">
+    <span class="id" id="curId"></span>
+    <span class="meta" id="curMeta"></span>
+    <span class="sig" id="curSig"></span>
+    <a class="open" id="openNew" target="_blank">在新标签打开 ↗</a>
+  </div>
+  <iframe id="frame" sandbox="allow-scripts allow-same-origin"></iframe>
+  <div id="foot">
+    <button data-layer="L1" title="铺满画布、不承载内容、自己不成页">1 背景板</button><button data-layer="L2" title="定义一页的形态或行为">2 页面主体</button><button data-layer="L3" title="只服务页面上的一个点">3 页面元件</button><button data-layer="L4" title="导航 / 揭示 / 切换">4 串联件</button><button data-layer="T" title="不是内容资产">5 模板/工具</button>
+    <button data-layer="BROKEN" class="bad" title="点开无法正常工作">B 无法工作</button>
+    <button id="undo" title="清空本条所有标记">U 清空本条</button>
+    <input id="note" placeholder="备注（可选）" />
+    <button id="export">导出 classification.json</button>
+  </div>
+</div>
+<script>
+const ASSETS = [{"id":"01-layout/centered-section","file":"01-layout/centered-section/index.html","dir":"01-layout","size":2,"signals":["滚动","外部CDN"]},{"id":"01-layout/grid-recipes","file":"01-layout/grid-recipes/index.html","dir":"01-layout","size":5,"signals":[]},{"id":"01-layout/horizontal-scroll","file":"01-layout/horizontal-scroll/index.html","dir":"01-layout","size":17,"signals":["滚动","外部CDN"]},{"id":"01-layout/scroll-sections","file":"01-layout/scroll-sections/index.html","dir":"01-layout","size":6,"signals":["链接","文字拆分","外部CDN"]},{"id":"01-layout/scrollytelling-chart","file":"01-layout/scrollytelling-chart/index.html","dir":"01-layout","size":19,"signals":["铺满画布","滚动","文字拆分","图表","外部CDN"]},{"id":"01-layout/scrollytelling-comparison","file":"01-layout/scrollytelling-comparison/index.html","dir":"01-layout","size":27,"signals":["铺满画布","滚动","链接","外部CDN"]},{"id":"01-layout/scrollytelling-map","file":"01-layout/scrollytelling-map/index.html","dir":"01-layout","size":22,"signals":["铺满画布","滚动","描边描绘","图表","外部CDN"]},{"id":"01-layout/scrollytelling-network","file":"01-layout/scrollytelling-network/index.html","dir":"01-layout","size":20,"signals":["铺满画布","滚动","外部CDN"]},{"id":"01-layout/scrollytelling-pinned","file":"01-layout/scrollytelling-pinned/index.html","dir":"01-layout","size":21,"signals":["铺满画布","滚动","外部CDN"]},{"id":"01-layout/skewed-scroll","file":"01-layout/skewed-scroll/index.html","dir":"01-layout","size":7,"signals":["链接"]},{"id":"01-layout/sticky-parallax","file":"01-layout/sticky-parallax/index.html","dir":"01-layout","size":13,"signals":["滚动","悬停","链接"]},{"id":"02-background/dot-grid","file":"02-background/dot-grid/index.html","dir":"02-background","size":12,"signals":["悬停","three.js","外部CDN"]},{"id":"02-background/glow-field","file":"02-background/glow-field/index.html","dir":"02-background","size":13,"signals":["悬停","three.js","外部CDN"]},{"id":"02-background/gradient-mesh","file":"02-background/gradient-mesh/index.html","dir":"02-background","size":10,"signals":["悬停","外部CDN"]},{"id":"02-background/oklch-gradient","file":"02-background/oklch-gradient/index.html","dir":"02-background","size":3,"signals":[]},{"id":"02-background/particle-field","file":"02-background/particle-field/index.html","dir":"02-background","size":15,"signals":["悬停","外部CDN"]},{"id":"03-map/choropleth","file":"03-map/choropleth/index.html","dir":"03-map","size":19,"signals":["悬停","指针","图表","外部CDN"]},{"id":"03-map/flow-map","file":"03-map/flow-map/index.html","dir":"03-map","size":20,"signals":["canvas2d","悬停","指针","描边描绘","图表","外部CDN"]},{"id":"03-map/world-map","file":"03-map/world-map/index.html","dir":"03-map","size":12,"signals":["悬停","指针","描边描绘","图表","外部CDN"]},{"id":"04-effects/airplanes","file":"04-effects/airplanes/index.html","dir":"04-effects","size":15,"signals":["铺满画布","滚动","链接","three.js","外部CDN"]},{"id":"04-effects/attract-hover","file":"04-effects/attract-hover/index.html","dir":"04-effects","size":3,"signals":["指针","外部CDN"]},{"id":"04-effects/bokeh","file":"04-effects/bokeh/index.html","dir":"04-effects","size":6,"signals":[]},{"id":"04-effects/cracked-text","file":"04-effects/cracked-text/index.html","dir":"04-effects","size":3,"signals":[]},{"id":"04-effects/css-3d-chess","file":"04-effects/css-3d-chess/index.html","dir":"04-effects","size":54,"signals":["悬停","链接","表格"]},{"id":"04-effects/css-art-car","file":"04-effects/css-art-car/index.html","dir":"04-effects","size":21,"signals":[]},{"id":"04-effects/cursor-glow","file":"04-effects/cursor-glow/index.html","dir":"04-effects","size":8,"signals":["悬停","指针","链接"]},{"id":"04-effects/drag-coloring","file":"04-effects/drag-coloring/index.html","dir":"04-effects","size":13,"signals":["铺满画布","拖拽","链接"]},{"id":"04-effects/flowing-image","file":"04-effects/flowing-image/index.html","dir":"04-effects","size":8,"signals":["外部CDN"]},{"id":"04-effects/gradient-border","file":"04-effects/gradient-border/index.html","dir":"04-effects","size":2,"signals":[]},{"id":"04-effects/letterfall","file":"04-effects/letterfall/index.html","dir":"04-effects","size":8,"signals":["canvas2d","three.js","外部CDN"]},{"id":"04-effects/light-box","file":"04-effects/light-box/index.html","dir":"04-effects","size":6,"signals":["three.js","外部CDN"]},{"id":"04-effects/light-flow","file":"04-effects/light-flow/index.html","dir":"04-effects","size":6,"signals":["three.js","外部CDN"]},{"id":"04-effects/lightning-bolt","file":"04-effects/lightning-bolt/index.html","dir":"04-effects","size":96,"signals":["悬停","链接"]},{"id":"04-effects/matrix-rain","file":"04-effects/matrix-rain/index.html","dir":"04-effects","size":3,"signals":[]},{"id":"04-effects/neon-text","file":"04-effects/neon-text/index.html","dir":"04-effects","size":2,"signals":[]},{"id":"04-effects/plant-generator","file":"04-effects/plant-generator/index.html","dir":"04-effects","size":5,"signals":["悬停"]},{"id":"04-effects/points-sphere","file":"04-effects/points-sphere/index.html","dir":"04-effects","size":4,"signals":["three.js","外部CDN"]},{"id":"04-effects/rgb-channels","file":"04-effects/rgb-channels/index.html","dir":"04-effects","size":2,"signals":["canvas2d"]},{"id":"04-effects/smoky-text","file":"04-effects/smoky-text/index.html","dir":"04-effects","size":4,"signals":[]},{"id":"04-effects/snake-highlight","file":"04-effects/snake-highlight/index.html","dir":"04-effects","size":5,"signals":["描边描绘","外部CDN"]},{"id":"04-effects/space-travel","file":"04-effects/space-travel/index.html","dir":"04-effects","size":27,"signals":["指针","three.js","外部CDN"]},{"id":"04-effects/svg-border","file":"04-effects/svg-border/index.html","dir":"04-effects","size":1,"signals":["悬停","描边描绘"]},{"id":"04-effects/svg-sphere","file":"04-effects/svg-sphere/index.html","dir":"04-effects","size":8,"signals":["描边描绘","外部CDN"]},{"id":"04-effects/text-particles","file":"04-effects/text-particles/index.html","dir":"04-effects","size":4,"signals":["canvas2d","指针"]},{"id":"04-effects/triangle-illusion","file":"04-effects/triangle-illusion/index.html","dir":"04-effects","size":18,"signals":[]},{"id":"05-components/button-kit","file":"05-components/button-kit/index.html","dir":"05-components","size":9,"signals":["悬停"]},{"id":"05-components/cards","file":"05-components/cards/index.html","dir":"05-components","size":6,"signals":[]},{"id":"05-components/data-explorer","file":"05-components/data-explorer/index.html","dir":"05-components","size":26,"signals":["悬停","链接","文字拆分","图表","表格","外部CDN"]},{"id":"05-components/drag-slider","file":"05-components/drag-slider/index.html","dir":"05-components","size":13,"signals":["悬停","指针","链接"]},{"id":"05-components/elastic-sidebar","file":"05-components/elastic-sidebar/index.html","dir":"05-components","size":16,"signals":["滚动","悬停","指针","链接"]},{"id":"05-components/expanding-card","file":"05-components/expanding-card/index.html","dir":"05-components","size":4,"signals":["链接"]},{"id":"05-components/expanding-form","file":"05-components/expanding-form/index.html","dir":"05-components","size":10,"signals":["悬停"]},{"id":"05-components/flip-card","file":"05-components/flip-card/index.html","dir":"05-components","size":9,"signals":["描边描绘"]},{"id":"05-components/hover-card","file":"05-components/hover-card/index.html","dir":"05-components","size":9,"signals":["悬停","指针","链接"]},{"id":"05-components/image-gallery","file":"05-components/image-gallery/index.html","dir":"05-components","size":23,"signals":["canvas2d","指针"]},{"id":"05-components/image-slider","file":"05-components/image-slider/index.html","dir":"05-components","size":11,"signals":[]},{"id":"05-components/image-track","file":"05-components/image-track/index.html","dir":"05-components","size":5,"signals":["悬停","指针","链接"]},{"id":"05-components/loader","file":"05-components/loader/index.html","dir":"05-components","size":3,"signals":["铺满画布"]},{"id":"05-components/metric-card","file":"05-components/metric-card/index.html","dir":"05-components","size":10,"signals":["铺满画布","悬停","外部CDN"]},{"id":"05-components/mini-keyboard","file":"05-components/mini-keyboard/index.html","dir":"05-components","size":14,"signals":["悬停","链接"]},{"id":"05-components/mix-blend-menu","file":"05-components/mix-blend-menu/index.html","dir":"05-components","size":3,"signals":["指针"]},{"id":"05-components/model-viewer","file":"05-components/model-viewer/index.html","dir":"05-components","size":12,"signals":["悬停"]},{"id":"05-components/navicon","file":"05-components/navicon/index.html","dir":"05-components","size":5,"signals":["悬停","链接"]},{"id":"05-components/order-flow","file":"05-components/order-flow/index.html","dir":"05-components","size":6,"signals":["链接","文字拆分","外部CDN"]},{"id":"05-components/rings-nav","file":"05-components/rings-nav/index.html","dir":"05-components","size":5,"signals":["悬停","链接"]},{"id":"05-components/sortable-grid","file":"05-components/sortable-grid/index.html","dir":"05-components","size":12,"signals":["悬停","拖拽","链接"]},{"id":"05-components/toggle","file":"05-components/toggle/index.html","dir":"05-components","size":13,"signals":[]},{"id":"06-animation/blur-focus","file":"06-animation/blur-focus/index.html","dir":"06-animation","size":12,"signals":["悬停","文字拆分","外部CDN"]},{"id":"06-animation/chain-timeline","file":"06-animation/chain-timeline/index.html","dir":"06-animation","size":13,"signals":["悬停","链接"]},{"id":"06-animation/chat-sequence","file":"06-animation/chat-sequence/index.html","dir":"06-animation","size":9,"signals":["悬停"]},{"id":"06-animation/clip-reveal","file":"06-animation/clip-reveal/index.html","dir":"06-animation","size":17,"signals":["悬停","外部CDN"]},{"id":"06-animation/collage-animation","file":"06-animation/collage-animation/index.html","dir":"06-animation","size":12,"signals":["文字拆分","外部CDN"]},{"id":"06-animation/folder-hover","file":"06-animation/folder-hover/index.html","dir":"06-animation","size":2,"signals":["悬停"]},{"id":"06-animation/gsap-starter","file":"06-animation/gsap-starter/index.html","dir":"06-animation","size":1,"signals":["文字拆分","外部CDN"]},{"id":"06-animation/hover-fade-blur","file":"06-animation/hover-fade-blur/index.html","dir":"06-animation","size":4,"signals":["悬停","表格"]},{"id":"06-animation/image-zoom","file":"06-animation/image-zoom/index.html","dir":"06-animation","size":3,"signals":["链接"]},{"id":"06-animation/infinite-cards","file":"06-animation/infinite-cards/index.html","dir":"06-animation","size":8,"signals":["滚动","悬停","外部CDN"]},{"id":"06-animation/kinetic-type","file":"06-animation/kinetic-type/index.html","dir":"06-animation","size":13,"signals":["悬停","文字拆分","外部CDN"]},{"id":"06-animation/line-mask","file":"06-animation/line-mask/index.html","dir":"06-animation","size":10,"signals":["悬停","文字拆分","外部CDN"]},{"id":"06-animation/login-transition","file":"06-animation/login-transition/index.html","dir":"06-animation","size":15,"signals":["描边描绘"]},{"id":"06-animation/logo-dots","file":"06-animation/logo-dots/index.html","dir":"06-animation","size":13,"signals":["canvas2d","指针","描边描绘","外部CDN"]},{"id":"06-animation/marquee","file":"06-animation/marquee/index.html","dir":"06-animation","size":23,"signals":["链接"]},{"id":"06-animation/motion-study","file":"06-animation/motion-study/index.html","dir":"06-animation","size":15,"signals":["悬停","链接"]},{"id":"06-animation/parallax-scroll","file":"06-animation/parallax-scroll/index.html","dir":"06-animation","size":95,"signals":["铺满画布","滚动","悬停","链接","外部CDN"]},{"id":"06-animation/particle-assemble","file":"06-animation/particle-assemble/index.html","dir":"06-animation","size":24,"signals":["canvas2d","悬停","three.js","外部CDN"]},{"id":"06-animation/popout-reveal","file":"06-animation/popout-reveal/index.html","dir":"06-animation","size":524,"signals":["悬停"]},{"id":"06-animation/pull-cord","file":"06-animation/pull-cord/index.html","dir":"06-animation","size":9,"signals":["拖拽","描边描绘"]},{"id":"06-animation/scroll-micro","file":"06-animation/scroll-micro/index.html","dir":"06-animation","size":7,"signals":[]},{"id":"06-animation/scroll-zoom","file":"06-animation/scroll-zoom/index.html","dir":"06-animation","size":2,"signals":["滚动","外部CDN"]},{"id":"06-animation/slide-merge","file":"06-animation/slide-merge/index.html","dir":"06-animation","size":16,"signals":["悬停","文字拆分","外部CDN"]},{"id":"06-animation/split-text","file":"06-animation/split-text/index.html","dir":"06-animation","size":10,"signals":["悬停","文字拆分","外部CDN"]},{"id":"06-animation/stroke-draw","file":"06-animation/stroke-draw/index.html","dir":"06-animation","size":17,"signals":["悬停","描边描绘","外部CDN"]},{"id":"06-animation/text-invert","file":"06-animation/text-invert/index.html","dir":"06-animation","size":2,"signals":["滚动","外部CDN"]},{"id":"06-animation/text-scramble","file":"06-animation/text-scramble/index.html","dir":"06-animation","size":3,"signals":["悬停","链接"]},{"id":"06-animation/welcome-sequence","file":"06-animation/welcome-sequence/index.html","dir":"06-animation","size":105,"signals":[]}];
+const LAYERS = [{"id":"L1","name":"背景板","hint":"铺满画布、不承载内容、自己不成页"},{"id":"L2","name":"页面主体","hint":"定义一页的形态或行为"},{"id":"L3","name":"页面元件","hint":"只服务页面上的一个点"},{"id":"L4","name":"串联件","hint":"导航 / 揭示 / 切换"},{"id":"T","name":"模板/工具","hint":"不是内容资产"}];
+const LS = "classification-review-v3";
+let dec = {};
+try { dec = JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) {}
+let idx = 0;
+
+const $ = id => document.getElementById(id);
+const save = () => localStorage.setItem(LS, JSON.stringify(dec));
+const rec = a => dec[a.id] || { layers: [], broken: false, note: "" };
+const isReviewed = a => { const d = dec[a.id]; return !!(d && (d.broken || (d.layers && d.layers.length))); };
+
+function write(a, patch, advance){
+  const d = Object.assign({ layers: [], broken: false, note: "" }, dec[a.id], patch, { at: new Date().toISOString() });
+  if (d.broken || (d.layers && d.layers.length)) dec[a.id] = d; else delete dec[a.id];
+  save();
+  show(advance ? idx + 1 : idx, a.id);
+}
+const toggleLayer = L => { const a = ASSETS[idx], cur = rec(a).layers || [];
+  write(a, { layers: cur.includes(L) ? cur.filter(x => x !== L) : cur.concat(L) }, false); };
+const toggleBroken = () => { const a = ASSETS[idx]; write(a, { broken: !rec(a).broken }, false); };
+const clearOne = () => { const a = ASSETS[idx]; delete dec[a.id]; save(); show(idx, a.id); };
+
+function stats(){
+  const reviewed = ASSETS.filter(isReviewed).length;
+  const broken = ASSETS.filter(a => rec(a).broken).length;
+  const by = {};
+  for (const a of ASSETS) for (const L of (rec(a).layers || [])) by[L] = (by[L] || 0) + 1;
+  const multi = ASSETS.filter(a => (rec(a).layers || []).length > 1).length;
+  $("stats").innerHTML =
+    "共 <b>" + ASSETS.length + "</b> · 已裁定 <b>" + reviewed + "</b> · 未裁定 <b>" + (ASSETS.length - reviewed) + "</b><br>" +
+    "无法工作 <b>" + broken + "</b> · 多选(≥2层) <b>" + multi + "</b><br>" +
+    LAYERS.map(l => l.id + " <b>" + (by[l.id] || 0) + "</b>").join(" · ");
+  $("progressBar").style.width = (reviewed / ASSETS.length * 100).toFixed(1) + "%";
+}
+
+function renderList(flashId){
+  const groups = {};
+  for (const a of ASSETS) (groups[a.dir] = groups[a.dir] || []).push(a);
+  let h = "";
+  for (const dir of Object.keys(groups)) {
+    h += '<div class="grp">' + dir + " (" + groups[dir].length + ")</div>";
+    for (const a of groups[dir]) {
+      const d = rec(a);
+      const ls = d.layers || [];
+      const tags = ls.map(L => '<span class="badge on b-' + L + '">' + L + '</span>').join("") +
+                   (d.broken ? '<span class="badge on b-bad">无法工作</span>' : "");
+      const dotCls = d.broken ? "bad" : (ls.length ? "ok" : "");
+      const cls = (a.id === ASSETS[idx].id ? "cur " : "") + (flashId === a.id ? "flash" : "");
+      h += '<div class="item ' + cls + '" data-id="' + a.id + '">' +
+           '<span class="dot ' + dotCls + '"></span>' +
+           '<span class="t">' + a.id + '</span>' +
+           '<span class="tags">' + (tags || '<span class="badge">未裁定</span>') + '</span></div>';
+    }
+  }
+  $("items").innerHTML = h;
+  const cur = $("items").querySelector(".cur");
+  if (cur) cur.scrollIntoView({ block: "nearest" });
+}
+
+function show(i, flashId){
+  idx = Math.max(0, Math.min(ASSETS.length - 1, i));
+  const a = ASSETS[idx], d = rec(a);
+  $("curId").textContent = (idx + 1) + "/" + ASSETS.length + " · " + a.id;
+  const parts = [].concat((d.layers || []), d.broken ? ["无法工作"] : []);
+  const summary = parts.length ? parts.join(" + ") : "未裁定";
+  $("curMeta").textContent = a.size + "KB · 当前：" + summary;
+  $("curSig").textContent = "客观信号（非建议）：" + (a.signals.join(" / ") || "无");
+  $("openNew").href = a.file;
+  $("frame").src = a.file;
+  $("note").value = d.note || "";
+  document.querySelectorAll("[data-layer]").forEach(btn => {
+    const L = btn.dataset.layer;
+    btn.classList.toggle("sel", L === "BROKEN" ? !!d.broken : (d.layers || []).includes(L));
+  });
+  renderList(flashId); stats();
+}
+
+document.querySelectorAll("[data-layer]").forEach(btn => btn.addEventListener("click", () => {
+  if (btn.dataset.layer === "BROKEN") toggleBroken(); else toggleLayer(btn.dataset.layer);
+}));
+$("undo").addEventListener("click", clearOne);
+$("note").addEventListener("input", () => { const a = ASSETS[idx]; write(a, { note: $("note").value }, false); });
+$("jumpUndecided").addEventListener("click", () => {
+  const i = ASSETS.findIndex(a => !isReviewed(a));
+  if (i >= 0) show(i); else alert("全部已裁定");
+});
+$("clearAll").addEventListener("click", () => { if (confirm("清空全部裁定？")) { dec = {}; save(); show(0); } });
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  if (e.key === "1") toggleLayer("L1");
+  else if (e.key === "2") toggleLayer("L2");
+  else if (e.key === "3") toggleLayer("L3");
+  else if (e.key === "4") toggleLayer("L4");
+  else if (e.key === "5") toggleLayer("T");
+  else if (e.key === "b" || e.key === "B") toggleBroken();
+  else if (e.key === "u" || e.key === "U") clearOne();
+  else if (e.key === "Enter" || e.key === "ArrowRight"){ e.preventDefault(); show(idx + 1); }
+  else if (e.key === "ArrowLeft"){ e.preventDefault(); show(idx - 1); }
+  else if (e.key === "ArrowDown"){ e.preventDefault(); show(idx + 1); }
+  else if (e.key === "ArrowUp"){ e.preventDefault(); show(idx - 1); }
+});
+
+$("items").addEventListener("click", e => {
+  const it = e.target.closest(".item");
+  if (it) show(ASSETS.findIndex(a => a.id === it.dataset.id));
+});
+
+$("export").addEventListener("click", () => {
+  const out = ASSETS.map(a => {
+    const d = rec(a);
+    return { id: a.id, layers: d.layers || [], broken: !!d.broken, note: d.note || "",
+             reviewed: isReviewed(a), at: d.at || "" };
+  });
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "classification.json";
+  link.click();
+});
+
+show(0);
+</script>
+</body>
+</html>

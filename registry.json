@@ -1,0 +1,2263 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-09-19",
+  "source": "人工裁定 classification.json（2026-09-19）+ 自动扫描",
+  "layers": {
+    "L1": {
+      "name": "背景板",
+      "integration": "embed",
+      "desc": "铺满画布、不承载内容；挂在背景槽，每页可换"
+    },
+    "L2": {
+      "name": "页面主体",
+      "integration": "rebuild",
+      "desc": "定义一页的形态/行为；按内容重建或嵌入"
+    },
+    "L3": {
+      "name": "页面元件",
+      "integration": "port",
+      "desc": "服务页面上一个点；移植配方或代码"
+    },
+    "L4": {
+      "name": "串联件",
+      "integration": "port",
+      "desc": "导航/揭示/切换；移植或由外壳自建"
+    },
+    "T": {
+      "name": "模板/工具",
+      "integration": "skip",
+      "desc": "不是内容资产"
+    }
+  },
+  "stats": {
+    "total": 95,
+    "reviewed": 95,
+    "broken": 19,
+    "byLayer": {
+      "L1": 10,
+      "L2": 16,
+      "L3": 46,
+      "L4": 16,
+      "T": 0
+    },
+    "multiLayer": 11,
+    "depFree": 37
+  },
+  "assets": [
+    {
+      "id": "01-layout/centered-section",
+      "file": "01-layout/centered-section/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "滚动"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 2,
+      "usage": []
+    },
+    {
+      "id": "01-layout/grid-recipes",
+      "file": "01-layout/grid-recipes/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 5,
+      "usage": []
+    },
+    {
+      "id": "01-layout/horizontal-scroll",
+      "file": "01-layout/horizontal-scroll/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "滚动"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 17,
+      "usage": []
+    },
+    {
+      "id": "01-layout/scroll-sections",
+      "file": "01-layout/scroll-sections/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "链接",
+        "文字拆分"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 6,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 38,
+        "visibleBoxes": 29,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": true,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "01-layout/scrollytelling-chart",
+      "file": "01-layout/scrollytelling-chart/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "铺满画布",
+        "滚动",
+        "文字拆分",
+        "图表"
+      ],
+      "deps": [
+        "https://cdn.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 19,
+      "usage": []
+    },
+    {
+      "id": "01-layout/scrollytelling-comparison",
+      "file": "01-layout/scrollytelling-comparison/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "铺满画布",
+        "滚动",
+        "链接"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css",
+        "https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 27,
+      "usage": []
+    },
+    {
+      "id": "01-layout/scrollytelling-map",
+      "file": "01-layout/scrollytelling-map/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "铺满画布",
+        "滚动",
+        "描边描绘",
+        "图表"
+      ],
+      "deps": [
+        "https://cdn.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js",
+        "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.js"
+      ],
+      "depFree": false,
+      "sizeKB": 22,
+      "usage": []
+    },
+    {
+      "id": "01-layout/scrollytelling-network",
+      "file": "01-layout/scrollytelling-network/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "铺满画布",
+        "滚动"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/cytoscape@3.34.3/dist/cytoscape.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 20,
+      "usage": []
+    },
+    {
+      "id": "01-layout/scrollytelling-pinned",
+      "file": "01-layout/scrollytelling-pinned/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "铺满画布",
+        "滚动"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 21,
+      "usage": []
+    },
+    {
+      "id": "01-layout/skewed-scroll",
+      "file": "01-layout/skewed-scroll/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 7,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 237,
+        "visibleBoxes": 41,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "01-layout/sticky-parallax",
+      "file": "01-layout/sticky-parallax/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "滚动",
+        "悬停",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 13,
+      "usage": []
+    },
+    {
+      "id": "02-background/dot-grid",
+      "file": "02-background/dot-grid/index.html",
+      "layers": [
+        "L1"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [
+        "悬停",
+        "three.js"
+      ],
+      "deps": [
+        "https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js",
+        "https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 12,
+      "usage": []
+    },
+    {
+      "id": "02-background/glow-field",
+      "file": "02-background/glow-field/index.html",
+      "layers": [
+        "L1"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [
+        "悬停",
+        "three.js"
+      ],
+      "deps": [
+        "https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js",
+        "https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 13,
+      "usage": []
+    },
+    {
+      "id": "02-background/gradient-mesh",
+      "file": "02-background/gradient-mesh/index.html",
+      "layers": [
+        "L1"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [
+        "https://esm.sh/mesh-gradient.js"
+      ],
+      "depFree": false,
+      "sizeKB": 10,
+      "usage": []
+    },
+    {
+      "id": "02-background/oklch-gradient",
+      "file": "02-background/oklch-gradient/index.html",
+      "layers": [
+        "L1"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 3,
+      "usage": []
+    },
+    {
+      "id": "02-background/particle-field",
+      "file": "02-background/particle-field/index.html",
+      "layers": [
+        "L1"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/@tsparticles/engine@4/tsparticles.engine.min.js",
+        "https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 15,
+      "usage": []
+    },
+    {
+      "id": "03-map/choropleth",
+      "file": "03-map/choropleth/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "指针",
+        "图表"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js",
+        "https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js",
+        "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.js"
+      ],
+      "depFree": false,
+      "sizeKB": 19,
+      "usage": []
+    },
+    {
+      "id": "03-map/flow-map",
+      "file": "03-map/flow-map/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "canvas2d",
+        "悬停",
+        "指针",
+        "描边描绘",
+        "图表"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js",
+        "https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js",
+        "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.js"
+      ],
+      "depFree": false,
+      "sizeKB": 20,
+      "usage": []
+    },
+    {
+      "id": "03-map/world-map",
+      "file": "03-map/world-map/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "指针",
+        "描边描绘",
+        "图表"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js",
+        "https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js",
+        "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.js"
+      ],
+      "depFree": false,
+      "sizeKB": 12,
+      "usage": []
+    },
+    {
+      "id": "04-effects/airplanes",
+      "file": "04-effects/airplanes/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "铺满画布",
+        "滚动",
+        "链接",
+        "three.js"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 15,
+      "usage": []
+    },
+    {
+      "id": "04-effects/attract-hover",
+      "file": "04-effects/attract-hover/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "指针"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 3,
+      "usage": []
+    },
+    {
+      "id": "04-effects/bokeh",
+      "file": "04-effects/bokeh/index.html",
+      "layers": [
+        "L1"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 6,
+      "usage": []
+    },
+    {
+      "id": "04-effects/cracked-text",
+      "file": "04-effects/cracked-text/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 3,
+      "usage": []
+    },
+    {
+      "id": "04-effects/css-3d-chess",
+      "file": "04-effects/css-3d-chess/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "链接",
+        "表格"
+      ],
+      "deps": [
+        "https://github.com/jhlywa/chess.js"
+      ],
+      "depFree": false,
+      "sizeKB": 54,
+      "usage": []
+    },
+    {
+      "id": "04-effects/css-art-car",
+      "file": "04-effects/css-art-car/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 21,
+      "usage": []
+    },
+    {
+      "id": "04-effects/cursor-glow",
+      "file": "04-effects/cursor-glow/index.html",
+      "layers": [
+        "L3",
+        "L4"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "指针",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 8,
+      "usage": []
+    },
+    {
+      "id": "04-effects/drag-coloring",
+      "file": "04-effects/drag-coloring/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "铺满画布",
+        "拖拽",
+        "链接"
+      ],
+      "deps": [
+        "https://github.com/substack/point-in-polygon/blob/master/index.js"
+      ],
+      "depFree": false,
+      "sizeKB": 13,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 0,
+        "visibleBoxes": 5,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "04-effects/flowing-image",
+      "file": "04-effects/flowing-image/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 8,
+      "usage": []
+    },
+    {
+      "id": "04-effects/gradient-border",
+      "file": "04-effects/gradient-border/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 2,
+      "usage": []
+    },
+    {
+      "id": "04-effects/letterfall",
+      "file": "04-effects/letterfall/index.html",
+      "layers": [
+        "L1"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [
+        "canvas2d",
+        "three.js"
+      ],
+      "deps": [
+        "https://unpkg.com/three@0.163.0/build/three.module.js",
+        "https://esm.sh/three/addons/controls/OrbitControls.js",
+        "https://esm.sh/three/addons/libs/tween.module.js",
+        "https://esm.sh/three/addons/math/SimplexNoise.js"
+      ],
+      "depFree": false,
+      "sizeKB": 8,
+      "usage": []
+    },
+    {
+      "id": "04-effects/light-box",
+      "file": "04-effects/light-box/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "three.js"
+      ],
+      "deps": [
+        "https://unpkg.com/three@0.171.0/build/three.webgpu.js",
+        "https://unpkg.com/three@0.171.0/build/three.tsl.js",
+        "https://esm.sh/three/addons/controls/OrbitControls.js",
+        "https://esm.sh/three/addons/tsl/display/BloomNode.js"
+      ],
+      "depFree": false,
+      "sizeKB": 6,
+      "usage": [],
+      "diag": {
+        "kind": "blank",
+        "label": "页面近乎空白（疑似真坏）",
+        "textLen": 0,
+        "visibleBoxes": 0,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "04-effects/light-flow",
+      "file": "04-effects/light-flow/index.html",
+      "layers": [
+        "L1",
+        "L4"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [
+        "three.js"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/gh/Anemolo/Infinite-Lights@master/js/three.min.js",
+        "https://cdn.jsdelivr.net/gh/Anemolo/Infinite-Lights@master/js/postprocessing.min.js",
+        "https://cdn.jsdelivr.net/gh/Anemolo/Infinite-Lights@master/js/InfiniteLights.js",
+        "https://cdn.jsdelivr.net/gh/Anemolo/Infinite-Lights@master/js/Distortions.js"
+      ],
+      "depFree": false,
+      "sizeKB": 6,
+      "usage": []
+    },
+    {
+      "id": "04-effects/lightning-bolt",
+      "file": "04-effects/lightning-bolt/index.html",
+      "layers": [
+        "L3",
+        "L4"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 96,
+      "usage": []
+    },
+    {
+      "id": "04-effects/matrix-rain",
+      "file": "04-effects/matrix-rain/index.html",
+      "layers": [
+        "L1"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 3,
+      "usage": []
+    },
+    {
+      "id": "04-effects/neon-text",
+      "file": "04-effects/neon-text/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 2,
+      "usage": []
+    },
+    {
+      "id": "04-effects/plant-generator",
+      "file": "04-effects/plant-generator/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 5,
+      "usage": [],
+      "diag": {
+        "kind": "blank",
+        "label": "页面近乎空白（疑似真坏）",
+        "textLen": 6,
+        "visibleBoxes": 2,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "04-effects/points-sphere",
+      "file": "04-effects/points-sphere/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "three.js"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 4,
+      "usage": [],
+      "diag": {
+        "kind": "blank",
+        "label": "页面近乎空白（疑似真坏）",
+        "textLen": 4,
+        "visibleBoxes": 1,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "04-effects/rgb-channels",
+      "file": "04-effects/rgb-channels/index.html",
+      "layers": [
+        "L1"
+      ],
+      "primary": "L1",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "embed",
+      "signals": [
+        "canvas2d"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 2,
+      "usage": []
+    },
+    {
+      "id": "04-effects/smoky-text",
+      "file": "04-effects/smoky-text/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 4,
+      "usage": []
+    },
+    {
+      "id": "04-effects/snake-highlight",
+      "file": "04-effects/snake-highlight/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "描边描绘"
+      ],
+      "deps": [
+        "https://rsms.me/inter/inter-ui.css",
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 5,
+      "usage": []
+    },
+    {
+      "id": "04-effects/space-travel",
+      "file": "04-effects/space-travel/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "指针",
+        "three.js"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 27,
+      "usage": []
+    },
+    {
+      "id": "04-effects/svg-border",
+      "file": "04-effects/svg-border/index.html",
+      "layers": [
+        "L2",
+        "L4"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "悬停",
+        "描边描绘"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 1,
+      "usage": []
+    },
+    {
+      "id": "04-effects/svg-sphere",
+      "file": "04-effects/svg-sphere/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "描边描绘"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 8,
+      "usage": []
+    },
+    {
+      "id": "04-effects/text-particles",
+      "file": "04-effects/text-particles/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "canvas2d",
+        "指针"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 4,
+      "usage": []
+    },
+    {
+      "id": "04-effects/triangle-illusion",
+      "file": "04-effects/triangle-illusion/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 18,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 0,
+        "visibleBoxes": 63,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "05-components/button-kit",
+      "file": "05-components/button-kit/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 9,
+      "usage": []
+    },
+    {
+      "id": "05-components/cards",
+      "file": "05-components/cards/index.html",
+      "layers": [
+        "L4"
+      ],
+      "primary": "L4",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 6,
+      "usage": []
+    },
+    {
+      "id": "05-components/data-explorer",
+      "file": "05-components/data-explorer/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "链接",
+        "文字拆分",
+        "图表",
+        "表格"
+      ],
+      "deps": [
+        "https://unpkg.com/tabulator-tables@6.5.3/dist/css/tabulator.min.css",
+        "https://cdn.jsdelivr.net/npm/echarts@6.1.0/dist/echarts.min.js",
+        "https://unpkg.com/tabulator-tables@6.5.3/dist/js/tabulator.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 26,
+      "usage": []
+    },
+    {
+      "id": "05-components/drag-slider",
+      "file": "05-components/drag-slider/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "悬停",
+        "指针",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 13,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 1319,
+        "visibleBoxes": 32,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "05-components/elastic-sidebar",
+      "file": "05-components/elastic-sidebar/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "滚动",
+        "悬停",
+        "指针",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 16,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 153,
+        "visibleBoxes": 15,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "05-components/expanding-card",
+      "file": "05-components/expanding-card/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 4,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 769,
+        "visibleBoxes": 13,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "05-components/expanding-form",
+      "file": "05-components/expanding-form/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 10,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 127,
+        "visibleBoxes": 2,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "05-components/flip-card",
+      "file": "05-components/flip-card/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "描边描绘"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 9,
+      "usage": []
+    },
+    {
+      "id": "05-components/hover-card",
+      "file": "05-components/hover-card/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "指针",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 9,
+      "usage": []
+    },
+    {
+      "id": "05-components/image-gallery",
+      "file": "05-components/image-gallery/index.html",
+      "layers": [
+        "L2",
+        "L4"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "canvas2d",
+        "指针"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 23,
+      "usage": []
+    },
+    {
+      "id": "05-components/image-slider",
+      "file": "05-components/image-slider/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 11,
+      "usage": []
+    },
+    {
+      "id": "05-components/image-track",
+      "file": "05-components/image-track/index.html",
+      "layers": [
+        "L4"
+      ],
+      "primary": "L4",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "指针",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 5,
+      "usage": []
+    },
+    {
+      "id": "05-components/loader",
+      "file": "05-components/loader/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "铺满画布"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 3,
+      "usage": []
+    },
+    {
+      "id": "05-components/metric-card",
+      "file": "05-components/metric-card/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "铺满画布",
+        "悬停"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/countup.js@2.10.1/dist/countUp.umd.js"
+      ],
+      "depFree": false,
+      "sizeKB": 10,
+      "usage": []
+    },
+    {
+      "id": "05-components/mini-keyboard",
+      "file": "05-components/mini-keyboard/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 14,
+      "usage": []
+    },
+    {
+      "id": "05-components/mix-blend-menu",
+      "file": "05-components/mix-blend-menu/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "指针"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 3,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 4,
+        "visibleBoxes": 7,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "05-components/model-viewer",
+      "file": "05-components/model-viewer/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [
+        "https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 12,
+      "usage": []
+    },
+    {
+      "id": "05-components/navicon",
+      "file": "05-components/navicon/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "悬停",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 5,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 16,
+        "visibleBoxes": 9,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "05-components/order-flow",
+      "file": "05-components/order-flow/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "链接",
+        "文字拆分"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 6,
+      "usage": [],
+      "diag": {
+        "kind": "blank",
+        "label": "页面近乎空白（疑似真坏）",
+        "textLen": 11,
+        "visibleBoxes": 3,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": true,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "05-components/rings-nav",
+      "file": "05-components/rings-nav/index.html",
+      "layers": [
+        "L4"
+      ],
+      "primary": "L4",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 5,
+      "usage": []
+    },
+    {
+      "id": "05-components/sortable-grid",
+      "file": "05-components/sortable-grid/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "悬停",
+        "拖拽",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 12,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 97,
+        "visibleBoxes": 3,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "05-components/toggle",
+      "file": "05-components/toggle/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 13,
+      "usage": [],
+      "diag": {
+        "kind": "blank",
+        "label": "页面近乎空白（疑似真坏）",
+        "textLen": 0,
+        "visibleBoxes": 0,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "06-animation/blur-focus",
+      "file": "06-animation/blur-focus/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "文字拆分"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js",
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 12,
+      "usage": []
+    },
+    {
+      "id": "06-animation/chain-timeline",
+      "file": "06-animation/chain-timeline/index.html",
+      "layers": [
+        "L4"
+      ],
+      "primary": "L4",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 13,
+      "usage": []
+    },
+    {
+      "id": "06-animation/chat-sequence",
+      "file": "06-animation/chat-sequence/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 9,
+      "usage": []
+    },
+    {
+      "id": "06-animation/clip-reveal",
+      "file": "06-animation/clip-reveal/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 17,
+      "usage": []
+    },
+    {
+      "id": "06-animation/collage-animation",
+      "file": "06-animation/collage-animation/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "文字拆分"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 12,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 16,
+        "visibleBoxes": 31,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": true,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "06-animation/folder-hover",
+      "file": "06-animation/folder-hover/index.html",
+      "layers": [
+        "L3",
+        "L4"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 2,
+      "usage": []
+    },
+    {
+      "id": "06-animation/gsap-starter",
+      "file": "06-animation/gsap-starter/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "文字拆分"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 1,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 72,
+        "visibleBoxes": 1,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": true,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "06-animation/hover-fade-blur",
+      "file": "06-animation/hover-fade-blur/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "表格"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 4,
+      "usage": []
+    },
+    {
+      "id": "06-animation/image-zoom",
+      "file": "06-animation/image-zoom/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 3,
+      "usage": []
+    },
+    {
+      "id": "06-animation/infinite-cards",
+      "file": "06-animation/infinite-cards/index.html",
+      "layers": [
+        "L2",
+        "L3",
+        "L4"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "滚动",
+        "悬停"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 8,
+      "usage": []
+    },
+    {
+      "id": "06-animation/kinetic-type",
+      "file": "06-animation/kinetic-type/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "文字拆分"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js",
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 13,
+      "usage": []
+    },
+    {
+      "id": "06-animation/line-mask",
+      "file": "06-animation/line-mask/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "文字拆分"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js",
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 10,
+      "usage": []
+    },
+    {
+      "id": "06-animation/login-transition",
+      "file": "06-animation/login-transition/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "描边描绘"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 15,
+      "usage": []
+    },
+    {
+      "id": "06-animation/logo-dots",
+      "file": "06-animation/logo-dots/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "canvas2d",
+        "指针",
+        "描边描绘"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 13,
+      "usage": []
+    },
+    {
+      "id": "06-animation/marquee",
+      "file": "06-animation/marquee/index.html",
+      "layers": [
+        "L2",
+        "L4"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 23,
+      "usage": []
+    },
+    {
+      "id": "06-animation/motion-study",
+      "file": "06-animation/motion-study/index.html",
+      "layers": [
+        "L2",
+        "L4"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "悬停",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 15,
+      "usage": []
+    },
+    {
+      "id": "06-animation/parallax-scroll",
+      "file": "06-animation/parallax-scroll/index.html",
+      "layers": [
+        "L2"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "铺满画布",
+        "滚动",
+        "悬停",
+        "链接"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 95,
+      "usage": []
+    },
+    {
+      "id": "06-animation/particle-assemble",
+      "file": "06-animation/particle-assemble/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "canvas2d",
+        "悬停",
+        "three.js"
+      ],
+      "deps": [
+        "https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js",
+        "https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/SVGLoader.js",
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 24,
+      "usage": []
+    },
+    {
+      "id": "06-animation/popout-reveal",
+      "file": "06-animation/popout-reveal/index.html",
+      "layers": [
+        "L2",
+        "L4"
+      ],
+      "primary": "L2",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "rebuild",
+      "signals": [
+        "悬停"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 524,
+      "usage": []
+    },
+    {
+      "id": "06-animation/pull-cord",
+      "file": "06-animation/pull-cord/index.html",
+      "layers": [],
+      "primary": "",
+      "broken": true,
+      "note": "",
+      "reviewed": true,
+      "integration": "skip",
+      "signals": [
+        "拖拽",
+        "描边描绘"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 9,
+      "usage": [],
+      "diag": {
+        "kind": "interactive",
+        "label": "有内容：多数需交互（悬停/拖拽）才动",
+        "textLen": 0,
+        "visibleBoxes": 10,
+        "canvases": 0,
+        "libsLoaded": {
+          "gsap": false,
+          "three": false,
+          "d3": false,
+          "vanta": false
+        }
+      }
+    },
+    {
+      "id": "06-animation/scroll-micro",
+      "file": "06-animation/scroll-micro/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 7,
+      "usage": []
+    },
+    {
+      "id": "06-animation/scroll-zoom",
+      "file": "06-animation/scroll-zoom/index.html",
+      "layers": [
+        "L4"
+      ],
+      "primary": "L4",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "滚动"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 2,
+      "usage": []
+    },
+    {
+      "id": "06-animation/slide-merge",
+      "file": "06-animation/slide-merge/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "文字拆分"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 16,
+      "usage": []
+    },
+    {
+      "id": "06-animation/split-text",
+      "file": "06-animation/split-text/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "文字拆分"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js",
+        "https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 10,
+      "usage": []
+    },
+    {
+      "id": "06-animation/stroke-draw",
+      "file": "06-animation/stroke-draw/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "描边描绘"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/vivus@0.4.6/dist/vivus.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 17,
+      "usage": []
+    },
+    {
+      "id": "06-animation/text-invert",
+      "file": "06-animation/text-invert/index.html",
+      "layers": [
+        "L3",
+        "L4"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "滚动"
+      ],
+      "deps": [
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+        "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
+      ],
+      "depFree": false,
+      "sizeKB": 2,
+      "usage": []
+    },
+    {
+      "id": "06-animation/text-scramble",
+      "file": "06-animation/text-scramble/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [
+        "悬停",
+        "链接"
+      ],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 3,
+      "usage": []
+    },
+    {
+      "id": "06-animation/welcome-sequence",
+      "file": "06-animation/welcome-sequence/index.html",
+      "layers": [
+        "L3"
+      ],
+      "primary": "L3",
+      "broken": false,
+      "note": "",
+      "reviewed": true,
+      "integration": "port",
+      "signals": [],
+      "deps": [],
+      "depFree": true,
+      "sizeKB": 105,
+      "usage": []
+    }
+  ],
+  "diagSummary": {
+    "checked": 19,
+    "blank": 5,
+    "canvas": 0,
+    "interactive": 14,
+    "note": "诊断方式：CDP 打开各资产 2.2s 后探测可见块/canvas/全局库；'需交互' 指静态打开无明显变化，真实使用时可能正常"
+  }
+}

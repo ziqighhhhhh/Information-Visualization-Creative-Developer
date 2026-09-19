@@ -1,0 +1,926 @@
+[
+  {
+    "id": "01-layout/centered-section",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:38:56.886Z"
+  },
+  {
+    "id": "01-layout/grid-recipes",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:39:07.406Z"
+  },
+  {
+    "id": "01-layout/horizontal-scroll",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:39:29.664Z"
+  },
+  {
+    "id": "01-layout/scroll-sections",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:39:34.539Z"
+  },
+  {
+    "id": "01-layout/scrollytelling-chart",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:39:42.312Z"
+  },
+  {
+    "id": "01-layout/scrollytelling-comparison",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:39:48.708Z"
+  },
+  {
+    "id": "01-layout/scrollytelling-map",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:39:53.077Z"
+  },
+  {
+    "id": "01-layout/scrollytelling-network",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:39:55.711Z"
+  },
+  {
+    "id": "01-layout/scrollytelling-pinned",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:39:59.136Z"
+  },
+  {
+    "id": "01-layout/skewed-scroll",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:02.042Z"
+  },
+  {
+    "id": "01-layout/sticky-parallax",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:06.394Z"
+  },
+  {
+    "id": "02-background/dot-grid",
+    "layers": [
+      "L1"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:12.832Z"
+  },
+  {
+    "id": "02-background/glow-field",
+    "layers": [
+      "L1"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:14.960Z"
+  },
+  {
+    "id": "02-background/gradient-mesh",
+    "layers": [
+      "L1"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:17.469Z"
+  },
+  {
+    "id": "02-background/oklch-gradient",
+    "layers": [
+      "L1"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:19.560Z"
+  },
+  {
+    "id": "02-background/particle-field",
+    "layers": [
+      "L1"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:23.345Z"
+  },
+  {
+    "id": "03-map/choropleth",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:26.555Z"
+  },
+  {
+    "id": "03-map/flow-map",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:28.117Z"
+  },
+  {
+    "id": "03-map/world-map",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:29.588Z"
+  },
+  {
+    "id": "04-effects/airplanes",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:37.426Z"
+  },
+  {
+    "id": "04-effects/attract-hover",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:39.875Z"
+  },
+  {
+    "id": "04-effects/bokeh",
+    "layers": [
+      "L1"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:41.936Z"
+  },
+  {
+    "id": "04-effects/cracked-text",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:45.653Z"
+  },
+  {
+    "id": "04-effects/css-3d-chess",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:48.782Z"
+  },
+  {
+    "id": "04-effects/css-art-car",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:51.231Z"
+  },
+  {
+    "id": "04-effects/cursor-glow",
+    "layers": [
+      "L3",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:40:57.141Z"
+  },
+  {
+    "id": "04-effects/drag-coloring",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:01.908Z"
+  },
+  {
+    "id": "04-effects/flowing-image",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:05.924Z"
+  },
+  {
+    "id": "04-effects/gradient-border",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:12.224Z"
+  },
+  {
+    "id": "04-effects/letterfall",
+    "layers": [
+      "L1"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:18.114Z"
+  },
+  {
+    "id": "04-effects/light-box",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:21.946Z"
+  },
+  {
+    "id": "04-effects/light-flow",
+    "layers": [
+      "L1",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:32.811Z"
+  },
+  {
+    "id": "04-effects/lightning-bolt",
+    "layers": [
+      "L3",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:38.686Z"
+  },
+  {
+    "id": "04-effects/matrix-rain",
+    "layers": [
+      "L1"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:41.731Z"
+  },
+  {
+    "id": "04-effects/neon-text",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:44.634Z"
+  },
+  {
+    "id": "04-effects/plant-generator",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:50.694Z"
+  },
+  {
+    "id": "04-effects/points-sphere",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:54.102Z"
+  },
+  {
+    "id": "04-effects/rgb-channels",
+    "layers": [
+      "L1"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:41:56.534Z"
+  },
+  {
+    "id": "04-effects/smoky-text",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:42:01.335Z"
+  },
+  {
+    "id": "04-effects/snake-highlight",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:42:06.280Z"
+  },
+  {
+    "id": "04-effects/space-travel",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:42:09.493Z"
+  },
+  {
+    "id": "04-effects/svg-border",
+    "layers": [
+      "L2",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:42:17.370Z"
+  },
+  {
+    "id": "04-effects/svg-sphere",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:42:40.561Z"
+  },
+  {
+    "id": "04-effects/text-particles",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:42:48.034Z"
+  },
+  {
+    "id": "04-effects/triangle-illusion",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:42:44.667Z"
+  },
+  {
+    "id": "05-components/button-kit",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:42:51.813Z"
+  },
+  {
+    "id": "05-components/cards",
+    "layers": [
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:42:57.618Z"
+  },
+  {
+    "id": "05-components/data-explorer",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:05.962Z"
+  },
+  {
+    "id": "05-components/drag-slider",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:12.510Z"
+  },
+  {
+    "id": "05-components/elastic-sidebar",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:16.434Z"
+  },
+  {
+    "id": "05-components/expanding-card",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:21.318Z"
+  },
+  {
+    "id": "05-components/expanding-form",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:26.256Z"
+  },
+  {
+    "id": "05-components/flip-card",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:33.211Z"
+  },
+  {
+    "id": "05-components/hover-card",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:38.461Z"
+  },
+  {
+    "id": "05-components/image-gallery",
+    "layers": [
+      "L2",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:43.954Z"
+  },
+  {
+    "id": "05-components/image-slider",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:49.062Z"
+  },
+  {
+    "id": "05-components/image-track",
+    "layers": [
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:43:56.789Z"
+  },
+  {
+    "id": "05-components/loader",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:01.111Z"
+  },
+  {
+    "id": "05-components/metric-card",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:05.509Z"
+  },
+  {
+    "id": "05-components/mini-keyboard",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:07.843Z"
+  },
+  {
+    "id": "05-components/mix-blend-menu",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:10.682Z"
+  },
+  {
+    "id": "05-components/model-viewer",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:14.059Z"
+  },
+  {
+    "id": "05-components/navicon",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:18.310Z"
+  },
+  {
+    "id": "05-components/order-flow",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:21.383Z"
+  },
+  {
+    "id": "05-components/rings-nav",
+    "layers": [
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:26.810Z"
+  },
+  {
+    "id": "05-components/sortable-grid",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:33.732Z"
+  },
+  {
+    "id": "05-components/toggle",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:38.961Z"
+  },
+  {
+    "id": "06-animation/blur-focus",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:45.448Z"
+  },
+  {
+    "id": "06-animation/chain-timeline",
+    "layers": [
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:44:52.532Z"
+  },
+  {
+    "id": "06-animation/chat-sequence",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:10.039Z"
+  },
+  {
+    "id": "06-animation/clip-reveal",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:14.271Z"
+  },
+  {
+    "id": "06-animation/collage-animation",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:19.092Z"
+  },
+  {
+    "id": "06-animation/folder-hover",
+    "layers": [
+      "L3",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:23.022Z"
+  },
+  {
+    "id": "06-animation/gsap-starter",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:27.598Z"
+  },
+  {
+    "id": "06-animation/hover-fade-blur",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:31.358Z"
+  },
+  {
+    "id": "06-animation/image-zoom",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:38.266Z"
+  },
+  {
+    "id": "06-animation/infinite-cards",
+    "layers": [
+      "L2",
+      "L3",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:46.708Z"
+  },
+  {
+    "id": "06-animation/kinetic-type",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:49.798Z"
+  },
+  {
+    "id": "06-animation/line-mask",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:52.557Z"
+  },
+  {
+    "id": "06-animation/login-transition",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:45:56.197Z"
+  },
+  {
+    "id": "06-animation/logo-dots",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:01.937Z"
+  },
+  {
+    "id": "06-animation/marquee",
+    "layers": [
+      "L2",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:05.588Z"
+  },
+  {
+    "id": "06-animation/motion-study",
+    "layers": [
+      "L2",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:09.872Z"
+  },
+  {
+    "id": "06-animation/parallax-scroll",
+    "layers": [
+      "L2"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:12.625Z"
+  },
+  {
+    "id": "06-animation/particle-assemble",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:20.248Z"
+  },
+  {
+    "id": "06-animation/popout-reveal",
+    "layers": [
+      "L2",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:24.182Z"
+  },
+  {
+    "id": "06-animation/pull-cord",
+    "layers": [],
+    "broken": true,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:28.577Z"
+  },
+  {
+    "id": "06-animation/scroll-micro",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:31.017Z"
+  },
+  {
+    "id": "06-animation/scroll-zoom",
+    "layers": [
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:34.719Z"
+  },
+  {
+    "id": "06-animation/slide-merge",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:42.436Z"
+  },
+  {
+    "id": "06-animation/split-text",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:46.131Z"
+  },
+  {
+    "id": "06-animation/stroke-draw",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:49.544Z"
+  },
+  {
+    "id": "06-animation/text-invert",
+    "layers": [
+      "L3",
+      "L4"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:55.140Z"
+  },
+  {
+    "id": "06-animation/text-scramble",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:46:59.176Z"
+  },
+  {
+    "id": "06-animation/welcome-sequence",
+    "layers": [
+      "L3"
+    ],
+    "broken": false,
+    "note": "",
+    "reviewed": true,
+    "at": "2026-09-19T13:47:03.001Z"
+  }
+]
