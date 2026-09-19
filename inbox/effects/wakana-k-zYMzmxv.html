@@ -1,0 +1,341 @@
+<!--
+  Source : https://codepen.io/wakana-k/pen/zYMzmxv
+  Title  : Parallax Skybox
+  Author : Wakana Y.K.
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects · batch: 2
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Parallax Skybox</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Asap&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
+}
+html {
+  font-size: max(18px, 2.5vw);
+  scroll-behavior: smooth;
+}
+body {
+  font-family: "Asap", sans-serif;
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  min-height: 100vh;
+  text-align: center;
+  color: white;
+  overflow-x: hidden;
+}
+a {
+  color: white;
+}
+#container {
+  position: relative;
+  z-index: 0;
+}
+canvas {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+}
+
+section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  min-height: 100vh;
+  margin: 3vw 0;
+  z-index: 1;
+}
+h1,
+h2 {
+  filter: drop-shadow(0 0 2px black);
+}
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  margin: 1rem 0;
+}
+.sample_wrap {
+  margin: 3rem 0;
+}
+.sample_img {
+  display: inline-block;
+  margin: 0 1rem;
+}
+.img {
+  width: 35vw;
+  height: auto;
+  margin: 1rem 0;
+  border: 3px solid white;
+}
+#arrow {
+  position: absolute;
+  bottom: 2vh;
+  left: 0;
+  right: 0;
+  font-size: 20vmin;
+  filter: drop-shadow(0 0 1px black);
+  transform-origin: center center;
+  transform: rotate(90deg);
+  -webkit-animation: arrow 0.8s 0s ease infinite;
+          animation: arrow 0.8s 0s ease infinite;
+}
+@-webkit-keyframes arrow {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes arrow {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+</style>
+</head>
+<body>
+<!--
+three.js - Parallax Skybox demo
+-->
+<!-- using three.js -->
+
+<div id="container"></div>
+
+<section>
+  <div>
+    <h1>Parallax Skybox</h1>
+    <p> - three.js - </p>
+    <p id='arrow'>&raquo;</p>
+  </div>
+</section>
+<section>
+  <div>
+  </div>
+</section>
+<section>
+  <div id="info">
+    <h2>Reference & Texture</h2>
+    <p><a href="https://threejs.org/examples/#webxr_vr_panorama_depth" target="_blank" rel="noopener">three.js - panorama with depth</a></br>
+      Created by <a href="https://orfleisher.com" target="_blank" rel="noopener">@juniorxsound</a>.</p>
+    <p> Panorama from <a href="https://krpano.com/examples/?depthmap" target="_blank" rel="noopener">krpano</a>.</p>
+    <div class="sample_wrap">
+      <div class="sample_img">
+        <p>Panorama image</p>
+        <img src="https://threejs.org/examples/textures/kandao3.jpg" class="img" />
+      </div>
+      <div class="sample_img">
+        <p>Depth map</p>
+        <img src="https://threejs.org/examples/textures/kandao3_depthmap.jpg" class="img" />
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <div>
+  </div>
+</section>
+<section>
+  <div>
+    <p id='arrow'>&raquo;</p>
+  </div>
+</section>
+<section>
+  <div>
+  </div>
+</section>
+<section>
+  <div>
+    <p id='arrow'>&raquo;</p>
+  </div>
+</section>
+<section>
+  <div>
+  </div>
+</section>
+<section>
+  <p>@wakana-k</p>
+</section>
+
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.6.3/dist/es-module-shims.js" crossorigin="anonymous"></script>
+<script type="importmap">
+  {
+    "imports": {      
+      "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/"
+    }
+  }
+</script>
+
+<script type="module">
+/*
+three.js - Parallax Skybox
+*/
+"use strict";
+
+const img_base = "https://threejs.org/examples/textures/kandao3.jpg";
+//let img_base = "https://happy358.github.io/Images/HDR/sunny_vondelpark_4k.jpg";
+const img_depth = "https://threejs.org/examples/textures/kandao3_depthmap.jpg";
+
+import * as THREE from 'https://esm.sh/three';
+/*
+// for debug
+import { OrbitControls } from 'https://esm.sh/three/addons/controls/OrbitControls.js';
+let controls;
+*/
+(function () {
+  let camera, scene, renderer, skybox;
+  let height = 0;
+
+  init();
+  animate();
+
+  function init() {
+    const container = document.getElementById("container");
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x101010);
+
+    const light = new THREE.AmbientLight(0xffffff, 3.3);
+    scene.add(light);
+
+    camera = new THREE.PerspectiveCamera(
+      70,
+      window.innerWidth / window.innerHeight,
+      1,
+      50
+    );
+    //camera.position.z = 3;// for debug
+    scene.add(camera);
+
+    // Create the panoramic sphere geometery
+    const panoSphereGeo = new THREE.SphereGeometry(30, 500, 500);
+
+    // Create the panoramic sphere material
+    const panoSphereMat = new THREE.MeshStandardMaterial({
+      side: THREE.BackSide,
+      displacementScale: -28.0
+    });
+
+    // Create the panoramic sphere mesh
+    skybox = new THREE.Mesh(panoSphereGeo, panoSphereMat);
+
+    // Load and assign the texture and depth map
+    const manager = new THREE.LoadingManager();
+    const loader = new THREE.TextureLoader(manager);
+
+    loader.load(img_base, function (texture) {
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.NearestFilter;
+      texture.generateMipmaps = false;
+      skybox.material.map = texture;
+    });
+
+    loader.load(img_depth, function (depth) {
+      depth.minFilter = THREE.NearestFilter;
+      depth.generateMipmaps = false;
+      skybox.material.displacementMap = depth;
+    });
+
+    // On load complete add the panoramic sphere to the scene
+    manager.onLoad = function () {
+      scene.add(skybox);
+    };
+
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.useLegacyLights = false;
+
+    container.appendChild(renderer.domElement);
+
+    //
+
+    /*
+  // for debug
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.autoRotate = false;
+  controls.enableDamping = false;
+  controls.enablePan = false;
+  controls.enableZoom = false;
+  controls.target.set(0, 0, -0.0001);
+  //controls.minDistance = 2;
+  //controls.maxDistance = 30;
+  controls.minPolarAngle = 0;
+  controls.maxPolarAngle = Math.PI / 2;
+
+  controls.update();
+*/
+
+    //
+    window.addEventListener("resize", onWindowResize);
+    //
+
+    height = document.body.clientHeight;
+    height -= window.innerHeight;
+    window.addEventListener("scroll", scrollAction);
+  }
+  function scrollAction() {
+    let scrollAmount = window.pageYOffset;
+    scrollAmount = scrollAmount / height;
+    scrollAmount *= Math.PI * 2;
+    skybox.rotation.y = scrollAmount;
+
+    skybox.position.y = Math.sin(scrollAmount * 2);
+    skybox.position.x = Math.sin(scrollAmount * 2) * 2;
+  }
+  function onWindowResize() {
+    height = document.body.clientHeight;
+    height -= window.innerHeight;
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    //controls.update();
+    render();
+  }
+
+  function render() {
+    renderer.render(scene, camera);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!--
+  Source : https://codepen.io/Alca/pen/OjwBEQ
+  Title  : OjwBEQ
+  Author : Alca
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects · batch: 2
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OjwBEQ</title>
+<style>
+html,
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #141414;
+}
+</style>
+</head>
+<body>
+<script>
+  window.canvasOptions = {
+  	autoClear: true,
+  	autoPushPop: true,
+  	//- centered: true
+  };
+</script>
+
+<script>
+let count = 40;
+let c = 1 / count;
+
+function draw() {
+  ctx.strokeStyle = 'hsl(180, 70%, 50%)';
+
+  ctx.beginPath();
+
+  let time_ = Date.now() * 0.0001;
+
+  for (let i = 0; i < count; i++) {
+    let t_ = i * c;
+
+    let time = (time_ + t_) % 1;
+    let t = ease.quint.in(time, 0, 1, 1);
+    let ty = ease.quint.out(t, 0, 1, 1);
+
+    let x = lerp(width, 0, t);
+    let y = ty * height * 0.4;
+    line(x, y, x, height - y, false);
+  }
+
+  ctx.stroke();
+}
+</script>
+</body>
+</html>

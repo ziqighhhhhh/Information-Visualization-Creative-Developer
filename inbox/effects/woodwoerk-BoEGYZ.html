@@ -1,0 +1,208 @@
+<!--
+  Source : https://codepen.io/woodwoerk/pen/BoEGYZ
+  Title  : Expanding Burger/Menu Icon
+  Author : Joe Harry
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects · batch: 2
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Expanding Burger/Menu Icon</title>
+<style>
+body {
+  background: #4CB8C4;
+  background: linear-gradient(to left, #4CB8C4, #3CD3AD);
+  padding: 60px 60px 0 60px;
+  font-family: 'Lato', sans-serif;
+  color: #FFF;
+}
+
+span {
+  display: inline-block;
+  vertical-align: middle;
+  color: white;
+}
+
+ul {
+  display: block;
+  list-style-type: none;
+  text-align: right;
+}
+
+a {
+  color: #FFF;
+}
+a:hover {
+  opacity: 0.7;
+}
+
+.menu {
+  margin: 0 20px 0 0;
+  padding-left: 1.25em;
+  cursor: pointer;
+  position: relative;
+  width: 30px;
+  height: 50px;
+  text-align: right;
+}
+
+.menu-close {
+  font-size: 0em;
+  opacity: 0;
+  text-align: center;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.menu-close-visible {
+  font-size: 2em;
+  opacity: 1;
+  transition: 0.2s 0.4s;
+}
+
+.menu-global {
+  z-index: -1;
+  position: absolute;
+  left: 0;
+  height: 10px; 
+  width: 100%;
+  background-color: #ffffff;
+
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  transition: 0.2s;
+}
+
+.menu-global:hover {
+  left: 10px;
+  transition: all 0.2s;
+}
+
+.menu-top {
+  top: 0;
+}
+.menu-middle {
+  top: 18px;
+}
+.menu-bottom {
+  top: 36px;
+}
+
+.menu-text{
+  opacity: 0;
+  font-size: 0em;
+  padding: 10px 0;
+  transition: 0.1s;
+}
+
+.expand {
+  box-shadow: rgba(0, 0, 0, 0.1) -2.5px 5px 7.5px, rgba(0, 0, 0, 0.1) 2.5px 5px 7.5px;
+  width: 200px;
+  height: 50px;
+
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+}
+
+.menu-top-expand {
+  top: 50px;
+  background: #FFF8E1;
+  transition: all 0.5s 0.2s, left 0.1s;
+}
+
+.menu-middle-expand {
+  top: 100px;
+  background: #FFECB3;
+  transition: all 0.5s 0.1s, left 0.1s;
+}
+
+.menu-bottom-expand {
+  top: 150px;
+  height: 100px;
+  background: #FFE082;
+  transition: all 0.5s, left 0.1s;
+}
+
+.menu-text-expand{
+  color: #000000;
+  opacity: 0.8;
+  padding: 10px;
+  font-size: 1.3em;
+  transition: all 0.2s 0.7s, font-size 0.1s;
+}
+
+#footer{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+#footer-text{
+  padding-left: 60px;
+}
+</style>
+</head>
+<body>
+<ul class="menu">
+  <div class="menu-close fa fa-close"></div>
+  <li class="menu-global menu-top"><span class="menu-text">Home</span></li>
+  <li class="menu-global menu-middle"><span class="menu-text">About Me</span></li>
+  <li class="menu-global menu-bottom"><span class="menu-text">My Giraffes</span></li>
+</ul>
+
+<footer id="footer">
+  <p id="footer-text">
+    <a href="https://codepen.io/woodwork/pen/xwoLoE/" target="_blank"><b>VERSION 2</b><br>Added ability to use more than 3 menu items (as pointed out in the comments)</a>
+  </p>
+</footer>
+
+<script>
+var Menu = {
+  el: {
+    menu: $('.menu'),
+    menuTop: $('.menu-top'),
+    menuClose: $('.menu-close'),
+    menuMiddle: $('.menu-middle'),
+    menuBottom: $('.menu-bottom'),
+    menuText: $('.menu-text')
+  },
+  
+  init: function() {
+    Menu.bindUIactions();
+  },
+  
+  bindUIactions: function() {
+    Menu.el.menu
+        .on(
+          'click',
+        function(event) {
+        Menu.activateMenu(event);
+        event.preventDefault();
+      }
+    );
+  },
+  
+  activateMenu: function() {
+    Menu.el.menuTop.toggleClass('menu-top-expand expand');
+    Menu.el.menuMiddle.toggleClass('menu-middle-expand expand');
+    Menu.el.menuBottom.toggleClass('menu-bottom-expand expand'); 
+    Menu.el.menuText.toggleClass('menu-text-expand');
+    Menu.el.menuClose.toggleClass('menu-close-visible');
+  }
+};
+  
+  //Stop menu item click closing the menu
+  $(".menu .menu-global").click(function(e) {
+      e.stopPropagation();
+});
+
+Menu.init();
+</script>
+</body>
+</html>

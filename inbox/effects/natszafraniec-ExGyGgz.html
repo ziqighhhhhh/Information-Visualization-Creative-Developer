@@ -1,0 +1,282 @@
+<!--
+  Source : https://codepen.io/natszafraniec/pen/ExGyGgz
+  Title  : Cards
+  Author : Natalia 🤟
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects · batch: 2
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cards</title>
+<style>
+:root {
+  --accent: #c7ecee;
+  --accentComplimentary: #7ed6df;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font: 400 100%/1 "Nunito", serif;
+  background-color: #f7f1e3;
+  color: #2f3640;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 350px);
+  gap: 35px;
+  padding: 60px 35px;
+  justify-content: center;
+}
+.card {
+  border-radius: 35px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 500px;
+}
+.card__top {
+  position: relative;
+  background-color: var(--accentComplimentary);
+  padding: 35px 35px 70px 35px;
+  z-index: 0;
+  display: flex;
+  align-items: flex-start;
+}
+.card__top:has(.card__figure) {
+  aspect-ratio: 3/2;
+}
+.card__bottom {
+  position: relative;
+  margin-top: -35px;
+  background-color: var(--accent);
+  padding: 35px;
+  border-radius: 35px;
+  display: flex;
+  gap: 60px;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  z-index: 1;
+}
+.card__figure {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: lighten;
+  opacity: 0.5;
+}
+.card__image {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.card__tag {
+  padding: 10px 20px;
+  border: 1px solid currentColor;
+  border-radius: 2em;
+  position: relative;
+  z-index: 1;
+}
+.card__title {
+  font-size: 2.5rem;
+}
+.card__text {
+  font-size: 1.25rem;
+}
+
+.card--reverse {
+  flex-direction: column-reverse;
+}
+.card--reverse .card__bottom {
+  margin-top: 0;
+  margin-bottom: -35px;
+}
+.card--reverse .card__top {
+  position: relative;
+  padding: 70px 35px 35px 35px;
+  align-items: flex-end;
+}
+
+.card--primary {
+  --accent: #ffbe76;
+  --accentComplimentary: #706fd3;
+}
+
+.card--secondary {
+  --accent: #63cdda;
+  --accentComplimentary: #f5cd79;
+}
+
+.card--tertiary {
+  --accent: #888df1;
+  --accentComplimentary: #ff9ff3;
+}
+</style>
+</head>
+<body>
+<ul class="grid">
+	<li class="grid__item">
+		<div class="card card--primary">
+			<div class="card__top">
+				<span class="card__tag">
+					Avocado
+				</span>
+				<figure class="card__figure">
+					<img class="card__image" src="https://picsum.photos/id/37/400/300" width="400" height="300" />
+				</figure>
+			</div>
+			<div class="card__bottom">
+				<h2 class="card__title">
+					Asian pear cherry rich coconut cream
+				</h2>
+				<p class="card__text">
+					Crunchy seaweed cranberry spritzer spiced peppermint blast zesty tofu pad thai summer
+				</p>
+			</div>
+		</div>
+	</li>
+	<li class="grid__item">
+		<div class="card card--secondary card--reverse">
+			<div class="card__top">
+				<span class="card__tag">
+					Tofu
+				</span>
+			</div>
+			<div class="card__bottom">
+				<h2 class="card__title">
+					Scotch bonnet pepper leek picnic salad
+				</h2>
+				<p class="card__text">
+					Lemon tahini dressing vine tomatoes toasted hazelnuts ultra creamy avocado pesto
+				</p>
+			</div>
+		</div>
+	</li>
+	<li class="grid__item">
+		<div class="card card--tertiary">
+			<div class="card__top">
+				<span class="card__tag">
+					Kale
+				</span>
+			</div>
+			<div class="card__bottom">
+				<h2 class="card__title">
+					Farro platter chia seeds 
+				</h2>
+				<p class="card__text">
+					Artichoke hearts cherry bomb pepper green grapes maple orange
+				</p>
+			</div>
+		</div>
+	</li>
+	<li class="grid__item">
+		<div class="card card--primary">
+			<div class="card__top">
+				<span class="card__tag">
+					Pears
+				</span>
+				<figure class="card__figure">
+					<img class="card__image" src="https://picsum.photos/id/49/400/300" width="400" height="300" />
+				</figure>
+			</div>
+			<div class="card__bottom">
+				<h2 class="card__title">
+					Dark chocolate grenadillo Thai curry green papaya
+				</h2>
+				<p class="card__text">
+					Thai basil tacos açai cocoa shallots red pepper double dark chocolate naga viper
+				</p>
+			</div>
+		</div>
+	</li>
+	<li class="grid__item">
+		<div class="card card--secondary card--reverse">
+			<div class="card__top">
+				<span class="card__tag">
+					Peaches
+				</span>
+				<figure class="card__figure">
+					<img class="card__image" src="https://picsum.photos/id/77/400/300" width="400" height="300" />
+				</figure>
+			</div>
+			<div class="card__bottom">
+				<h2 class="card__title">
+					Cilantro lime vinaigrette
+				</h2>
+				<p class="card__text">
+					Fruit smash potato seeds pineapple salsa main course 
+				</p>
+			</div>
+		</div>
+	</li>
+	<li class="grid__item">
+		<div class="card card--tertiary">
+			<div class="card__top">
+				<span class="card__tag">
+					Pears
+				</span>
+				<figure class="card__figure">
+					<img class="card__image" src="https://picsum.photos/id/50/400/300" width="400" height="300" />
+				</figure>
+			</div>
+			<div class="card__bottom">
+				<h2 class="card__title">
+					Dark chocolate grenadillo Thai curry green papaya
+				</h2>
+				<p class="card__text">
+					Thai basil tacos açai cocoa shallots red pepper double dark chocolate naga viper
+				</p>
+			</div>
+		</div>
+	</li>
+	<li class="grid__item">
+		<div class="card card--secondary">
+			<div class="card__top">
+				<span class="card__tag">
+					Avocado
+				</span>
+				<figure class="card__figure">
+					<img class="card__image" src="https://picsum.photos/id/55/400/300" width="400" height="300" />
+				</figure>
+			</div>
+			<div class="card__bottom">
+				<h2 class="card__title">
+					Asian pear cherry rich coconut cream
+				</h2>
+				<p class="card__text">
+					Crunchy seaweed cranberry spritzer spiced peppermint blast zesty tofu pad thai summer
+				</p>
+			</div>
+		</div>
+	</li>
+	<li class="grid__item">
+		<div class="card card--primary card--reverse">
+			<div class="card__top">
+				<span class="card__tag">
+					Tofu
+				</span>
+			</div>
+			<div class="card__bottom">
+				<h2 class="card__title">
+					Scotch bonnet pepper leek picnic salad
+				</h2>
+				<p class="card__text">
+					Lemon tahini dressing vine tomatoes toasted hazelnuts ultra creamy avocado pesto
+				</p>
+			</div>
+		</div>
+	</li>
+</ul>
+
+
+</body>
+</html>

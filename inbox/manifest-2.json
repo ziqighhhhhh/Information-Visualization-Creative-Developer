@@ -1,0 +1,1102 @@
+[
+  {
+    "file": "inbox/effects/hexagoncircle-XWbWKwL.html",
+    "title": "Card Hover Interactions",
+    "author": "Ryan Mulligan",
+    "source": "https://codepen.io/hexagoncircle/pen/XWbWKwL",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/hexagoncircle-jgGxKR.html",
+    "title": "React Slider w/ Hover Effect",
+    "author": "Ryan Mulligan",
+    "source": "https://codepen.io/hexagoncircle/pen/jgGxKR",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/hexagoncircle-wvmjomb.html",
+    "title": "CSS Marquee Logo Wall",
+    "author": "Ryan Mulligan",
+    "source": "https://codepen.io/hexagoncircle/pen/wvmjomb",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/hexagoncircle-aZWOdE.html",
+    "title": "CSS Site Scroll Micro Animation",
+    "author": "Ryan Mulligan",
+    "source": "https://codepen.io/hexagoncircle/pen/aZWOdE",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/hexagoncircle-JjRYaZw.html",
+    "title": "CSS Sticky Parallax Sections",
+    "author": "Ryan Mulligan",
+    "source": "https://codepen.io/hexagoncircle/pen/JjRYaZw",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ste-vg-zBVaZw.html",
+    "title": "Me",
+    "author": "Steve Gardner",
+    "source": "https://codepen.io/ste-vg/pen/zBVaZw",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ste-vg-GRooLza.html",
+    "title": "Airplanes.",
+    "author": "Steve Gardner",
+    "source": "https://codepen.io/ste-vg/pen/GRooLza",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ste-vg-ppLQNW.html",
+    "title": "Tower Blocks",
+    "author": "Steve Gardner",
+    "source": "https://codepen.io/ste-vg/pen/ppLQNW",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ste-vg-GqaZbo.html",
+    "title": "Animated Weather Cards",
+    "author": "Steve Gardner",
+    "source": "https://codepen.io/ste-vg/pen/GqaZbo",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ste-vg-oKYjKV.html",
+    "title": "Clip Clop Clippity Clop [CSS Only] ",
+    "author": "Steve Gardner",
+    "source": "https://codepen.io/ste-vg/pen/oKYjKV",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ste-vg-zYerxoR.html",
+    "title": "Spell Caster",
+    "author": "Steve Gardner",
+    "source": "https://codepen.io/ste-vg/pen/zYerxoR",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ZachSaucier-abGGKOY.html",
+    "title": "Simplex noise colored lines via vertex shader",
+    "author": "Zach Saucier",
+    "source": "https://codepen.io/ZachSaucier/pen/abGGKOY",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ZachSaucier-nMRbQN.html",
+    "title": "SVG Border Animation 1",
+    "author": "Zach Saucier",
+    "source": "https://codepen.io/ZachSaucier/pen/nMRbQN",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ZachSaucier-mVEwje.html",
+    "title": "Reverse clip path with blend modes",
+    "author": "Zach Saucier",
+    "source": "https://codepen.io/ZachSaucier/pen/mVEwje",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ZachSaucier-jOwNvO.html",
+    "title": "Simple, flat contact form",
+    "author": "Zach Saucier",
+    "source": "https://codepen.io/ZachSaucier/pen/jOwNvO",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ZachSaucier-kPLeoZ.html",
+    "title": "Personal website Jan 2014",
+    "author": "Zach Saucier",
+    "source": "https://codepen.io/ZachSaucier/pen/kPLeoZ",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ZachSaucier-OowezM.html",
+    "title": "Card explode | Disintegrate.js",
+    "author": "Zach Saucier",
+    "source": "https://codepen.io/ZachSaucier/pen/OowezM",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/osublake-NdEONL.html",
+    "title": "Scroll Header",
+    "author": "Blake Bowen",
+    "source": "https://codepen.io/osublake/pen/NdEONL",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/osublake-dMLQJr.html",
+    "title": "Animated Flexbox Playground",
+    "author": "Blake Bowen",
+    "source": "https://codepen.io/osublake/pen/dMLQJr",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/osublake-gpGEye.html",
+    "title": "SVG Plant Generator",
+    "author": "Blake Bowen",
+    "source": "https://codepen.io/osublake/pen/gpGEye",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/osublake-RNLdpz.html",
+    "title": "Sortable Grid Using GreenSock Draggable",
+    "author": "Blake Bowen",
+    "source": "https://codepen.io/osublake/pen/RNLdpz",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/osublake-VmgNJB.html",
+    "title": "Drag and Drop Coloring",
+    "author": "Blake Bowen",
+    "source": "https://codepen.io/osublake/pen/VmgNJB",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/osublake-oGoyYb.html",
+    "title": "SVG Pan, Zoom and Rotate",
+    "author": "Blake Bowen",
+    "source": "https://codepen.io/osublake/pen/oGoyYb",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/dipscom-mVYjPw.html",
+    "title": "SVG Effect: Outer Glow",
+    "author": "Pedro Tavares",
+    "source": "https://codepen.io/dipscom/pen/mVYjPw",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/dipscom-amxYvB.html",
+    "title": "Shooting Hoops",
+    "author": "Pedro Tavares",
+    "source": "https://codepen.io/dipscom/pen/amxYvB",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/dipscom-adjGNp.html",
+    "title": "Ships Ahoy!",
+    "author": "Pedro Tavares",
+    "source": "https://codepen.io/dipscom/pen/adjGNp",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/dipscom-zBoQXV.html",
+    "title": "MOMO BROS",
+    "author": "Pedro Tavares",
+    "source": "https://codepen.io/dipscom/pen/zBoQXV",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/dipscom-PmywQb.html",
+    "title": "Responsive Animated Moving Things",
+    "author": "Pedro Tavares",
+    "source": "https://codepen.io/dipscom/pen/PmywQb",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/dipscom-MpGYrq.html",
+    "title": "THREEJS: Update texture on click",
+    "author": "Pedro Tavares",
+    "source": "https://codepen.io/dipscom/pen/MpGYrq",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/isladjan-abdyPBw.html",
+    "title": "Parallax scroll animation",
+    "author": "isladjan",
+    "source": "https://codepen.io/isladjan/pen/abdyPBw",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/isladjan-bGpjZwN.html",
+    "title": "Space Globe 1",
+    "author": "isladjan",
+    "source": "https://codepen.io/isladjan/pen/bGpjZwN",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/isladjan-qBqPzEX.html",
+    "title": "Particles That Speak",
+    "author": "isladjan",
+    "source": "https://codepen.io/isladjan/pen/qBqPzEX",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/isladjan-zYqLxeG.html",
+    "title": "Dreaming of Jupiter - Three.js",
+    "author": "isladjan",
+    "source": "https://codepen.io/isladjan/pen/zYqLxeG",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/isladjan-BaaNKqj.html",
+    "title": "hex animation ",
+    "author": "isladjan",
+    "source": "https://codepen.io/isladjan/pen/BaaNKqj",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/isladjan-dypjJQb.html",
+    "title": "Lots of Particles",
+    "author": "isladjan",
+    "source": "https://codepen.io/isladjan/pen/dypjJQb",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bennettfeely-DrvpJr.html",
+    "title": "Navicon Transformicons",
+    "author": "Bennett Feely",
+    "source": "https://codepen.io/bennettfeely/pen/DrvpJr",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bennettfeely-nZXRyJ.html",
+    "title": "Smoky Text",
+    "author": "Bennett Feely",
+    "source": "https://codepen.io/bennettfeely/pen/nZXRyJ",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bennettfeely-qRJOZJ.html",
+    "title": "Rings Navigation Concept",
+    "author": "Bennett Feely",
+    "source": "https://codepen.io/bennettfeely/pen/qRJOZJ",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bennettfeely-RNwMyy.html",
+    "title": "CSS Parallax Header Image",
+    "author": "Bennett Feely",
+    "source": "https://codepen.io/bennettfeely/pen/RNwMyy",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bennettfeely-wWVerW.html",
+    "title": "Menu with mix-blend-mode buttons",
+    "author": "Bennett Feely",
+    "source": "https://codepen.io/bennettfeely/pen/wWVerW",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/suez-dPqxoM.html",
+    "title": "Login/Logout animation concept",
+    "author": "Nikolay Talanov",
+    "source": "https://codepen.io/suez/pen/dPqxoM",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/suez-rLGvxr.html",
+    "title": "Cool Layout with Complex Chainable Animation",
+    "author": "Nikolay Talanov",
+    "source": "https://codepen.io/suez/pen/rLGvxr",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/suez-ByvKXE.html",
+    "title": "Fullscreen drag-slider with parallax",
+    "author": "Nikolay Talanov",
+    "source": "https://codepen.io/suez/pen/ByvKXE",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/suez-wMMgXp.html",
+    "title": "Fancy Slider",
+    "author": "Nikolay Talanov",
+    "source": "https://codepen.io/suez/pen/wMMgXp",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/suez-emjwvP.html",
+    "title": "Elastic SVG Sidebar Material Design",
+    "author": "Nikolay Talanov",
+    "source": "https://codepen.io/suez/pen/emjwvP",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/suez-gadLre.html",
+    "title": "Skewed One Page Scroll",
+    "author": "Nikolay Talanov",
+    "source": "https://codepen.io/suez/pen/gadLre",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/woodwoerk-pgLvEr.html",
+    "title": "Expanding Contact Form",
+    "author": "Joe Harry",
+    "source": "https://codepen.io/woodwoerk/pen/pgLvEr",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/woodwoerk-rxrLqa.html",
+    "title": "Step",
+    "author": "Joe Harry",
+    "source": "https://codepen.io/woodwoerk/pen/rxrLqa",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/woodwoerk-BoEGYZ.html",
+    "title": "Expanding Burger/Menu Icon",
+    "author": "Joe Harry",
+    "source": "https://codepen.io/woodwoerk/pen/BoEGYZ",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/woodwoerk-YWjWzo.html",
+    "title": "Samsung TV Loader",
+    "author": "Joe Harry",
+    "source": "https://codepen.io/woodwoerk/pen/YWjWzo",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/woodwoerk-adbyvG.html",
+    "title": "Expanding Card | Material Design",
+    "author": "Joe Harry",
+    "source": "https://codepen.io/woodwoerk/pen/adbyvG",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/woodwoerk-bERRrM.html",
+    "title": "Long Live Ziggy Stardust",
+    "author": "Joe Harry",
+    "source": "https://codepen.io/woodwoerk/pen/bERRrM",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bradwoods-KKEVgZG.html",
+    "title": "garden - draw-on-scroll",
+    "author": "Brad Woods",
+    "source": "https://codepen.io/bradwoods/pen/KKEVgZG",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bradwoods-Yzgpgar.html",
+    "title": "garden - preserve-3d",
+    "author": "Brad Woods",
+    "source": "https://codepen.io/bradwoods/pen/Yzgpgar",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bradwoods-xxejLvN.html",
+    "title": "candle flame",
+    "author": "Brad Woods",
+    "source": "https://codepen.io/bradwoods/pen/xxejLvN",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bradwoods-eYoLoPB.html",
+    "title": "garden - fedisplacementmap - 1",
+    "author": "Brad Woods",
+    "source": "https://codepen.io/bradwoods/pen/eYoLoPB",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/bradwoods-yyNEqgv.html",
+    "title": "garden - three.js - animate a mesh on a sphere’s surface - animate along path - v2",
+    "author": "Brad Woods",
+    "source": "https://codepen.io/bradwoods/pen/yyNEqgv",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ainalem-EQXjOR.html",
+    "title": "Snake highlight",
+    "author": "Mikael Ainalem",
+    "source": "https://codepen.io/ainalem/pen/EQXjOR",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ainalem-QWGNzYm.html",
+    "title": "About Us Pop-Out Effect",
+    "author": "Mikael Ainalem",
+    "source": "https://codepen.io/ainalem/pen/QWGNzYm",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ainalem-LJYRxz.html",
+    "title": "Flippin&#39; burgers",
+    "author": "Mikael Ainalem",
+    "source": "https://codepen.io/ainalem/pen/LJYRxz",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ainalem-GRqPwoz.html",
+    "title": "Placeholders",
+    "author": "Mikael Ainalem",
+    "source": "https://codepen.io/ainalem/pen/GRqPwoz",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ainalem-VWJRav.html",
+    "title": "Triangles - deer or rabbit",
+    "author": "Mikael Ainalem",
+    "source": "https://codepen.io/ainalem/pen/VWJRav",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/ainalem-aLKxjm.html",
+    "title": "Lazy loading with inline SVG",
+    "author": "Mikael Ainalem",
+    "source": "https://codepen.io/ainalem/pen/aLKxjm",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/yuanchuan-wZJqNK.html",
+    "title": "Floating heart",
+    "author": "yuanchuan",
+    "source": "https://codepen.io/yuanchuan/pen/wZJqNK",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/yuanchuan-vVRKRQ.html",
+    "title": "Gradient Shapes",
+    "author": "yuanchuan",
+    "source": "https://codepen.io/yuanchuan/pen/vVRKRQ",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/yuanchuan-pBrMNQ.html",
+    "title": "Chasing",
+    "author": "yuanchuan",
+    "source": "https://codepen.io/yuanchuan/pen/pBrMNQ",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/yuanchuan-xxEXwZw.html",
+    "title": "Background patterns",
+    "author": "yuanchuan",
+    "source": "https://codepen.io/yuanchuan/pen/xxEXwZw",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/yuanchuan-vVEVEE.html",
+    "title": "Falling",
+    "author": "yuanchuan",
+    "source": "https://codepen.io/yuanchuan/pen/vVEVEE",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/prisoner849-JjvQOXx.html",
+    "title": "Warm snowflakes",
+    "author": "Paul",
+    "source": "https://codepen.io/prisoner849/pen/JjvQOXx",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/prisoner849-PoOKrPO.html",
+    "title": "Icosahedron: Perlin Noise + Isolines + SelectiveBloom",
+    "author": "Paul",
+    "source": "https://codepen.io/prisoner849/pen/PoOKrPO",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/prisoner849-PvdEMP.html",
+    "title": "Palms",
+    "author": "Paul",
+    "source": "https://codepen.io/prisoner849/pen/PvdEMP",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/alca-mdLaKyr.html",
+    "title": "mdLaKyr",
+    "author": "Alca",
+    "source": "https://codepen.io/Alca/pen/mdLaKyr",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/alca-VByeJd.html",
+    "title": "Recreating &quot;Motion Study&quot; by Mauricio Vio",
+    "author": "Alca",
+    "source": "https://codepen.io/Alca/pen/VByeJd",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/alca-OjwBEQ.html",
+    "title": "OjwBEQ",
+    "author": "Alca",
+    "source": "https://codepen.io/Alca/pen/OjwBEQ",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/alca-vYeyOwd.html",
+    "title": "Recreating &quot;Minimal keyboard&quot; by Dibyajyoti Mishra",
+    "author": "Alca",
+    "source": "https://codepen.io/Alca/pen/vYeyOwd",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/alca-bWGMoz.html",
+    "title": "Mock Chat Animation",
+    "author": "Alca",
+    "source": "https://codepen.io/Alca/pen/bWGMoz",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/alca-wZXrKK.html",
+    "title": "Interactive Photo Cards",
+    "author": "Alca",
+    "source": "https://codepen.io/Alca/pen/wZXrKK",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/Mamboleoo-yLbxYdx.html",
+    "title": "Sparkly skull ✨",
+    "author": "Louis Hoebregts",
+    "source": "https://codepen.io/Mamboleoo/pen/yLbxYdx",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/Mamboleoo-PZWPZx.html",
+    "title": "Happy New Year !",
+    "author": "Louis Hoebregts",
+    "source": "https://codepen.io/Mamboleoo/pen/PZWPZx",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/toshiya-marukubo-powzLKr.html",
+    "title": "Practice / 3.js",
+    "author": "Toshiya Marukubo",
+    "source": "https://codepen.io/toshiya-marukubo/pen/powzLKr",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/toshiya-marukubo-wvGpmmY.html",
+    "title": "#174 in 2020 / JavaScript Canvas",
+    "author": "Toshiya Marukubo",
+    "source": "https://codepen.io/toshiya-marukubo/pen/wvGpmmY",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/toshiya-marukubo-MWyKxEb.html",
+    "title": "#157 in 2020 / JavaScript Canvas",
+    "author": "Toshiya Marukubo",
+    "source": "https://codepen.io/toshiya-marukubo/pen/MWyKxEb",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/wakana-k-WNLrWMm.html",
+    "title": "Swaying photo gallery - scroll event",
+    "author": "Wakana Y.K.",
+    "source": "https://codepen.io/wakana-k/pen/WNLrWMm",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/wakana-k-poBBRmN.html",
+    "title": "Parametric Surface",
+    "author": "Wakana Y.K.",
+    "source": "https://codepen.io/wakana-k/pen/poBBRmN",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/wakana-k-zYMzmxv.html",
+    "title": "Parallax Skybox",
+    "author": "Wakana Y.K.",
+    "source": "https://codepen.io/wakana-k/pen/zYMzmxv",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/wakana-k-YzJqBpM.html",
+    "title": "Stained glass",
+    "author": "Wakana Y.K.",
+    "source": "https://codepen.io/wakana-k/pen/YzJqBpM",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/wakana-k-gOqqWdY.html",
+    "title": "Confetti",
+    "author": "Wakana Y.K.",
+    "source": "https://codepen.io/wakana-k/pen/gOqqWdY",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": true,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/natszafraniec-oNJxgLz.html",
+    "title": "ScrollTrigger keyhole animation",
+    "author": "Natalia 🤟",
+    "source": "https://codepen.io/natszafraniec/pen/oNJxgLz",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/natszafraniec-eYMPEaM.html",
+    "title": "Rotating links/buttons with text placed on a circular path",
+    "author": "Natalia 🤟",
+    "source": "https://codepen.io/natszafraniec/pen/eYMPEaM",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/natszafraniec-wvzGXMW.html",
+    "title": "Generative SVG + animation w/ GSAP and React",
+    "author": "Natalia 🤟",
+    "source": "https://codepen.io/natszafraniec/pen/wvzGXMW",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/natszafraniec-ExGyGgz.html",
+    "title": "Cards",
+    "author": "Natalia 🤟",
+    "source": "https://codepen.io/natszafraniec/pen/ExGyGgz",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/natszafraniec-oNGmoOa.html",
+    "title": "Bubblegum on hover",
+    "author": "Natalia 🤟",
+    "source": "https://codepen.io/natszafraniec/pen/oNGmoOa",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/effects/natszafraniec-yLmoKMw.html",
+    "title": "Matter.js responsive navigation links",
+    "author": "Natalia 🤟",
+    "source": "https://codepen.io/natszafraniec/pen/yLmoKMw",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "effects",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/jh3y-NWdNMBJ.html",
+    "title": "3D CSS Plane 😎 (Tap to Toggle + Mouse Move Parallax)",
+    "author": "Jhey",
+    "source": "https://codepen.io/jh3y/pen/NWdNMBJ",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/akapowl-dyVKvKj.html",
+    "title": "horizontalLoop() helper function for seamless looping (responsive)",
+    "author": "Paul Slawik",
+    "source": "https://codepen.io/akapowl/pen/dyVKvKj",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/akapowl-zYRqbwm.html",
+    "title": "Centered text",
+    "author": "Paul Slawik",
+    "source": "https://codepen.io/akapowl/pen/zYRqbwm",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/akapowl-MWExqWb.html",
+    "title": "Animated Continuous Sections Using Sliding divs - original by @BrianCross - adjusted to not-infinite",
+    "author": "Paul Slawik",
+    "source": "https://codepen.io/akapowl/pen/MWExqWb",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/PointC-KRWgOK.html",
+    "title": "Interactive SVG mask w/full screen image  (GSAP3)",
+    "author": "Craig Roblewsky",
+    "source": "https://codepen.io/PointC/pen/KRWgOK",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/PointC-mmMXQK.html",
+    "title": "SVG Wars: May the morph be with you. (GSAP3)",
+    "author": "Craig Roblewsky",
+    "source": "https://codepen.io/PointC/pen/mmMXQK",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/PointC-zLbxzO.html",
+    "title": "Hamburger menu button w/handwriting effect (GSAP 3)",
+    "author": "Craig Roblewsky",
+    "source": "https://codepen.io/PointC/pen/zLbxzO",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/PointC-LyEqGe.html",
+    "title": "Before &amp; After Slider Gallery With SVG Masks",
+    "author": "Craig Roblewsky",
+    "source": "https://codepen.io/PointC/pen/LyEqGe",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/juliangarnier-kxGRvV.html",
+    "title": "CSS 3D Hartwig chess set (fully playable)",
+    "author": "Julian Garnier",
+    "source": "https://codepen.io/juliangarnier/pen/kxGRvV",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/juliangarnier-gmOwJX.html",
+    "title": "Anime.js Fireworks canvas demo",
+    "author": "Julian Garnier",
+    "source": "https://codepen.io/juliangarnier/pen/gmOwJX",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/GreenSock-jOoxyK.html",
+    "title": "hide rerun on embedded pens",
+    "author": "GSAP",
+    "source": "https://codepen.io/GreenSock/pen/jOoxyK",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/GreenSock-aYYOdN.html",
+    "title": "GSAP Starter Template",
+    "author": "GSAP",
+    "source": "https://codepen.io/GreenSock/pen/aYYOdN",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/GreenSock-BaarZmV.html",
+    "title": "WebGL Point Sphere - GSAP 3",
+    "author": "GSAP",
+    "source": "https://codepen.io/GreenSock/pen/BaarZmV",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/tomhermans-MWQZzdQ.html",
+    "title": "Lightning text skew idea",
+    "author": "Tom Hermans",
+    "source": "https://codepen.io/tomhermans/pen/MWQZzdQ",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/tomhermans-ZExzrry.html",
+    "title": "mask image blend CSS custom properties w/ tweakpane controls",
+    "author": "Tom Hermans",
+    "source": "https://codepen.io/tomhermans/pen/ZExzrry",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/tomhermans-wBvwomx.html",
+    "title": "dithering background",
+    "author": "Tom Hermans",
+    "source": "https://codepen.io/tomhermans/pen/wBvwomx",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  },
+  {
+    "file": "inbox/text/tomhermans-vYQpwwy.html",
+    "title": "Chrome Knob. basically a web native circular range slider",
+    "author": "Tom Hermans",
+    "source": "https://codepen.io/tomhermans/pen/vYQpwwy",
+    "license": "MIT (CodePen public pen default)",
+    "categoryGuess": "text",
+    "module": false,
+    "collectedAt": "2026-09-19"
+  }
+]

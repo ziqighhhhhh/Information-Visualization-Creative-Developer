@@ -1,0 +1,161 @@
+<!--
+  Source : https://codepen.io/woodwoerk/pen/adbyvG
+  Title  : Expanding Card | Material Design
+  Author : Joe Harry
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects · batch: 2
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Expanding Card | Material Design</title>
+<style>
+body {
+  font-family: Roboto, sans-serif;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  color: #FFF;
+  background: #FAFAFA;
+}
+
+h1 {
+  font-weight: 700;
+  font-size: 64px;
+  margin: 20px 0 0 0;
+  padding: 0 20px;
+}
+
+p {
+  font-size: 16px;
+  padding: 0 20px;
+}
+
+em {
+  font-style: normal;
+  color: #FFC400;
+}
+
+a {
+  font-style: normal;
+  color: #FFD740;
+  text-decoration: none;
+  padding-right: 10px;
+  cursor: pointer;
+}
+
+.sub {
+  margin: 0;
+}
+
+.button {
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  font-size: 20px;
+  line-height: 60px;
+  font-weight: bold;
+  transform: rotate(45deg);
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.expand .button {
+  transform: rotate(630deg);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.container {
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 5vh;
+  background-color: #03A9F4;
+  border-radius: 50%;
+  width: 60px;
+  max-width: 60px;
+  height: 60px;
+  text-align: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  overflow: hidden;
+  transition: all 0.2s 0.45s, height 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.25s, max-width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.35s, width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
+}
+
+.container.expand {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.17);
+  border-radius: 0;
+  width: 80%;
+  height: 500px;
+  max-width: 600px;
+  padding: 0;
+  transition: all 0.2s, max-width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.1s, height 0.3s ease 0.25s;
+}
+
+.content {
+  transform: translateY(100%);
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  text-align: left;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s 0.2s;
+}
+
+.expand .content {
+  transform: translateY(0px);
+  opacity: 1;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.05s, opacity 0s;
+}
+
+.content .head {
+  padding: 0 0 20px 0;
+}
+
+.content .body {
+  color: #000;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #FFF;
+  width: 100%;
+  height: 100%;
+  padding: 10px 0;
+  box-sizing: border-box;
+}
+
+.action-bar {
+  padding-left: 15px;
+  border-top: 1px solid #E0E0E0;
+  width: 100%;
+}
+
+.action-bar a {
+  text-transform: uppercase;
+  line-height: 52px;
+  color: #FFC400;
+}
+</style>
+</head>
+<body>
+<div class="container"><span class="button">&#10006;</span>
+  <div class="content">
+    <div class="head">
+      <h1>Expand.</h1>
+      <p class="sub">by <a href="https://codepen.io/woodwork/" target="_blank">Joe Harry</a></p>
+    </div>
+    <div class="body">
+      <p>
+        There once was a wolf named <em>Knox</em>. He lived in a bright blue box. Until one day, his box blew away and he was left with only his <em>socks</em>.<br><br> Integer augue augue, fermentum at purus nec, euismod rutrum ex. Nulla pulvinar tortor ipsum, vel accumsan nunc rutrum sed. Praesent faucibus sollicitudin tempus. Phasellus congue ex tempor malesuada congue. Etiam vitae dui commodo, ultrices eros malesuada mi. Fusce suscipit eleifend lacus, at gravida urna gravida in. Nullam sodales a consequat leo nisl sit amet ipsum. Pellentesque aliquam dolor quam, et ultricies leo fringilla in. Nulla eu neque eu mauris malesuada efficitur ultrices sed mi. Vestibulum nec quam vitae purus ut sed velit. Vestibulum ultricies iaculis magna ut consequat.</p>
+      <div class="action-bar"><a>SHARE</a><a>LEARN MORE</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('.button').click(function () {
+  $(this).parent().toggleClass('expand');     
+});
+</script>
+</body>
+</html>

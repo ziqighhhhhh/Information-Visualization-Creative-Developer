@@ -1,0 +1,486 @@
+<!--
+  Source : https://codepen.io/Alca/pen/vYeyOwd
+  Title  : Recreating &quot;Minimal keyboard&quot; by Dibyajyoti Mishra
+  Author : Alca
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects · batch: 2
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Recreating quot;Minimal keyboardquot; by Dibyajyoti Mishra</title>
+<style>
+:root {
+  --gap: 15px;
+  --key-width: 50px;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #0a0a0a;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.keyboard {
+  --rot-x: 20deg;
+  --rot-y: 0deg;
+  display: inline-flex;
+  flex-direction: column;
+  padding: var(--gap);
+  border-radius: 17.5px;
+  transform-style: preserve-3d;
+  perspective: 1200px;
+  transform: perspective(1200px) rotateX(var(--rot-x)) rotateY(var(--rot-y));
+  transition: 100ms transform;
+}
+
+.row {
+  display: flex;
+  transform-style: preserve-3d;
+}
+.row + .row {
+  margin-top: var(--gap);
+}
+
+.keyboard,
+.key {
+  background: #141414;
+  border: 2px solid rgba(64, 64, 64, 0.2);
+  box-shadow: -5px -5px 10px rgba(255, 255, 255, 0.01), -2px -2px 6px rgba(255, 255, 255, 0.03), 2px 2px 5px rgba(0, 0, 0, 0.3), 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.key {
+  --width: var(--key-width);
+  --color: hsl(0, 0%, 85%);
+  --size: 1;
+  --size-2: 1.654545;
+  --size-3: 1.981818;
+  --size-4: 2.290909;
+  --size-5: 2.618181;
+  --size-6: 1.327272;
+  --size-7: 7.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--width) * var(--size));
+  height: var(--width);
+  border-radius: 7.5px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  transform: translate3D(0, 0, 30px);
+  transition: 300ms;
+  cursor: pointer;
+}
+.key:hover {
+  transform: translate3D(0, 0, 35px);
+}
+.key:active, .key[data-selected]:not([data-selected=false]) {
+  transition: 100ms;
+  transform: translate3D(0, 0, 25px);
+  border-color: var(--color);
+  box-shadow: 0px 2px 8px var(--color), 0px 5px 20px var(--color), -5px -5px 10px rgba(255, 255, 255, 0.01), -2px -2px 6px rgba(255, 255, 255, 0.03), 2px 2px 5px rgba(0, 0, 0, 0.3), 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+.key + .key {
+  margin-left: var(--gap);
+}
+.key:before {
+  display: block;
+  content: "";
+  width: 15px;
+  height: 15px;
+  border-radius: 7.5px;
+  background-color: var(--color);
+}
+.key.stretch {
+  padding: 0 25px;
+}
+.key.stretch:before {
+  width: 100%;
+}
+.key.empty:before {
+  display: none;
+}
+.key.size-2 {
+  --size: var(--size-2);
+}
+.key.size-3 {
+  --size: var(--size-3);
+}
+.key.size-4 {
+  --size: var(--size-4);
+}
+.key.size-5 {
+  --size: var(--size-5);
+}
+.key.size-6 {
+  --size: var(--size-6);
+}
+.key.size-7 {
+  --size: var(--size-7);
+}
+.key.grey {
+  --color: hsl( 0, 0%, 50%);
+}
+.key.red {
+  --color: hsl( 0, 80%, 60%);
+}
+.key.orange {
+  --color: hsl( 25, 80%, 60%);
+}
+.key.yellow {
+  --color: hsl( 50, 80%, 60%);
+}
+.key.green {
+  --color: hsl(150, 80%, 60%);
+}
+.key.blue {
+  --color: hsl(210, 80%, 60%);
+}
+.key.purple {
+  --color: hsl(270, 80%, 60%);
+}
+.key[data-color=grey] {
+  --color: hsl( 0, 0%, 50%);
+}
+.key[data-color=red] {
+  --color: hsl( 0, 80%, 60%);
+}
+.key[data-color=orange] {
+  --color: hsl( 25, 80%, 60%);
+}
+.key[data-color=yellow] {
+  --color: hsl( 50, 80%, 60%);
+}
+.key[data-color=green] {
+  --color: hsl(150, 80%, 60%);
+}
+.key[data-color=blue] {
+  --color: hsl(210, 80%, 60%);
+}
+.key[data-color=purple] {
+  --color: hsl(270, 80%, 60%);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#footer {
+  height: 12vh;
+  font-size: 1vh;
+}
+#footer #dribbble {
+  border-radius: 2vh;
+  position: absolute;
+  bottom: 4vh;
+  right: 4vh;
+  transition: 300ms cubic-bezier(0.7, 0, 0.3, 1);
+  padding-left: 1.5vh;
+}
+#footer #dribbble:before, #footer #dribbble:after {
+  vertical-align: middle;
+  transition: inherit;
+}
+#footer #dribbble:before {
+  display: inline;
+  content: "View original Dribbble";
+  font-size: 2vh;
+  opacity: 0;
+  transform: translate3D(-200px, 0, 0);
+}
+#footer #dribbble:after {
+  content: "";
+  display: inline-block;
+  width: 4vh;
+  height: 4vh;
+  margin-left: 1vh;
+  background-image: url(https://alca.tv/static/u/82fde61b-28ef-4f17-976e-8f1abb5a1165.png);
+  background-size: contain;
+  background-position: center;
+}
+#footer #dribbble.hover, #footer #dribbble:hover {
+  background: #e94e89;
+}
+#footer #dribbble.hover:before, #footer #dribbble:hover:before {
+  opacity: 1;
+  transform: translate3D(0, 0, 0);
+  transition-delay: 50ms;
+}
+#footer #dribbble.hover:after, #footer #dribbble:hover:after {
+  filter: saturate(0%) contrast(200%) brightness(200%) invert(100%);
+}
+</style>
+</head>
+<body>
+<div class="keyboard">
+  <div class="row">
+    <div class="key orange" data-code="Escape" data-macro="orange"></div>
+    <div class="key" data-code="Digit1"></div>
+    <div class="key" data-code="Digit2"></div>
+    <div class="key" data-code="Digit3"></div>
+    <div class="key" data-code="Digit4"></div>
+    <div class="key" data-code="Digit5"></div>
+    <div class="key" data-code="Digit6"></div>
+    <div class="key" data-code="Digit7"></div>
+    <div class="key" data-code="Digit8"></div>
+    <div class="key" data-code="Digit9"></div>
+    <div class="key" data-code="Digit0"></div>
+    <div class="key" data-code="Minus"></div>
+    <div class="key" data-code="Equal"></div>
+    <div class="key size-4 grey stretch" data-code="Backspace"></div>
+    <div class="key red" data-macro="red"></div>
+  </div>
+  <div class="row">
+    <div class="key size-2 grey stretch" data-code="Tab"></div>
+    <div class="key" data-code="KeyQ"></div>
+    <div class="key" data-code="KeyW"></div>
+    <div class="key" data-code="KeyE"></div>
+    <div class="key" data-code="KeyR"></div>
+    <div class="key" data-code="KeyT"></div>
+    <div class="key" data-code="KeyY"></div>
+    <div class="key" data-code="KeyU"></div>
+    <div class="key" data-code="KeyI"></div>
+    <div class="key" data-code="KeyO"></div>
+    <div class="key" data-code="KeyP"></div>
+    <div class="key" data-code="BracketLeft"></div>
+    <div class="key" data-code="BracketRight"></div>
+    <div class="key size-2 grey stretch" data-code="Backslash"></div>
+    <div class="key yellow" data-macro="yellow"></div>
+  </div>
+  <div class="row">
+    <div class="key size-3 grey stretch" data-code="CapsLock"></div>
+    <div class="key" data-code="KeyA"></div>
+    <div class="key" data-code="KeyS"></div>
+    <div class="key" data-code="KeyD"></div>
+    <div class="key" data-code="KeyF"></div>
+    <div class="key" data-code="KeyG"></div>
+    <div class="key" data-code="KeyH"></div>
+    <div class="key" data-code="KeyJ"></div>
+    <div class="key" data-code="KeyK"></div>
+    <div class="key" data-code="KeyL"></div>
+    <div class="key" data-code="Semicolon"></div>
+    <div class="key" data-code="Quote"></div>
+    <div class="key size-5 green stretch" data-code="Enter" data-macro="green:Enter"></div>
+    <div class="key green" data-macro="green"></div>
+  </div>
+  <div class="row">
+    <div class="key size-5 yellow stretch" data-code="ShiftLeft" data-macro="yellow:ShiftLeft"></div>
+    <div class="key" data-code="KeyZ"></div>
+    <div class="key" data-code="KeyX"></div>
+    <div class="key" data-code="KeyC"></div>
+    <div class="key" data-code="KeyV"></div>
+    <div class="key" data-code="KeyB"></div>
+    <div class="key" data-code="KeyN"></div>
+    <div class="key" data-code="KeyM"></div>
+    <div class="key" data-code="Comma"></div>
+    <div class="key" data-code="Period"></div>
+    <div class="key" data-code="Slash"></div>
+    <div class="key size-3 yellow stretch" data-code="ShiftRight" data-macro="yellow:ShiftRight"></div>
+    <div class="key" data-code="ArrowUp"></div>
+    <div class="key blue" data-macro="blue"></div>
+  </div>
+  <div class="row">
+    <div class="key size-6 red" data-code="ControlLeft" data-macro="red:ControlLeft"></div>
+    <div class="key size-6 purple" data-code="MetaLeft" data-macro="purple:MetaLeft"></div>
+    <div class="key size-6 blue" data-code="AltLeft" data-macro="blue:AltLeft"></div>
+    <div class="key size-7 empty" data-code="Space" data-macro="default:Space"></div>
+    <div class="key size-2 blue stretch" data-code="AltRight" data-macro="blue:AltRight"></div>
+    <div class="key size-2 purple stretch" data-code="ContextMenu" data-macro="purple:ContextMenu"></div>
+    <div class="key" data-code="ArrowLeft"></div>
+    <div class="key" data-code="ArrowDown"></div>
+    <div class="key" data-code="ArrowRight"></div>
+  </div>
+</div>
+<div id="footer"><a href="https://dribbble.com/shots/14735602-Minimal-keyboard" target="_blank">
+    <div id="dribbble"></div></a></div>
+
+<script>
+const keyboard = document.querySelector('.keyboard');
+const rotation = { x: 20, y: 0 };
+// const empty = document.querySelector('.empty');
+// empty.style.color = 'white';
+let animating = [];
+let animatingColor;
+const keysDown = new Set();
+const keyCodeToEle = new Map();
+const allKeys = [...document.querySelectorAll('.key')];
+allKeys.forEach(ele => {
+  ele.dataset.code && keyCodeToEle.set(ele.dataset.code, ele);
+});
+const capsLockKeyIndex = allKeys.indexOf(keyCodeToEle.get('CapsLock'));
+const arrowKeyIndexes = ['Up', 'Left', 'Down', 'Right'].map(n => allKeys.indexOf(keyCodeToEle.get(`Arrow${n}`)));
+const macroKeys = [document.querySelector('[data-code="Escape"]'), ...document.querySelectorAll('[data-macro]')];
+const furthestKeys = {};
+requestAnimationFrame(() => {
+  const allKeyBounds = allKeys.map(n => n.getBoundingClientRect());
+  for (const macro of macroKeys) {
+    const index = allKeys.indexOf(macro);
+    const color = macro.dataset.macro;
+    furthestKeys[color] = 0;
+    const macroBounds = allKeyBounds[index];
+    for (let i = 0; i < allKeys.length; i++) {
+      const ele = allKeys[i];
+      if (macro === ele) continue;
+      const eleBounds = allKeyBounds[i];
+      const d = dist(
+      macroBounds.x + macroBounds.width * 0.5, macroBounds.y + macroBounds.height * 0.5,
+      eleBounds.x + eleBounds.width * 0.5, eleBounds.y + eleBounds.height * 0.5);
+
+      ele.macro = ele.macro || {};
+      ele.macro[color] = d;
+      if (d > furthestKeys[color]) {
+        furthestKeys[color] = d;
+      }
+    }
+  }
+});
+function animateMacro(ele) {
+  const { macro } = ele.dataset;
+  const [color, id] = macro.split(':');
+  if (!keysDown.has(capsLockKeyIndex)) {
+    if (['Space', 'ShiftLeft'].includes(id)) {
+      return;
+    }
+  }
+  animating.push({ time: performance.now(), macro, color });
+  // animating.push({ time: performance.now(), color: macro.split(':')[0] });
+  if (animating.length === 1) {
+    _draw();
+  }
+}
+macroKeys.forEach(ele => {
+  ele.addEventListener('click', () => animateMacro(ele));
+});
+function setKeyState(code, state) {
+  const ele = keyCodeToEle.get(code);
+  if (ele) {
+    if (state) {
+      keysDown.add(allKeys.indexOf(ele));
+      ele.dataset.selected = 'true';
+    } else
+    {
+      ele.dataset.selected = 'false';
+      keysDown.delete(allKeys.indexOf(ele));
+      if (macroKeys.includes(ele)) {
+        animateMacro(ele);
+      }
+    }
+    const [up, left, down, right] = arrowKeyIndexes.map(n => keysDown.has(n));
+    if (up) rotation.x += 1;
+    if (left) rotation.y += -1;
+    if (down) rotation.x += -1;
+    if (right) rotation.y += 1;
+    keyboard.style.setProperty('--rot-x', `${rotation.x}deg`);
+    keyboard.style.setProperty('--rot-y', `${rotation.y}deg`);
+  }
+}
+window.addEventListener('keydown', e => {
+  if (e.code.startsWith('F') && !isNaN(e.code.slice(1))) {
+    return;
+  }
+  e.preventDefault();
+  setKeyState('CapsLock', e.getModifierState('CapsLock'));
+  if (e.code === 'CapsLock') {
+    return;
+  }
+  // if(animating.length) return;
+  // empty.textContent = e.code;
+  // const ele = document.querySelector(`[data-code=${e.code}]`);
+  setKeyState(e.code, true);
+});
+window.addEventListener('keyup', e => {
+  e.preventDefault();
+  setKeyState('CapsLock', e.getModifierState('CapsLock'));
+  if (e.code === 'CapsLock') {
+    return;
+  }
+  // if(animating.length) return;
+  // empty.textContent = e.code;
+  // const ele = document.querySelector(`[data-code=${e.code}]`);
+  setKeyState(e.code, false);
+});
+window.addEventListener('blur', e => {
+  if (animating.length) animating.splice(0);
+  for (const ele of document.querySelectorAll('[data-selected="true"], [data-color]')) {
+    const index = allKeys.indexOf(ele);
+    if (index !== capsLockKeyIndex) {
+      ele.dataset.selected = 'false';
+      ele.dataset.color = '';
+      keysDown.delete(index);
+    }
+  }
+});
+
+function distSq(x1, y1, x2, y2) {
+  const _x = x2 - x1,_y = y2 - y1;
+  return _x * _x + _y * _y;
+}
+function dist(x1, y1, x2, y2) {
+  const d = distSq(x1, y1, x2, y2);
+  if (d === 0) return 0;
+  return Math.sqrt(d);
+}
+
+function _draw(e) {
+  draw(e);
+  if (animating.length) {
+    requestAnimationFrame(_draw);
+  } else
+  {
+    for (const ele of document.querySelectorAll('[data-selected="true"], [data-color]')) {
+      ele.dataset.selected = 'false';
+      ele.dataset.color = '';
+    }
+  }
+}
+
+function draw(e) {
+  if (!animating.length) return;
+  const actions = Array(allKeys.length).fill(false);
+  keysDown.forEach(i => actions[i] = true);
+  const dilation = 100;
+  for (let i = animating.length - 1; i >= 0; i--) {
+    const a = animating[i];
+    const time = e - a.time;
+    const duration = furthestKeys[a.macro] + dilation;
+    if (time >= duration) {
+      animating.splice(i, 1);
+      return;
+    }
+    for (let keyIndex = 0; keyIndex < allKeys.length; keyIndex++) {
+      const key = allKeys[keyIndex];
+      const d = key.macro[a.macro];
+      const t = Math.abs(time - d);
+      if (t < dilation && !actions[keyIndex]) {
+        actions[keyIndex] = a.color;
+      }
+    }
+  }
+  for (let i = 0; i < actions.length; i++) {
+    const key = allKeys[i];
+    if (actions[i]) {
+      key.dataset.selected = 'true';
+      if (typeof actions[i] === 'string') {
+        key.dataset.color = actions[i];
+      }
+    } else
+    {
+      key.dataset.color = '';
+      key.dataset.selected = 'false';
+    }
+  }
+}
+</script>
+</body>
+</html>

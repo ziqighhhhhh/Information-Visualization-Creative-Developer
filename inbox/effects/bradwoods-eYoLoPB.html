@@ -1,0 +1,78 @@
+<!--
+  Source : https://codepen.io/bradwoods/pen/eYoLoPB
+  Title  : garden - fedisplacementmap - 1
+  Author : Brad Woods
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects · batch: 2
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>garden - fedisplacementmap - 1</title>
+<style>
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+img + p,
+svg + p {
+  margin-top: 64px;
+}
+
+img,
+svg {
+  width: 400px;
+}
+</style>
+</head>
+<body>
+<p>Source:</p>
+<svg viewBox="0 0 400 100">
+  <text x="40" y="72" font-size="108" fill="hsl(170, 100%, 25%)" font-weight="700">
+    my text
+  </text>
+</svg>
+
+<p>Map:</p>
+<img alt="A towel." src="https://garden.bradwoods.io/images/towel.png" />
+
+<p>Filtered:</p>
+<svg viewBox="0 0 400 260">
+  <filter id="myFilter" x="-50%" y="-50%" width="200%" height="200%">
+
+    <feImage href="https://garden.bradwoods.io/images/towel.png" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="MAP_RESULT" />
+
+    <feDisplacementMap in="SourceGraphic" in2="MAP_RESULT" scale="15" xChannelSelector="R" yChannelSelector="R" result="DISPLACED_TEXT_RESULT" />
+
+    <!-- The map asset is also being rendered in the background. -->
+    <!-- To view just the result of feDisplacementMap, remove <feMerge> below. -->
+    <feMerge>
+      <feMergeNode in="MAP_RESULT"></feMergeNode>
+      <feMergeNode in="DISPLACED_TEXT_RESULT"></feMergeNode>
+    </feMerge>
+  </filter>
+
+  <text x="40" y="140" font-size="108" filter="url(#myFilter)" fill="hsl(170, 100%, 25%)" font-weight="700">
+    my text
+  </text>
+</svg>
+
+<script>
+// see Loading Asset Problem section for why this is being done:
+const feImage = document.querySelector("feImage");
+const url = feImage.getAttribute("href");
+
+fetch(url)
+  .then((response) => response.blob())
+  .then((blob) => {
+    const objURL = URL.createObjectURL(blob);
+
+    feImage.setAttribute("href", objURL);
+  });
+</script>
+</body>
+</html>

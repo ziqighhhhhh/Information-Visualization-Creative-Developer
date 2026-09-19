@@ -1,0 +1,67 @@
+<!--
+  Source : https://codepen.io/ZachSaucier/pen/nMRbQN
+  Title  : SVG Border Animation 1
+  Author : Zach Saucier
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects · batch: 2
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SVG Border Animation 1</title>
+<style>
+html, body {
+  background: rgb(20,20,20);
+  text-align: center;
+  height: 100%;
+  overflow: hidden;
+}
+.svg-wrapper {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+	  margin: 0 auto;
+  width: 320px;  
+}
+.shape {
+  stroke-dasharray: 140 540;
+  stroke-dashoffset: -474;
+  stroke-width: 8px;
+  fill: transparent;
+  stroke: #19f6e8;
+  border-bottom: 5px solid black;
+  transition: stroke-width 1s, stroke-dashoffset 1s, stroke-dasharray 1s;
+}
+.text {
+  font-family: 'Roboto Condensed';
+  font-size: 22px;
+  line-height: 32px;
+  letter-spacing: 8px;
+  color: #fff;
+  top: -48px;
+  position: relative;
+  pointer-events: none;
+}
+.shape:hover {
+  stroke-width: 2px;
+  stroke-dashoffset: 0;
+  stroke-dasharray: 760;
+}
+</style>
+</head>
+<body>
+<div class="svg-wrapper">
+  <svg height="60" width="320" xmlns="http://www.w3.org/2000/svg">
+    <rect class="shape" height="60" width="320" />
+    <div class="text">ZACH SAUCIER</div>
+  </svg>
+</div>
+
+<script>
+// For more check out zachsaucier.com
+// Fork of https://codepen.io/seanmccaffery/pen/xBpbG
+</script>
+</body>
+</html>
