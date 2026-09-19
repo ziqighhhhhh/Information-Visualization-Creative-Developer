@@ -24,6 +24,10 @@
 
 vivus@0.4.6（CDN）
 
+## 变体（demos/）
+
+- `demos/svg-line-drawing-anime.html`：anime.js 版 SVG 描线（Julian Garnier 官方 demo，inbox 收集，第三方 MIT）——与 Vivus 引擎版对照
+
 ## 相关资产
 
 - `../slide-merge/` / `../clip-reveal/` / `../particle-assemble/`：logo 揭示系列的其他机制（对撞 / 遮罩 / 粒子聚合）
