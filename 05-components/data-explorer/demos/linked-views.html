@@ -1,0 +1,1862 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linked Views Explorer — ECharts + Tabulator</title>
+
+<link rel="stylesheet" href="https://unpkg.com/tabulator-tables@6.5.3/dist/css/tabulator.min.css">
+
+<style>
+:root{
+  --bg:#07090c;
+  --panel:#0d1117;
+  --text:#f6f8fb;
+  --muted:#7f8996;
+  --line:rgba(255,255,255,.075);
+  --accent:#ff7a16;
+  --accent2:#ffc36a;
+  --green:#67d795;
+  --danger:#ff6f52;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  min-height:100%;
+  background:
+    radial-gradient(circle at 80% 12%,rgba(255,122,22,.055),transparent 25%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+body{padding:28px}
+.app{width:min(1500px,100%);margin:auto}
+
+.header{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:28px;
+  margin-bottom:20px;
+}
+.eyebrow{
+  margin-bottom:8px;
+  color:var(--accent);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+h1{
+  margin:0;
+  font-size:clamp(30px,4vw,54px);
+  line-height:.94;
+  letter-spacing:-.055em;
+}
+.subtitle{
+  margin-top:14px;
+  color:var(--muted);
+  font-size:13px;
+}
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:8px;
+}
+.control{display:grid;gap:6px}
+.control label{
+  color:rgba(255,255,255,.34);
+  font-size:8px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+select,button{
+  appearance:none;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:rgba(255,255,255,.035);
+  color:#dfe4ea;
+  padding:10px 13px;
+  font:inherit;
+  font-size:11px;
+  cursor:pointer;
+}
+select:hover,button:hover{
+  border-color:rgba(255,255,255,.15);
+  background:rgba(255,255,255,.055);
+}
+button.active{
+  color:#fff;
+  border-color:rgba(255,122,22,.42);
+  background:rgba(255,122,22,.10);
+}
+
+.status-row{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:center;
+  margin-bottom:12px;
+}
+.status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:rgba(255,255,255,.38);
+  font-size:9px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#596472}
+.status.ok .status-dot{background:var(--green)}
+.status.error .status-dot{background:var(--danger)}
+.selection-summary{
+  color:rgba(255,255,255,.28);
+  font-size:9px;
+}
+.error-box{
+  display:none;
+  margin-bottom:12px;
+  padding:14px 16px;
+  border:1px solid rgba(255,90,65,.24);
+  border-radius:14px;
+  background:rgba(255,90,65,.07);
+  color:#f0a69a;
+  font-size:12px;
+}
+.error-box.show{display:block}
+
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:12px;
+}
+.metric{
+  position:relative;
+  min-height:128px;
+  padding:20px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 92% 12%,rgba(255,122,22,.065),transparent 42%),
+    linear-gradient(180deg,rgba(255,255,255,.026),rgba(255,255,255,.008));
+}
+.metric::after{
+  content:"";
+  position:absolute;
+  left:20px;right:20px;bottom:0;
+  height:1px;
+  background:linear-gradient(90deg,var(--accent),transparent 72%);
+  opacity:.5;
+}
+.metric span{
+  display:block;
+  color:rgba(255,255,255,.38);
+  font-size:9px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.metric strong{
+  display:block;
+  margin-top:20px;
+  font-size:31px;
+  line-height:1;
+  letter-spacing:-.045em;
+}
+.metric small{
+  display:block;
+  margin-top:10px;
+  color:rgba(255,255,255,.28);
+  font-size:9px;
+}
+
+.dashboard{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.card{
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.023),rgba(255,255,255,.007));
+  overflow:hidden;
+}
+.card.wide{grid-column:1/-1}
+.card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  padding:18px 20px 0;
+}
+.card-head span{
+  color:rgba(255,255,255,.34);
+  font-size:9px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.card-head h2{
+  margin:5px 0 0;
+  font-size:17px;
+  letter-spacing:-.02em;
+}
+.card-meta{
+  color:rgba(255,255,255,.25);
+  font-size:9px;
+  line-height:1.45;
+  text-align:right;
+}
+.chart{
+  width:100%;
+  height:320px;
+  padding:0 8px 8px;
+}
+.chart.trend{height:350px}
+.table-shell{padding:12px 16px 16px}
+
+.hint{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  margin-top:14px;
+  color:rgba(255,255,255,.25);
+  font-size:9px;
+  line-height:1.5;
+}
+
+/* Tabulator */
+#marketTable.tabulator{
+  border:0;
+  border-radius:16px;
+  background:transparent;
+  color:rgba(255,255,255,.78);
+  font-size:11px;
+}
+#marketTable .tabulator-header{
+  border:1px solid rgba(255,255,255,.07);
+  border-bottom:0;
+  border-radius:14px 14px 0 0;
+  background:#10151c;
+  color:rgba(255,255,255,.58);
+}
+#marketTable .tabulator-header .tabulator-col{
+  border-right:1px solid rgba(255,255,255,.055);
+  background:#10151c;
+}
+#marketTable .tabulator-header .tabulator-col:hover{background:#151b23}
+#marketTable .tabulator-header .tabulator-col-content{padding:12px 10px}
+#marketTable .tabulator-col-title{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+#marketTable .tabulator-tableholder{
+  border-left:1px solid rgba(255,255,255,.07);
+  border-right:1px solid rgba(255,255,255,.07);
+  background:#0b0f14;
+}
+#marketTable .tabulator-table{background:#0b0f14}
+#marketTable .tabulator-row{
+  min-height:48px;
+  border-bottom:1px solid rgba(255,255,255,.055);
+  background:#0b0f14;
+  color:rgba(255,255,255,.76);
+  transition:background .15s ease,box-shadow .15s ease;
+}
+#marketTable .tabulator-row:nth-child(even){background:#0d1218}
+#marketTable .tabulator-row:hover{background:#151b23}
+#marketTable .tabulator-row.linked-hover{
+  background:rgba(255,122,22,.085)!important;
+  box-shadow:inset 3px 0 0 var(--accent);
+}
+#marketTable .tabulator-cell{
+  border-right:1px solid rgba(255,255,255,.035);
+  padding:12px 10px;
+}
+#marketTable .tabulator-footer{
+  border:1px solid rgba(255,255,255,.07);
+  border-top:0;
+  border-radius:0 0 14px 14px;
+  background:#10151c;
+  color:rgba(255,255,255,.42);
+}
+#marketTable .tabulator-page{
+  border:1px solid rgba(255,255,255,.08)!important;
+  border-radius:8px!important;
+  background:rgba(255,255,255,.035)!important;
+  color:rgba(255,255,255,.55)!important;
+}
+#marketTable .tabulator-page.active{
+  color:#fff!important;
+  border-color:rgba(255,122,22,.36)!important;
+  background:rgba(255,122,22,.12)!important;
+}
+#marketTable input{
+  width:100%;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;
+  background:#0b0f14;
+  color:#fff;
+  padding:7px 8px;
+  outline:none;
+}
+.market-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-weight:650;
+  color:#fff;
+}
+.market-pill i{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 10px rgba(255,122,22,.28);
+}
+.money{
+  font-variant-numeric:tabular-nums;
+  font-weight:650;
+  color:#fff;
+}
+.margin-good{color:#7fe1a5}
+.margin-mid{color:#ffc36a}
+
+@media(max-width:1050px){
+  body{padding:18px}
+  .header{display:block}
+  .controls{justify-content:flex-start;margin-top:24px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .dashboard{grid-template-columns:1fr}
+  .card.wide{grid-column:auto}
+}
+@media(max-width:560px){
+  .metrics{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+<header class="header">
+  <div>
+    <div class="eyebrow">Exploration / Linked Views Engine</div>
+    <h1>Market Intelligence</h1>
+    <div class="subtitle">
+      One state model, multiple views: time range, ranking, market matrix and data grid stay linked.
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="control">
+      <label>Region</label>
+      <select id="region">
+        <option>All</option>
+        <option>Asia Pacific</option>
+        <option>Middle East & Africa</option>
+        <option>Americas</option>
+      </select>
+    </div>
+
+    <div class="control">
+      <label>Product</label>
+      <select id="product">
+        <option>All</option>
+        <option>Standard</option>
+        <option>Premium</option>
+        <option>Compact</option>
+      </select>
+    </div>
+
+    <div class="control">
+      <label>Year</label>
+      <select id="year">
+        <option>2024</option>
+        <option>2025</option>
+        <option selected>2026</option>
+      </select>
+    </div>
+
+    <div class="control">
+      <label>Market</label>
+      <button id="marketButton">Market: All</button>
+    </div>
+
+    <div class="control">
+      <label>Time range</label>
+      <button id="rangeButton">Months: 1–12</button>
+    </div>
+  </div>
+</header>
+
+<div class="status-row">
+  <div class="status" id="status">
+    <i class="status-dot"></i>
+    <span id="statusText">Checking runtimes…</span>
+  </div>
+  <div class="selection-summary" id="selectionSummary"></div>
+</div>
+
+<div class="error-box" id="errorBox"></div>
+
+<section class="metrics" id="metrics"></section>
+
+<section class="dashboard">
+
+  <article class="card wide">
+    <div class="card-head">
+      <div>
+        <span>Time range driver</span>
+        <h2>Monthly revenue</h2>
+      </div>
+      <div class="card-meta">Drag the zoom slider to filter every other view</div>
+    </div>
+    <div class="chart trend" id="trendChart"></div>
+  </article>
+
+  <article class="card">
+    <div class="card-head">
+      <div>
+        <span>Linked ranking</span>
+        <h2>Revenue by market</h2>
+      </div>
+      <div class="card-meta">Hover or click</div>
+    </div>
+    <div class="chart" id="rankingChart"></div>
+  </article>
+
+  <article class="card">
+    <div class="card-head">
+      <div>
+        <span>Market matrix</span>
+        <h2>Revenue × margin</h2>
+      </div>
+      <div class="card-meta">Bubble size = revenue share</div>
+    </div>
+    <div class="chart" id="scatterChart"></div>
+  </article>
+
+  <article class="card wide">
+    <div class="card-head">
+      <div>
+        <span>Interactive grid</span>
+        <h2>Market detail</h2>
+      </div>
+      <div class="card-meta">Sort · filter · resize columns · row click</div>
+    </div>
+    <div class="table-shell">
+      <div id="marketTable"></div>
+    </div>
+  </article>
+
+</section>
+
+<footer class="hint">
+  <span>Hover in ranking or scatter to highlight the same market in the other chart and table.</span>
+  <span>Apache ECharts 6.1.0 · Tabulator 6.5.3</span>
+</footer>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@6.1.0/dist/echarts.min.js"></script>
+<script src="https://unpkg.com/tabulator-tables@6.5.3/dist/js/tabulator.min.js"></script>
+
+<script>
+(function(){
+"use strict";
+
+const marketDefs = [
+  ["Asia Pacific","Vietnam",1.05],
+  ["Asia Pacific","Singapore",0.82],
+  ["Middle East & Africa","Saudi Arabia",1.18],
+  ["Middle East & Africa","Uganda",0.56],
+  ["Americas","Brazil",1.34],
+  ["Americas","Mexico",0.92]
+];
+
+const productDefs = [
+  ["Standard",1],
+  ["Premium",1.28],
+  ["Compact",0.78]
+];
+
+const DATA = [];
+
+function pseudo(seed){
+  const x = Math.sin(seed * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+for(const year of [2024,2025,2026]){
+  for(let mi=0;mi<marketDefs.length;mi++){
+    const [region,market,mf] = marketDefs[mi];
+
+    for(let pi=0;pi<productDefs.length;pi++){
+      const [product,pf] = productDefs[pi];
+
+      for(let month=1;month<=12;month++){
+        const season =
+          1
+          + .10*Math.sin((month-2)/12*Math.PI*2)
+          + .035*Math.cos(month/12*Math.PI*4);
+
+        const noise =
+          .96
+          + pseudo(year*1000+mi*100+pi*20+month)*.08;
+
+        const revenue =
+          36000
+          * mf
+          * pf
+          * (1+(year-2024)*.095)
+          * season
+          * noise;
+
+        const margin =
+          18
+          + 5*pf
+          + 2.5*mf
+          + (year-2024)*.7
+          + (pseudo(month*91+mi*17+pi)-.5)*1.4;
+
+        DATA.push({
+          year,
+          month,
+          region,
+          market,
+          product,
+          revenue,
+          margin
+        });
+      }
+    }
+  }
+}
+
+const state = {
+  region:"All",
+  product:"All",
+  year:2026,
+  market:"All",
+  monthStart:1,
+  monthEnd:12,
+  hoverMarket:null
+};
+
+const $ = selector =>
+  document.querySelector(selector);
+
+let trendChart = null;
+let rankingChart = null;
+let scatterChart = null;
+let marketTable = null;
+let suppressZoomEvent = false;
+
+const monthNames = [
+  "Jan","Feb","Mar","Apr","May","Jun",
+  "Jul","Aug","Sep","Oct","Nov","Dec"
+];
+
+function setStatus(kind,text){
+  $("#status").className =
+    "status " + kind;
+
+  $("#statusText").textContent =
+    text;
+}
+
+function showError(error){
+  console.error(error);
+
+  $("#errorBox").textContent =
+    String(
+      error && error.message
+        ? error.message
+        : error
+    );
+
+  $("#errorBox").classList.add("show");
+  setStatus("error","Runtime error");
+}
+
+function money(value){
+  if(value >= 1000000){
+    return "$" + (value/1000000).toFixed(2) + "M";
+  }
+
+  return "$" + (value/1000).toFixed(0) + "K";
+}
+
+function sourceRows({
+  includeMarket=true,
+  includeMonths=true,
+  yearOverride=null
+}={}){
+  const year =
+    yearOverride == null
+      ? state.year
+      : yearOverride;
+
+  return DATA.filter(row => {
+    if(Number(row.year) !== Number(year)){
+      return false;
+    }
+
+    if(
+      state.region !== "All"
+      && row.region !== state.region
+    ){
+      return false;
+    }
+
+    if(
+      state.product !== "All"
+      && row.product !== state.product
+    ){
+      return false;
+    }
+
+    if(
+      includeMarket
+      && state.market !== "All"
+      && row.market !== state.market
+    ){
+      return false;
+    }
+
+    if(
+      includeMonths
+      && (
+        row.month < state.monthStart
+        || row.month > state.monthEnd
+      )
+    ){
+      return false;
+    }
+
+    return true;
+  });
+}
+
+function aggregateMonths(data){
+  const map =
+    new Map();
+
+  data.forEach(row => {
+    map.set(
+      row.month,
+      (map.get(row.month) || 0)
+      + row.revenue
+    );
+  });
+
+  return monthNames.map(
+    (name,index) => ({
+      month:index+1,
+      name,
+      revenue:
+        map.get(index+1) || 0
+    })
+  );
+}
+
+function aggregateMarkets(data){
+  const map =
+    new Map();
+
+  data.forEach(row => {
+    const current =
+      map.get(row.market)
+      || {
+        market:row.market,
+        region:row.region,
+        revenue:0,
+        marginTotal:0,
+        count:0
+      };
+
+    current.revenue += row.revenue;
+    current.marginTotal += row.margin;
+    current.count += 1;
+
+    map.set(
+      row.market,
+      current
+    );
+  });
+
+  const rows =
+    Array
+      .from(map.values())
+      .map(row => ({
+        market:row.market,
+        region:row.region,
+        revenue:row.revenue,
+        margin:
+          row.count
+            ? row.marginTotal/row.count
+            : 0
+      }))
+      .sort(
+        (a,b) =>
+          b.revenue - a.revenue
+      );
+
+  const total =
+    rows.reduce(
+      (sum,row) =>
+        sum + row.revenue,
+      0
+    );
+
+  rows.forEach(
+    (row,index) => {
+      row.rank = index + 1;
+      row.share =
+        total
+          ? row.revenue/total*100
+          : 0;
+
+      const months =
+        Math.max(
+          1,
+          state.monthEnd-state.monthStart+1
+        );
+
+      row.monthlyAvg =
+        row.revenue/months;
+    }
+  );
+
+  return rows;
+}
+
+function renderMetrics(){
+  const data =
+    sourceRows();
+
+  const previous =
+    sourceRows({
+      yearOverride:Number(state.year)-1
+    });
+
+  const revenue =
+    data.reduce(
+      (sum,row) =>
+        sum + row.revenue,
+      0
+    );
+
+  const previousRevenue =
+    previous.reduce(
+      (sum,row) =>
+        sum + row.revenue,
+      0
+    );
+
+  const growth =
+    previousRevenue
+      ? (
+          (revenue-previousRevenue)
+          / previousRevenue
+        ) * 100
+      : 0;
+
+  const marketCount =
+    new Set(
+      data.map(row => row.market)
+    ).size;
+
+  const margin =
+    data.length
+      ? (
+          data.reduce(
+            (sum,row) =>
+              sum + row.margin,
+            0
+          )
+          / data.length
+        )
+      : 0;
+
+  $("#metrics").innerHTML = `
+    <article class="metric">
+      <span>Revenue</span>
+      <strong>${money(revenue)}</strong>
+      <small>months ${state.monthStart}–${state.monthEnd}</small>
+    </article>
+
+    <article class="metric">
+      <span>YoY growth</span>
+      <strong>${growth >= 0 ? "+" : ""}${growth.toFixed(1)}%</strong>
+      <small>same months vs. ${Number(state.year)-1}</small>
+    </article>
+
+    <article class="metric">
+      <span>Active markets</span>
+      <strong>${marketCount}</strong>
+      <small>current filter</small>
+    </article>
+
+    <article class="metric">
+      <span>Avg. margin</span>
+      <strong>${margin.toFixed(1)}%</strong>
+      <small>selected period</small>
+    </article>
+  `;
+}
+
+function trendOption(){
+  const rows =
+    aggregateMonths(
+      sourceRows({
+        includeMonths:false
+      })
+    );
+
+  return {
+    animationDuration:500,
+    animationEasing:"cubicOut",
+
+    grid:{
+      left:58,
+      right:26,
+      top:30,
+      bottom:80
+    },
+
+    tooltip:{
+      trigger:"axis",
+      backgroundColor:"rgba(10,14,19,.96)",
+      borderColor:"rgba(255,255,255,.09)",
+      textStyle:{
+        color:"#fff",
+        fontSize:11
+      },
+      formatter:params => {
+        const p =
+          params[0];
+
+        return `
+          <div style="color:#8994a2;margin-bottom:5px">${p.axisValue}</div>
+          <b>${money(p.value)}</b>
+        `;
+      }
+    },
+
+    xAxis:{
+      type:"category",
+      boundaryGap:false,
+      data:rows.map(
+        row =>
+          row.name
+      ),
+      axisLine:{
+        lineStyle:{
+          color:"#2b333d"
+        }
+      },
+      axisTick:{show:false},
+      axisLabel:{
+        color:"#737e8c",
+        fontSize:10
+      }
+    },
+
+    yAxis:{
+      type:"value",
+      splitNumber:4,
+      axisLine:{show:false},
+      axisTick:{show:false},
+      axisLabel:{
+        color:"#737e8c",
+        fontSize:10,
+        formatter:value =>
+          money(value)
+      },
+      splitLine:{
+        lineStyle:{
+          color:"rgba(255,255,255,.055)"
+        }
+      }
+    },
+
+    dataZoom:[
+      {
+        type:"inside",
+        startValue:state.monthStart-1,
+        endValue:state.monthEnd-1,
+        zoomOnMouseWheel:false,
+        moveOnMouseMove:true
+      },
+      {
+        type:"slider",
+        height:18,
+        bottom:24,
+        startValue:state.monthStart-1,
+        endValue:state.monthEnd-1,
+        borderColor:"rgba(255,255,255,.07)",
+        backgroundColor:"rgba(255,255,255,.025)",
+        fillerColor:"rgba(255,122,22,.14)",
+        handleStyle:{
+          color:"#ff7a16",
+          borderColor:"#ffc36a"
+        },
+        moveHandleStyle:{
+          color:"#ff7a16"
+        },
+        textStyle:{
+          color:"#6f7a87",
+          fontSize:9
+        }
+      }
+    ],
+
+    series:[
+      {
+        type:"line",
+        data:rows.map(
+          row =>
+            row.revenue
+        ),
+        smooth:.32,
+        symbol:"circle",
+        symbolSize:7,
+        showSymbol:false,
+        lineStyle:{
+          width:3,
+          color:"#ff7a16"
+        },
+        itemStyle:{
+          color:"#ffc36a",
+          borderColor:"#fff0d6",
+          borderWidth:1
+        },
+        areaStyle:{
+          color:new echarts.graphic.LinearGradient(
+            0,0,0,1,
+            [
+              {
+                offset:0,
+                color:"rgba(255,122,22,.23)"
+              },
+              {
+                offset:1,
+                color:"rgba(255,122,22,.01)"
+              }
+            ]
+          )
+        }
+      }
+    ]
+  };
+}
+
+function rankingRows(){
+  return aggregateMarkets(
+    sourceRows({
+      includeMarket:false
+    })
+  );
+}
+
+function rankingOption(){
+  const rows =
+    rankingRows();
+
+  return {
+    animationDuration:450,
+
+    grid:{
+      left:94,
+      right:50,
+      top:24,
+      bottom:40
+    },
+
+    tooltip:{
+      trigger:"item",
+      backgroundColor:"rgba(10,14,19,.96)",
+      borderColor:"rgba(255,255,255,.09)",
+      textStyle:{
+        color:"#fff",
+        fontSize:11
+      },
+      formatter:param => {
+        const row =
+          rows[param.dataIndex];
+
+        return `
+          <div style="color:#8994a2;margin-bottom:6px">${row.market}</div>
+          <b>${money(row.revenue)}</b><br>
+          <span style="color:#8994a2">${row.share.toFixed(1)}% share</span>
+        `;
+      }
+    },
+
+    xAxis:{
+      type:"value",
+      axisLine:{show:false},
+      axisTick:{show:false},
+      axisLabel:{
+        color:"#737e8c",
+        fontSize:10,
+        formatter:value =>
+          money(value)
+      },
+      splitLine:{
+        lineStyle:{
+          color:"rgba(255,255,255,.055)"
+        }
+      }
+    },
+
+    yAxis:{
+      type:"category",
+      inverse:true,
+      data:rows.map(
+        row =>
+          row.market
+      ),
+      axisLine:{show:false},
+      axisTick:{show:false},
+      axisLabel:{
+        color:"#a9b2bd",
+        fontSize:10
+      }
+    },
+
+    series:[
+      {
+        type:"bar",
+        barWidth:18,
+
+        data:rows.map(
+          row => ({
+            value:row.revenue,
+            itemStyle:{
+              color:
+                state.market === row.market
+                || state.hoverMarket === row.market
+                  ? "#ff7a16"
+                  : "#3b4653",
+              borderRadius:[
+                0,8,8,0
+              ]
+            }
+          })
+        ),
+
+        label:{
+          show:true,
+          position:"right",
+          color:"#8b95a2",
+          fontSize:9,
+          formatter:param =>
+            money(param.value)
+        },
+
+        emphasis:{
+          itemStyle:{
+            color:"#ff7a16"
+          }
+        }
+      }
+    ]
+  };
+}
+
+function scatterOption(){
+  const rows =
+    rankingRows();
+
+  const maxRevenue =
+    Math.max(
+      1,
+      ...rows.map(
+        row =>
+          row.revenue
+      )
+    );
+
+  return {
+    animationDuration:450,
+
+    grid:{
+      left:60,
+      right:28,
+      top:28,
+      bottom:48
+    },
+
+    tooltip:{
+      trigger:"item",
+      backgroundColor:"rgba(10,14,19,.96)",
+      borderColor:"rgba(255,255,255,.09)",
+      textStyle:{
+        color:"#fff",
+        fontSize:11
+      },
+      formatter:param => {
+        const d =
+          param.data;
+
+        return `
+          <div style="color:#8994a2;margin-bottom:6px">${d[3]}</div>
+          Revenue: <b>${money(d[0])}</b><br>
+          Margin: <b>${d[1].toFixed(1)}%</b><br>
+          Share: <b>${d[2].toFixed(1)}%</b>
+        `;
+      }
+    },
+
+    xAxis:{
+      type:"value",
+      name:"Revenue",
+      nameTextStyle:{
+        color:"#778391",
+        fontSize:9
+      },
+      axisLine:{show:false},
+      axisTick:{show:false},
+      axisLabel:{
+        color:"#737e8c",
+        fontSize:10,
+        formatter:value =>
+          money(value)
+      },
+      splitLine:{
+        lineStyle:{
+          color:"rgba(255,255,255,.055)"
+        }
+      }
+    },
+
+    yAxis:{
+      type:"value",
+      name:"Margin",
+      nameTextStyle:{
+        color:"#778391",
+        fontSize:9
+      },
+      axisLine:{show:false},
+      axisTick:{show:false},
+      axisLabel:{
+        color:"#737e8c",
+        fontSize:10,
+        formatter:value =>
+          value.toFixed(0) + "%"
+      },
+      splitLine:{
+        lineStyle:{
+          color:"rgba(255,255,255,.055)"
+        }
+      }
+    },
+
+    series:[
+      {
+        type:"scatter",
+
+        data:rows.map(
+          row => [
+            row.revenue,
+            row.margin,
+            row.share,
+            row.market
+          ]
+        ),
+
+        symbolSize:data =>
+          16
+          + 34 * (data[0]/maxRevenue),
+
+        itemStyle:{
+          color:param => {
+            const market =
+              param.data[3];
+
+            return (
+              state.market === market
+              || state.hoverMarket === market
+            )
+              ? "#ff7a16"
+              : "#5c6b7a";
+          },
+          opacity:.9,
+          borderColor:"#d9e1e8",
+          borderWidth:.6
+        },
+
+        label:{
+          show:true,
+          formatter:param =>
+            param.data[3],
+          position:"top",
+          color:"#9ba6b3",
+          fontSize:9
+        },
+
+        emphasis:{
+          scale:1.16,
+          itemStyle:{
+            color:"#ff7a16",
+            borderColor:"#fff"
+          },
+          label:{
+            color:"#fff"
+          }
+        }
+      }
+    ]
+  };
+}
+
+function marketFormatter(cell){
+  return `
+    <span class="market-pill">
+      <i></i>
+      ${cell.getValue()}
+    </span>
+  `;
+}
+
+function moneyFormatter(cell){
+  return `
+    <span class="money">
+      ${money(cell.getValue())}
+    </span>
+  `;
+}
+
+function marginFormatter(cell){
+  const value =
+    Number(
+      cell.getValue()
+    );
+
+  const cls =
+    value >= 25
+      ? "margin-good"
+      : "margin-mid";
+
+  return `
+    <span class="${cls}">
+      ${value.toFixed(1)}%
+    </span>
+  `;
+}
+
+function shareFormatter(cell){
+  const value =
+    Number(
+      cell.getValue()
+    );
+
+  return `
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 42px;
+      gap:10px;
+      align-items:center
+    ">
+      <div style="
+        height:5px;
+        overflow:hidden;
+        border-radius:999px;
+        background:rgba(255,255,255,.06)
+      ">
+        <div style="
+          width:${Math.min(100,value)}%;
+          height:100%;
+          border-radius:999px;
+          background:linear-gradient(90deg,#ff7a16,#ffc36a)
+        "></div>
+      </div>
+      <span style="
+        color:#aeb7c1;
+        font-variant-numeric:tabular-nums
+      ">${value.toFixed(1)}%</span>
+    </div>
+  `;
+}
+
+function initTable(){
+  marketTable =
+    new Tabulator(
+      "#marketTable",
+      {
+        height:356,
+        layout:"fitColumns",
+        responsiveLayout:"hide",
+        movableColumns:true,
+        placeholder:"No matching markets",
+        pagination:true,
+        paginationSize:6,
+
+        initialSort:[
+          {
+            column:"revenue",
+            dir:"desc"
+          }
+        ],
+
+        columns:[
+          {
+            title:"#",
+            field:"rank",
+            width:58,
+            hozAlign:"center",
+            headerSort:false
+          },
+          {
+            title:"Market",
+            field:"market",
+            minWidth:150,
+            frozen:true,
+            headerFilter:"input",
+            formatter:marketFormatter
+          },
+          {
+            title:"Region",
+            field:"region",
+            minWidth:160,
+            headerFilter:"input"
+          },
+          {
+            title:"Revenue",
+            field:"revenue",
+            minWidth:130,
+            hozAlign:"right",
+            sorter:"number",
+            formatter:moneyFormatter
+          },
+          {
+            title:"Share",
+            field:"share",
+            minWidth:180,
+            sorter:"number",
+            formatter:shareFormatter
+          },
+          {
+            title:"Avg / Month",
+            field:"monthlyAvg",
+            minWidth:130,
+            hozAlign:"right",
+            sorter:"number",
+            formatter:moneyFormatter
+          },
+          {
+            title:"Margin",
+            field:"margin",
+            minWidth:110,
+            hozAlign:"right",
+            sorter:"number",
+            formatter:marginFormatter
+          }
+        ]
+      }
+    );
+
+  marketTable.on(
+    "rowClick",
+    function(event,row){
+      const market =
+        row.getData().market;
+
+      setMarketSelection(
+        market
+      );
+    }
+  );
+
+  marketTable.on(
+    "rowMouseEnter",
+    function(event,row){
+      setHoverMarket(
+        row.getData().market,
+        false
+      );
+    }
+  );
+
+  marketTable.on(
+    "rowMouseLeave",
+    function(){
+      setHoverMarket(
+        null,
+        false
+      );
+    }
+  );
+}
+
+function updateTable(){
+  const rows =
+    rankingRows();
+
+  marketTable.replaceData(
+    rows
+  );
+
+  requestAnimationFrame(
+    () => {
+      marketTable.redraw(true);
+      syncTableHover();
+    }
+  );
+}
+
+function syncTableHover(){
+  if(!marketTable){
+    return;
+  }
+
+  marketTable
+    .getRows()
+    .forEach(
+      row => {
+        const el =
+          row.getElement();
+
+        const market =
+          row.getData().market;
+
+        el.classList.toggle(
+          "linked-hover",
+          market === state.hoverMarket
+          || market === state.market
+        );
+      }
+    );
+}
+
+function renderAll({
+  updateTrend=true
+}={}){
+  renderMetrics();
+
+  if(updateTrend){
+    suppressZoomEvent = true;
+
+    trendChart.setOption(
+      trendOption(),
+      true
+    );
+
+    setTimeout(
+      () => {
+        suppressZoomEvent = false;
+      },
+      0
+    );
+  }
+
+  rankingChart.setOption(
+    rankingOption(),
+    true
+  );
+
+  scatterChart.setOption(
+    scatterOption(),
+    true
+  );
+
+  updateTable();
+  syncControls();
+
+  setStatus(
+    "ok",
+    "Linked views ready"
+  );
+}
+
+function renderLinkedOnly(){
+  renderMetrics();
+
+  rankingChart.setOption(
+    rankingOption(),
+    true
+  );
+
+  scatterChart.setOption(
+    scatterOption(),
+    true
+  );
+
+  updateTable();
+  syncControls();
+}
+
+function syncControls(){
+  $("#region").value =
+    state.region;
+
+  $("#product").value =
+    state.product;
+
+  $("#year").value =
+    String(state.year);
+
+  const marketButton =
+    $("#marketButton");
+
+  marketButton.textContent =
+    state.market === "All"
+      ? "Market: All"
+      : "Market: "
+        + state.market
+        + " ×";
+
+  marketButton.classList.toggle(
+    "active",
+    state.market !== "All"
+  );
+
+  const rangeButton =
+    $("#rangeButton");
+
+  rangeButton.textContent =
+    state.monthStart === 1
+    && state.monthEnd === 12
+      ? "Months: 1–12"
+      : `Months: ${state.monthStart}–${state.monthEnd} ×`;
+
+  rangeButton.classList.toggle(
+    "active",
+    !(
+      state.monthStart === 1
+      && state.monthEnd === 12
+    )
+  );
+
+  $("#selectionSummary").textContent =
+    [
+      state.region,
+      state.product,
+      state.year,
+      state.market === "All"
+        ? "All markets"
+        : state.market,
+      `M${state.monthStart}–M${state.monthEnd}`
+    ].join(" · ");
+}
+
+function setMarketSelection(market){
+  state.market =
+    state.market === market
+      ? "All"
+      : market;
+
+  state.hoverMarket =
+    null;
+
+  renderAll({
+    updateTrend:true
+  });
+}
+
+function setHoverMarket(
+  market,
+  syncCharts=true
+){
+  if(state.hoverMarket === market){
+    return;
+  }
+
+  state.hoverMarket =
+    market;
+
+  rankingChart.setOption(
+    rankingOption(),
+    true
+  );
+
+  scatterChart.setOption(
+    scatterOption(),
+    true
+  );
+
+  syncTableHover();
+
+  if(!syncCharts){
+    return;
+  }
+}
+
+function bind(){
+  $("#region").addEventListener(
+    "change",
+    event => {
+      state.region =
+        event.target.value;
+
+      state.market =
+        "All";
+
+      renderAll();
+    }
+  );
+
+  $("#product").addEventListener(
+    "change",
+    event => {
+      state.product =
+        event.target.value;
+
+      state.market =
+        "All";
+
+      renderAll();
+    }
+  );
+
+  $("#year").addEventListener(
+    "change",
+    event => {
+      state.year =
+        Number(
+          event.target.value
+        );
+
+      renderAll();
+    }
+  );
+
+  $("#marketButton").addEventListener(
+    "click",
+    () => {
+      state.market =
+        "All";
+
+      state.hoverMarket =
+        null;
+
+      renderAll();
+    }
+  );
+
+  $("#rangeButton").addEventListener(
+    "click",
+    () => {
+      state.monthStart = 1;
+      state.monthEnd = 12;
+
+      renderAll({
+        updateTrend:true
+      });
+    }
+  );
+
+  rankingChart.on(
+    "click",
+    params => {
+      if(
+        params.componentType !== "series"
+      ){
+        return;
+      }
+
+      const rows =
+        rankingRows();
+
+      const market =
+        rows[params.dataIndex]?.market;
+
+      if(market){
+        setMarketSelection(
+          market
+        );
+      }
+    }
+  );
+
+  rankingChart.on(
+    "mouseover",
+    params => {
+      const rows =
+        rankingRows();
+
+      const market =
+        rows[params.dataIndex]?.market;
+
+      if(market){
+        setHoverMarket(
+          market
+        );
+      }
+    }
+  );
+
+  rankingChart.on(
+    "mouseout",
+    () => {
+      setHoverMarket(
+        null
+      );
+    }
+  );
+
+  scatterChart.on(
+    "click",
+    params => {
+      const market =
+        params?.data?.[3];
+
+      if(market){
+        setMarketSelection(
+          market
+        );
+      }
+    }
+  );
+
+  scatterChart.on(
+    "mouseover",
+    params => {
+      const market =
+        params?.data?.[3];
+
+      if(market){
+        setHoverMarket(
+          market
+        );
+      }
+    }
+  );
+
+  scatterChart.on(
+    "mouseout",
+    () => {
+      setHoverMarket(
+        null
+      );
+    }
+  );
+
+  trendChart.on(
+    "datazoom",
+    params => {
+      if(suppressZoomEvent){
+        return;
+      }
+
+      const payload =
+        params.batch?.[0]
+        || params;
+
+      const start =
+        Number(
+          payload.start ?? 0
+        );
+
+      const end =
+        Number(
+          payload.end ?? 100
+        );
+
+      state.monthStart =
+        Math.max(
+          1,
+          Math.floor(
+            start/100*12
+          ) + 1
+        );
+
+      state.monthEnd =
+        Math.min(
+          12,
+          Math.max(
+            state.monthStart,
+            Math.ceil(
+              end/100*12
+            )
+          )
+        );
+
+      renderLinkedOnly();
+    }
+  );
+}
+
+function boot(){
+  if(
+    typeof window.echarts === "undefined"
+    ||
+    typeof window.Tabulator === "undefined"
+  ){
+    showError(
+      new Error(
+        "ECharts or Tabulator did not load. Check CDN/network access."
+      )
+    );
+    return;
+  }
+
+  trendChart =
+    echarts.init(
+      $("#trendChart")
+    );
+
+  rankingChart =
+    echarts.init(
+      $("#rankingChart")
+    );
+
+  scatterChart =
+    echarts.init(
+      $("#scatterChart")
+    );
+
+  initTable();
+  bind();
+
+  renderAll();
+
+  window.addEventListener(
+    "resize",
+    () => {
+      trendChart.resize();
+      rankingChart.resize();
+      scatterChart.resize();
+      marketTable.redraw(true);
+    }
+  );
+}
+
+if(document.readyState === "loading"){
+  document.addEventListener(
+    "DOMContentLoaded",
+    boot,
+    {
+      once:true
+    }
+  );
+}else{
+  boot();
+}
+
+window.linkedViewsExplorer = {
+  getState:function(){
+    return {...state};
+  },
+
+  setState:function(patch){
+    Object.assign(
+      state,
+      patch || {}
+    );
+
+    renderAll();
+  }
+};
+
+})();
+</script>
+</body>
+</html>

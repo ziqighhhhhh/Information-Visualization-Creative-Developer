@@ -30,6 +30,12 @@ ECharts：`trendOption(data)` / `rankingOption(data)` 返回配置；Tabulator�
 
 echarts@6.1.0（jsdelivr）· tabulator-tables@6.5.3（unpkg）
 
+## 变体（`demos/`）
+
+- `demos/linked-views.html`：同栈同能力的另一视图组合——time range + ranking + market matrix + grid，并演示图表与表格行之间的 `linked-hover` 互相高亮。主演示（`index.html`）是 trend + ranking + 指标卡 + grid 的组合。
+
+命名惯例：demo 文件名描述"视图组合特征"，能力仍归 `data-explorer`。
+
 ## 来源
 
 自研资产（原 `data-explorer-engine-standalone-v2.html`），2026-09 归档入 `05-components/`。
