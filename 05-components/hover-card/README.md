@@ -19,6 +19,8 @@ demos/ 内含 Kippo 卡片变体
 ## 变体（demos/）
 
 - `demos/kippo.html`
+- `demos/photo-cards.html`：Interactive Photo Cards — Alca（https://codepen.io/Alca/pen/wZXrKK）
+- `demos/hover-pack.html`：Card Hover Interactions — Ryan Mulligan（https://codepen.io/hexagoncircle/pen/XWbWKwL）
 
 ## 归档
 

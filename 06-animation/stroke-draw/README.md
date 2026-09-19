@@ -27,6 +27,7 @@ vivus@0.4.6（CDN）
 ## 变体（demos/）
 
 - `demos/svg-line-drawing-anime.html`：anime.js 版 SVG 描线（Julian Garnier 官方 demo，inbox 收集，第三方 MIT）——与 Vivus 引擎版对照
+- `demos/garden-scroll.html`：garden - draw-on-scroll — Brad Woods（https://codepen.io/bradwoods/pen/KKEVgZG）
 
 ## 相关资产
 

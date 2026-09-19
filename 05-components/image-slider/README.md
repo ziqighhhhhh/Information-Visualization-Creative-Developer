@@ -13,6 +13,10 @@
 
 无依赖
 
+## 变体（demos/）
+
+- `demos/fancy.html`：Fancy Slider — Nikolay Talanov（https://codepen.io/suez/pen/wMMgXp）
+
 ## 归档
 
 2026-09 由 inbox 审查后分类入 `05-components/`。

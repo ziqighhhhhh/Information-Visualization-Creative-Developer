@@ -13,6 +13,10 @@
 
 gsap + Observer（CDN）
 
+## 变体（demos/）
+
+- `demos/sliding-divs.html`：Animated Continuous Sections Using Sliding divs - original by @BrianCross - adjusted to not-infinite — Paul Slawik（https://codepen.io/akapowl/pen/MWExqWb）
+
 ## 归档
 
 2026-09 由 inbox 审查后分类入 `01-layout/`。

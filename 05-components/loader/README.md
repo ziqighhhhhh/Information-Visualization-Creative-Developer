@@ -13,6 +13,10 @@
 
 无依赖
 
+## 变体（demos/）
+
+- `demos/samsung-tv.html`：Samsung TV Loader — Joe Harry（https://codepen.io/woodwoerk/pen/YWjWzo）
+
 ## 归档
 
 2026-09 由 inbox 审查后分类入 `05-components/`。
