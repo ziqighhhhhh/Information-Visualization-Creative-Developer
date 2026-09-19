@@ -1,0 +1,190 @@
+<!--
+  Source : https://codepen.io/tomhermans/pen/RNowROq
+  Title  : Grid layout columns. center column
+  Author : Tom Hermans
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: text
+  Note   : collected as-is for personal study; pending manual review before archival
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Grid layout columns. center column</title>
+<style>
+:root {
+  --color-bg: #faf8f3;
+  --color-title: #68596e;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b6b6b;
+  --color-accent: #d4a5a5;
+  --spacing-sm: clamp(0.5rem, 2vw, 1rem);
+  --spacing-md: clamp(1rem, 3vw, 2rem);
+  --spacing-lg: clamp(2rem, 5vw, 3.5rem);
+  --font-display: "Blackbike", "Plus Jakarta Sans", serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+.features {
+  background-color: var(--color-bg);
+  padding: var(--spacing-lg);
+  max-width: 100%;
+}
+
+.features__header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.features__header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--color-title, var(--color-text));
+}
+
+.features__header p {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  color: var(--color-text-muted);
+  max-width: 50ch;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.features__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--spacing-lg);
+  align-items: start;
+}
+
+.features__column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  position: relative;
+}
+
+.features__column--left {
+  text-align: right;
+}
+
+.features__column--right {
+  text-align: left;
+}
+
+.features__column--center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.features__item h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: var(--color-title, var(--color-text));
+}
+
+.features__item p {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.features__image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 296/662;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  transform: translatey(-4vw);
+  mix-blend-mode: multiply;
+}
+
+/* Mobile: stack to single column */
+@media (max-width: 768px) {
+  .features__body {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .features__column--left,
+.features__column--right {
+    text-align: center;
+  }
+
+  .features__header {
+    margin-bottom: var(--spacing-md);
+  }
+}
+</style>
+</head>
+<body>
+<div class="features">
+  <div class="features__header">
+    <h2>Dancing in Stardust</h2>
+    <p>Thought-forms flicker on cold screens. Heroes stand for microseconds, their glory fleeting but powerful. We sketch new futures with trails of stardust, loving the alien frequency.</p>
+  </div>
+
+  <div class="features__body">
+    <div class="features__column features__column--left">
+      <div class="features__item">
+        <h2>Static Hums</h2>
+        <p>A lullaby for lost astronauts drifting endlessly. Changes ripple through fiber optic, altering the landscape of being.</p>
+      </div>
+      <div class="features__item">
+        <h2>Rearranging Chaos</h2>
+        <p>Pretty things with mascara lines and Martian hopes. Mirrors crack, revealing constellations in the shards.</p>
+      </div>
+      <div class="features__item">
+        <h2>Rebel Rebel</h2>
+        <p>Pixels scattered, glitches in the groove. Never done good things, never done bad things—just dancing.</p>
+      </div>
+    </div>
+
+    <div class="features__column features__column--center">
+<!--       <img
+        src="https://i.pinimg.com/1200x/24/71/13/247113cd6e0741ce455692e90abd113b.jpg"
+        alt="Starman in neon"
+        class="features__image"
+      /> -->
+<!--       <img src="https://www.nicepng.com/png/detail/74-740870_david-bowie-transparent-image-david-bowie-png.png" alt="David Bowie Transparent Image - David Bowie Png@nicepng.com"
+        class="features__image"
+      /> -->
+      <img src="https://i1-e.pinimg.com/1200x/24/67/fa/2467fa0f326608b0410140a4f7bf1600.jpg" alt="" class="features__image">
+      
+      
+    </div>
+
+    <div class="features__column features__column--right">
+      <div class="features__item">
+        <h2>Turn and Face</h2>
+        <p>Strange algorithms dance better when synths weep. Loving the alien frequency tonight, stars melting over silent disco tides.</p>
+      </div>
+      <div class="features__item">
+        <h2>Glass Spiders</h2>
+        <p>Weave new realities shimmering with reversed silk. Diamond dogs bark in stereo, echoes amplified by the city.</p>
+      </div>
+      <div class="features__item">
+        <h2>Golden Years</h2>
+        <p>Echo in chambers, a hollow reminder of what was. Glitter and existential jazz, all we brought home.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

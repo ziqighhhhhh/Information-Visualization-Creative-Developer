@@ -1,0 +1,78 @@
+<!--
+  Source : https://codepen.io/tomhermans/pen/poEZYQg
+  Title  : grid overlap example (with tailwind now)
+  Author : Tom Hermans
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: text
+  Note   : collected as-is for personal study; pending manual review before archival
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>grid overlap example (with tailwind now)</title>
+<style>
+:root {
+  --param1: 1;
+}
+
+#wrap {
+  outline: 1px solid black;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  position: relative;
+}
+</style>
+</head>
+<body>
+<div class="wrap w-5/6 mx-auto">
+  <div class="grid grid-cols-10 ">
+    <div class="row-span-full col-start-1 col-span-6 self-center">
+      <img class="object-cover rounded-lg" src="https://images.unsplash.com/photo-1610212411735-e68d49920025?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80" alt="">
+    </div>
+    <div class="row-span-full col-span-6 col-end-11 self-center p-4 text-white bg-gradient-to-tr to-red-200 via-pink-500 from-blue-500 rounded-lg">
+      <h1 class="text-2xl font-bold mt-0">title of this overlapping bit</h1>
+      <p class="mb-2">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        <!-- Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.-->
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+// // tweakpane parameters
+// const PARAMS = {
+//   param1: 1,
+//   msg: "Tweakpane ready"
+// };
+// const wrap = document.getElementById("wrap");
+// const rootstyle = document.documentElement.style;
+
+// const pane = new Tweakpane();
+// pane.addInput(PARAMS, "msg", {}).on("change", (val) => {
+//   setCustomProp("msg", val);
+// });
+
+// pane
+//   .addInput(PARAMS, "param1", {
+//     min: 0,
+//     max: 24,
+//     step: 0.1
+//   })
+//   .on("change", (val) => {
+//     setCustomProp("param1", val);
+//   });
+
+// function setCustomProp(prop, val, unit = "") {
+//   // on root elem
+//   console.log(prop + val + unit);
+//   rootstyle.setProperty("--" + prop, val + unit);
+// }
+</script>
+</body>
+</html>

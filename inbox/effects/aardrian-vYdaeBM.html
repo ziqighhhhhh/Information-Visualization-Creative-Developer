@@ -1,0 +1,127 @@
+<!--
+  Source : https://codepen.io/aardrian/pen/vYdaeBM
+  Title  : Pure CSS Animated Image Zoom 🚜 [general sibling combinators, bg image]
+  Author : Adrian Roselli
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects
+  Note   : collected as-is for personal study; pending manual review before archival
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pure CSS Animated Image Zoom 🚜 [general sibling combinators, bg image]</title>
+<style>
+body {
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  line-height: 1.4;
+  display: grid;
+  place-items: center;
+  min-height: 95vh;
+}
+
+div[role="img"] {
+  width: 50vmin;
+  aspect-ratio: 1920 / 2402;
+  background-image: url("https://assets.codepen.io/605876/max-bender-city-scape.jpeg");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: 100%;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  div[role="img"] {
+    transition: all 0.2s ease-out;
+  }
+}
+
+#bus:checked ~ div[role="img"] {
+  background-position: 29% 71%;
+  background-size: 600%;
+}
+
+#car:checked ~ div[role="img"] {
+  background-position: 70% 76%;
+  background-size: 550%;
+}
+
+#walk:checked ~ div[role="img"] {
+  background-position: 77% 67%;
+  background-size: 1200%;
+}
+
+#mail:checked ~ div[role="img"] {
+  background-position: 71% 68%;
+  background-size: 800%;
+}
+
+#stop:checked ~ div[role="img"] {
+  background-position: 0% 71%;
+  background-size: 600%;
+}
+
+#peak:checked ~ div[role="img"] {
+  background-position: 52% 39%;
+  background-size: 800%;
+}
+
+/* Layout */
+
+fieldset {
+  display: grid;
+  grid-template-columns:  50vmin 5em 1.5em;
+  gap: .25em 1em;
+  max-width: 33em;
+}
+
+fieldset > * {
+  align-self: start;
+}
+
+fieldset div[role="img"] {
+  grid-row: 1 / span 14;
+}
+
+legend {
+  margin-left: calc(50vmin + 1em);
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 80%;
+  padding: 1em;
+  text-align: center;
+  background-color: #fff;
+}
+</style>
+</head>
+<body>
+<fieldset>
+  <legend>Zoom Spots</legend>
+  <label for="default">Default</label>
+  <input type="radio" id="default" name="zoomies" value="default" checked>
+  <label for="bus">Bus</label>
+  <input type="radio" id="bus" name="zoomies" value="bus">
+  <label for="car">Car</label>
+  <input type="radio" id="car" name="zoomies" value="car">
+  <label for="walk">Walk Sign</label>
+  <input type="radio" id="walk" name="zoomies" value="walk">
+  <label for="mail">Mail Truck</label>
+  <input type="radio" id="mail" name="zoomies" value="mail">
+  <label for="stop">Bus Stop</label>
+  <input type="radio" id="stop" name="zoomies" value="stop">
+  <label for="peak">Peak</label>
+  <input type="radio" id="peak" name="zoomies" value="peak">
+  <div role="img" aria-label="Looking up a wet Chicago city street in the early evening, cars with headlights facing the camera, a bus and bus stop on the left of the image, a mail truck next to walking sign on the right, and in the middle center is the top of an office tower against a cloudy blue sky."></div>
+</fieldset>
+
+<footer>Photo by <a href="https://unsplash.com/photos/VmX3vmBecFE" target="_top">Max Bender on Unsplash</a></footer>
+
+
+</body>
+</html>

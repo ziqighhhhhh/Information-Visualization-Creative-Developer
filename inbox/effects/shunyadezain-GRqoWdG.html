@@ -1,0 +1,106 @@
+<!--
+  Source : https://codepen.io/shunyadezain/pen/GRqoWdG
+  Title  : CSS Folder Hover Micro Interaction
+  Author : Shunya Koide
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: effects
+  Note   : collected as-is for personal study; pending manual review before archival
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CSS Folder Hover Micro Interaction</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  background: #f1f2f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.folder {
+  transition: all 0.2s ease-in;
+}
+.folder__back {
+  position: relative;
+  width: 100px;
+  height: 80px;
+  background: #4786ff;
+  border-radius: 0px 5px 5px 5px;
+}
+.folder__back::after {
+  position: absolute;
+  bottom: 98%;
+  left: 0;
+  content: "";
+  width: 30px;
+  height: 10px;
+  background: #4786ff;
+  border-radius: 5px 5px 0 0;
+}
+.folder__back .paper {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  width: 70%;
+  height: 80%;
+  background: #e6e6e6;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+}
+.folder__back .paper:nth-child(2) {
+  background: #f2f2f2;
+  width: 80%;
+  height: 70%;
+}
+.folder__back .paper:nth-child(3) {
+  background: white;
+  width: 90%;
+  height: 60%;
+}
+.folder__back .folder__front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #70a1ff;
+  border-radius: 5px;
+  transform-origin: bottom;
+  transition: all 0.3s ease-in-out;
+}
+.folder:hover {
+  transform: translateY(-8px);
+}
+.folder:hover .paper {
+  transform: translate(-50%, 0%);
+}
+.folder:hover .folder__front {
+  transform: skew(15deg) scaleY(0.6);
+}
+.folder:hover .right {
+  transform: skew(-15deg) scaleY(0.6);
+}
+</style>
+</head>
+<body>
+<div class="folder">
+  <div class="folder__back">
+    <div class="paper"></div>
+    <div class="paper"></div>
+    <div class="paper"></div>
+    <div class="folder__front"></div>
+    <div class="folder__front right"></div>
+  </div>
+</div>
+
+<script>
+//follow me on twitter :) @shunyadezain
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!--
+  Source : https://codepen.io/akapowl/pen/YzeWYRQ
+  Title  : MilkShake Ordering-Flow  w/ GSAP - codepenchallenge cpc-shake
+  Author : Paul Slawik
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: text
+  Note   : collected as-is for personal study; pending manual review before archival
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MilkShake Ordering-Flow  w/ GSAP - codepenchallenge cpc-shake</title>
+<style>
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+body,
+html {
+	height: 100%;
+	display: grid;
+	background: rgb(255, 255, 255);
+	/*
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.8169642857142857) 0%, rgba(250, 66, 66, 1) 100%);
+	*/
+}
+
+.button {
+	position: relative;
+	color: rgba(250, 66, 66, 1);
+	text-transform: uppercase;
+	font-family: sans-serif;
+	text-decoration: none;
+	font-size: 10vmin;	
+	margin: auto;	
+	border-radius: 1.5vmin;
+	background: rgba(255,255,255, 0.5);
+	padding: 1.3vmin 0 0 0;
+	border: 2px solid salmon;
+}
+
+.progress {
+	position: absolute;
+	background: rgba(250, 66, 66, 0.075);
+	top: 0; left: 0;
+	height: 100%;
+	width: 0%;
+	border-radius: 1.5vmin;
+	z-index: 0;
+}
+
+.shake, .text, .bell {
+	display: inline-block;
+	position: relative;
+	overflow: hidden;
+	z-index: 1;
+}
+
+.text {	
+	font-family: 'Montserrat'; 
+	box-shadow: -4px 0 0 -2px salmon, 4px 0 0 -2px salmon;
+	padding: 0 4.3vmin 0 4.3vmin;
+}
+
+.text > div {
+  will-change: transform;
+}
+
+.bell {
+	width: 0;
+}
+</style>
+</head>
+<body>
+<a class="button" href="#"><div class="progress"></div><span class="shake">&nbsp;🥤&nbsp;</span><span class="text">Order</span><span class="bell">&nbsp;🔔&nbsp;</span></a>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script>
+// Please don't nest single tweens in onComplete functions like I do ...
+
+
+
+gsap.registerPlugin(SplitText, CustomEase, CustomWiggle);
+
+
+
+const button = document.querySelector('.button')
+
+const shake = document.querySelector('.shake')
+const text = document.querySelector('.text')
+const bell = document.querySelector('.bell')
+
+const progress = document.querySelector('.progress')
+
+
+
+let splitOrder = new SplitText(text, { type: 'chars' })
+let orderChars = splitOrder.chars
+
+
+
+button.addEventListener('click', order)
+
+function order(){
+	
+	button.style.cursor = 'progress'
+	
+	button.removeEventListener('click', order)
+	
+	gsap.to(orderChars, { yPercent: 150, rotation: 90, stagger: 0.1, ease: 'back.in', onComplete: function() {
+		
+		splitOrder.revert()
+		
+		const state = Flip.getState(text)
+		
+		gsap.set(text, { textContent: 'Shaking' })
+		
+		splitShaking = new SplitText(text, { type: 'chars' })
+		shakingChars = splitShaking.chars
+
+		gsap.set(shakingChars, { yPercent: -150, rotation: -90, autoAlpha: 0 })
+		
+		Flip.from(state, { duration: 0.5, ease: 'power1.inOut', onComplete: function() {
+			
+			gsap.set(shakingChars, { autoAlpha: 1 })
+			
+			gsap.to(shakingChars, { yPercent: 0, rotation: 0, stagger: 0.1, ease: 'back.out', onComplete: function() {
+												
+				gsap.to([shake, shakingChars], { delay: 0.25, duration: 2, yPercent: 10, rotation: 20, ease: 'wiggle(20)', repeat: 1, repeatDelay: 1 })
+				
+				gsap.to(progress, { width: '100%', duration: 5.5, ease: 'none', onComplete:function() {
+										
+						gsap.to(shakingChars, { duration: 0.5, yPercent: 150, rotation: 90, stagger: 0.05, ease: 'back.in', onComplete: function() {
+							
+							gsap.set(progress, { left: 'unset', right: 0 })					
+							gsap.to(progress, { duration: 0.5, width: 0, ease: 'power2.inOut' })
+
+							gsap.to(shake, { duration: 0.5, width: 0, ease: 'power2.inOut' })
+							gsap.to(bell, { duration: 0.5, width: 'auto', ease: 'power2.inOut' })
+														
+							splitShaking.revert()
+							
+							const state = Flip.getState(text)
+							
+							gsap.set(text, { textContent: 'Pick Up' })
+							
+							splitPickup = new SplitText(text, { type: 'chars' })
+							pickupChars = splitPickup.chars
+
+							gsap.set(pickupChars, { yPercent: -150, rotation: -90, autoAlpha: 0 })
+							
+							Flip.from(state, {duration: 0.5, ease: 'power2.inOut', onComplete: function() {
+								
+								gsap.set(pickupChars, { autoAlpha: 1 })
+								
+								gsap.to(pickupChars, { yPercent: 0, rotation: 0, stagger: 0.1, ease: 'back.out', onComplete: function() {
+								
+									gsap.to(bell, { transformOrigin: 'center top', duration: 2, rotation: 5, ease: 'wiggle(20)', repeat: -1, repeatDelay: 1 });
+								
+									button.style.cursor = 'pointer'
+									
+									button.addEventListener('click', revert)
+									
+								} })
+								
+							} })
+							
+						} })
+					
+				} })
+				
+			} })
+			
+		}});
+						
+	} })		
+	
+}
+
+
+
+function revert() {
+	
+	button.style.cursor = 'progress'
+	
+	button.removeEventListener('click', revert)
+	
+	gsap.killTweensOf(bell)
+		
+	gsap.set(progress, { right: 'unset', left: 0 })	
+			
+	gsap.to(pickupChars, { duration: 0.5, yPercent: 150, rotation: 90, stagger: 0.05, ease: 'back.in', onComplete: function() {
+	
+		splitPickup.revert()
+
+		const state = Flip.getState(text)
+
+		gsap.set(text, { textContent: 'Order' })
+
+		splitOrder = new SplitText(text, { type: 'chars' })
+		orderChars = splitOrder.chars
+		
+		Flip.from(state, { ease: 'power1.inOut' })
+		
+		gsap.to(bell, { width: 0, ease: 'power1.inOut' })
+		gsap.to(shake, { width: 'auto', ease: 'power1.inOut' })
+		
+		gsap.set(orderChars, { yPercent: -150, rotation: -90 })
+		
+		gsap.to(orderChars, { delay: 0.25, duration: 0.5, yPercent: 0, rotation: 0, stagger: 0.1, ease: 'back.out', onComplete: function() {
+			
+			gsap.set(bell, { clearProps: 'transform' })
+			
+			button.style.cursor = 'pointer'
+			
+			button.addEventListener('click', order)
+			
+		} })
+		
+	} })
+	
+}
+</script>
+</body>
+</html>

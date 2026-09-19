@@ -1,0 +1,56 @@
+<!--
+  Source : https://codepen.io/tylergaw/pen/wvaEgr
+  Title  : Rattle Animation
+  Author : Tyler Gaw
+  License: MIT (CodePen public pen default) — keep attribution when reusing
+  Collected: 2026-09-19 · category-guess: text
+  Note   : collected as-is for personal study; pending manual review before archival
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rattle Animation</title>
+<style>
+@-webkit-keyframes rattle {
+  0% {
+    -webkit-transform: translateX(-2px);
+    letter-spacing: -0.012em;
+  }
+  25% {
+    -webkit-transform: translateY(-2px) rotate(-1deg);
+    font-size: 6.9999em;
+  }
+  50% {
+    -webkit-transform: translateX(1px);
+    text-shadow: 0 1px 0 #000, 1px 1px 0 #f4513d, 2px 2px 0 #f2da5b, -3px -5px 0 #f4513d, -4px -6px 0 rgba(242, 218, 91, 0.6);
+  }
+  75% {
+    -webkit-transform: translateY(1px);
+  }
+  100% {
+    -webkit-transform: translateY(-2px);
+  }
+}
+.multi-ani {
+  -webkit-animation: rattle 0.08s infinite alternate;
+  color: #f2da5b;
+  font-family: "Jolly Lodger", cursive;
+  font-size: 7em;
+  text-align: center;
+  text-shadow: 0 4px 0 #000, -2px -2px 0 #f4513d, -3px -3px 0 #f2da5b;
+}
+
+body {
+  background-color: #f4513d;
+}
+</style>
+</head>
+<body>
+<link href='https://fonts.googleapis.com/css?family=Jolly+Lodger' rel='stylesheet' type='text/css'>
+<p class="multi-ani">Rattle Me Bones</p>
+
+
+</body>
+</html>
